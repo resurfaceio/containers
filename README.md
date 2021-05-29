@@ -1,5 +1,5 @@
-# test-containers
-Base containers for test applications
+# containers
+Base containers for other containers
 
 ```
 bash python-gradle.sh 2.x.x
