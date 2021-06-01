@@ -4,11 +4,11 @@ FROM adoptopenjdk/openjdk11:jdk-11.0.10_9-alpine-slim
 # Do as one big step to reduce container size!
 RUN apk add --no-cache --upgrade wget supervisor python3 less libcrypto1.1 libssl1.1 lighttpd musl musl-utils &&\
 mkdir /var/log/supervisord && mkdir /etc/supervisord &&\
-wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/356/trino-server-356.tar.gz &&\
+wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/357/trino-server-357.tar.gz &&\
 mkdir -p /opt &&\
-tar -xf trino-server-356.tar.gz -C /opt &&\
-mv /opt/trino-server-356 /opt/trino &&\
-rm trino-server-356.tar.gz &&\
+tar -xf trino-server-357.tar.gz -C /opt &&\
+mv /opt/trino-server-357 /opt/trino &&\
+rm trino-server-357.tar.gz &&\
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' /opt/trino/bin/launcher.py &&\
 rm -rf /opt/trino/plugin/accumulo &&\
 rm -rf /opt/trino/plugin/atop &&\
