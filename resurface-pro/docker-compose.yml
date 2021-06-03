@@ -1,0 +1,33 @@
+version: '3.2'
+
+services:
+  resurface:
+    image: docker.resurface.io/release/resurface-pro:2.3.0
+    container_name: resurface-pro
+    ports:
+      - '4000:4000'
+      - '4002:4002'
+      - '4003:4001'
+      - 4001
+
+  worker:
+    image: docker.resurface.io/release/resurface-pro-worker:2.3.0
+    ports:
+      - 4000
+      - 4001
+
+  haproxy:
+    image: eeacms/haproxy
+    depends_on:
+      - resurface
+      - worker
+    ports:
+      - '4001:4001'
+    environment:
+      FRONTEND_PORT: "4001"
+      BACKENDS: "worker"
+      BACKENDS_PORT: "4001"
+      DNS_ENABLED: "True"
+      HTTPCHK: "GET /"
+      INTER: "5s"
+      LOG_LEVEL: "info"
