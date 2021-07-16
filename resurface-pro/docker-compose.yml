@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   resurface:
-    image: docker.resurface.io/release/resurface-pro:2.3.0
+    image: docker.resurface.io/release/resurface-pro:2.3.1
     container_name: resurface-pro
     ports:
       - '4000:4000'
@@ -11,7 +11,7 @@ services:
       - 4001
 
   worker:
-    image: docker.resurface.io/release/resurface-pro-worker:2.3.0
+    image: docker.resurface.io/release/resurface-pro-worker:2.3.1
     ports:
       - 4000
       - 4001
