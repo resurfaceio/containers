@@ -2,22 +2,25 @@ version: '3.2'
 
 services:
   coordinator:
-    image: docker.resurface.io/release/resurface:2.4.3
+    container_name: resurface_coordinator
+    image: docker.resurface.io/release/resurface:2.4.0
     ports:
       - '4000:4000'
       - 4001
     volumes:
-      - "coordinator:/db"
+      - "resurfacedb_coordinator:/db"
 
   workerA:
-    image: docker.resurface.io/release/resurface:2.4.3
+    container_name: resurface_workerA
+    image: docker.resurface.io/release/resurface:2.4.0
     ports:
       - 4000
       - 4001
     volumes:
-      - "workerA:/db"
+      - "resurfacedb_workerA:/db"
 
   haproxy:
+    container_name: resurface_haproxy
     image: eeacms/haproxy
     depends_on:
       - coordinator
@@ -34,5 +37,5 @@ services:
       LOG_LEVEL: "info"
 
 volumes:
-  coordinator:
-  workerA:
+  resurfacedb_coordinator:
+  resurfacedb_workerA:

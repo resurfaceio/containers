@@ -2,15 +2,17 @@ version: '3.2'
 
 services:
   coordinator:
-    image: docker.resurface.io/release/resurface:2.4.3
+    container_name: resurface_coordinator
+    image: docker.resurface.io/release/resurface:2.4.0
     ports:
       - '4000:4000'
       - 4001
     tmpfs:
       - /db
 
-  worker:
-    image: docker.resurface.io/release/resurface:2.4.3
+  workerA:
+    container_name: resurface_workerA
+    image: docker.resurface.io/release/resurface:2.4.0
     ports:
       - 4000
       - 4001
@@ -18,15 +20,16 @@ services:
       - /db
 
   haproxy:
+    container_name: resurface_haproxy
     image: eeacms/haproxy
     depends_on:
       - coordinator
-      - worker
+      - workerA
     ports:
       - '4001:4001'
     environment:
       FRONTEND_PORT: "4001"
-      BACKENDS: "coordinator worker"
+      BACKENDS: "coordinator workerA"
       BACKENDS_PORT: "4001"
       DNS_ENABLED: "True"
       HTTPCHK: "GET /"
