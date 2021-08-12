@@ -7,8 +7,8 @@ services:
     ports:
       - '4000:4000'
       - 4001
-    volumes:
-      - "resurfacedb_coordinator:/db"
+    tmpfs:
+      - /db
 
   workerA:
     container_name: resurface_workerA
@@ -16,8 +16,8 @@ services:
     ports:
       - 4000
       - 4001
-    volumes:
-      - "resurfacedb_workerA:/db"
+    tmpfs:
+      - /db
 
   haproxy:
     container_name: resurface_haproxy
@@ -35,7 +35,3 @@ services:
       HTTPCHK: "GET /"
       INTER: "5s"
       LOG_LEVEL: "info"
-
-volumes:
-  resurfacedb_coordinator:
-  resurfacedb_workerA:
