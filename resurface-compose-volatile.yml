@@ -1,0 +1,34 @@
+version: '3.2'
+
+services:
+  coordinator:
+    image: docker.resurface.io/release/resurface:3.0.13
+    ports:
+      - '7700:7700'
+      - 7701
+    tmpfs:
+      - /db
+
+  worker:
+    image: docker.resurface.io/release/resurface-worker:3.0.13
+    ports:
+      - 7700
+      - 7701
+    tmpfs:
+      - /db
+
+  haproxy:
+    image: eeacms/haproxy
+    depends_on:
+      - coordinator
+      - worker
+    ports:
+      - '7701:7701'
+    environment:
+      FRONTEND_PORT: "7701"
+      BACKENDS: "coordinator worker"
+      BACKENDS_PORT: "7701"
+      DNS_ENABLED: "True"
+      HTTPCHK: "GET /"
+      INTER: "5s"
+      LOG_LEVEL: "info"

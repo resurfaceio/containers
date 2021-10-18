@@ -3,19 +3,19 @@ version: '3.2'
 services:
   coordinator:
     container_name: resurface_coordinator
-    image: docker.resurface.io/release/resurface:2.4.0-beta2
+    image: docker.resurface.io/release/resurface:3.0.13
     ports:
-      - '4000:4000'
-      - 4001
+      - '7700:7700'
+      - 7701
     volumes:
       - "resurfacedb_coordinator:/db"
 
   workerA:
     container_name: resurface_workerA
-    image: docker.resurface.io/release/resurface-worker:2.4.0-beta2
+    image: docker.resurface.io/release/resurface-worker:3.0.13
     ports:
-      - 4000
-      - 4001
+      - 7700
+      - 7701
     volumes:
       - "resurfacedb_workerA:/db"
 
@@ -26,11 +26,11 @@ services:
       - coordinator
       - workerA
     ports:
-      - '4001:4001'
+      - '7701:7701'
     environment:
-      FRONTEND_PORT: "4001"
+      FRONTEND_PORT: "7701"
       BACKENDS: "coordinator workerA"
-      BACKENDS_PORT: "4001"
+      BACKENDS_PORT: "7701"
       DNS_ENABLED: "True"
       HTTPCHK: "GET /"
       INTER: "5s"
