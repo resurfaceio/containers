@@ -1,5 +1,9 @@
-# Resurface containers
+# resurfaceio-containers
 Containers and deployment scripts
+
+## System requirements
+
+* Docker
 
 ## Run volatile cluster with 2 nodes
 
