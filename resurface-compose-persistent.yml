@@ -3,7 +3,7 @@ version: '3.2'
 services:
   coordinator:
     container_name: resurface_coordinator
-    image: docker.resurface.io/release/resurface:3.0.13
+    image: docker.resurface.io/release/resurface:3.0.14
     ports:
       - '7700:7700'
       - 7701
@@ -12,7 +12,7 @@ services:
 
   workerA:
     container_name: resurface_workerA
-    image: docker.resurface.io/release/resurface-worker:3.0.13
+    image: docker.resurface.io/release/resurface-worker:3.0.14
     ports:
       - 7700
       - 7701
