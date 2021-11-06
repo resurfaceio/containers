@@ -1,14 +1,14 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim
+FROM adoptopenjdk/openjdk11:jdk-11.0.13_8-alpine-slim
 
 # Download and configure packages
 # Do as one big step to reduce container size!
 RUN apk add --no-cache --upgrade apk-tools less libcrypto1.1 libssl1.1 musl musl-utils python3 supervisor wget &&\
 mkdir /var/log/supervisord && mkdir /etc/supervisord &&\
-wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/363/trino-server-363.tar.gz &&\
+wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/364/trino-server-364.tar.gz &&\
 mkdir -p /opt &&\
-tar -xf trino-server-363.tar.gz -C /opt &&\
-mv /opt/trino-server-363 /opt/trino &&\
-rm trino-server-363.tar.gz &&\
+tar -xf trino-server-364.tar.gz -C /opt &&\
+mv /opt/trino-server-364 /opt/trino &&\
+rm trino-server-364.tar.gz &&\
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' /opt/trino/bin/launcher.py &&\
 rm -rf /opt/trino/plugin/accumulo &&\
 rm -rf /opt/trino/plugin/atop &&\
@@ -48,4 +48,4 @@ rm -rf /opt/trino/plugin/thrift &&\
 rm -rf /opt/trino/plugin/tpcds &&\
 rm -rf /opt/trino/plugin/tpch
 
-CMD ping localhost
+ENTRYPOINT ["tail", "-f", "/dev/null"]
