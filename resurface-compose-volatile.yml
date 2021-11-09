@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   coordinator:
-    image: docker.resurface.io/release/resurface:3.0.17
+    image: docker.resurface.io/release/resurface:3.0.18
     ports:
       - '7700:7700'
       - 7701
@@ -10,7 +10,7 @@ services:
       - /db
 
   worker:
-    image: docker.resurface.io/release/resurface-worker:3.0.17
+    image: docker.resurface.io/release/resurface-worker:3.0.18
     ports:
       - 7700
       - 7701
