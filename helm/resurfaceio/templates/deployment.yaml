@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resurfaceio.fullname" . }}
+  labels:
+    {{- include "resurfaceio.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "resurfaceio.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurfaceio.selectorLabels" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+      - name: resurface-entitlement
+      containers:
+        - name: {{ .Chart.Name }}
+          image: docker.resurface.io/release/resurface:3.0.18
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: db
+              containerPort: {{ .Values.service.port.apiExplorer }}
+              protocol: TCP
+            - name: fluke
+              containerPort: {{ .Values.service.port.flukeServer }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: fluke
+          readinessProbe:
+            httpGet:
+              path: /
+              port: db

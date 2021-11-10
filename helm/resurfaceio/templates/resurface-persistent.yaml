@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluke
+  labels:
+    app: resurface
+spec:
+  selector:
+    app: resurface
+  ports:
+  - port: 7701
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: resurface
+spec:
+  serviceName: fluke
+  selector:
+    matchLabels:
+      app: resurface
+  template:
+    metadata:
+      labels:
+        app: resurface
+    spec:
+      containers:
+      - name: resurface
+        image: docker.resurface.io/release/resurface:3.0.17
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: resurface-db
+          mountPath: /db
+      imagePullSecrets:
+      - name: resurface-entitlement   
+  volumeClaimTemplates:
+  - metadata:
+      name: resurface-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: azurefile
+      resources:
+        requests:
+          storage: 1Gi
+

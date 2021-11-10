@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resurfaceio.fullname" . }}-db
+  labels:
+    {{- include "resurfaceio.labels" . | nindent 4 }}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: {{ .Values.service.port.apiExplorer }}
+      targetPort: db
+  selector:
+    {{- include "resurfaceio.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "resurfaceio.fullname" . }}
+  labels:
+    {{- include "resurfaceio.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: {{ .Values.service.port.flukeServer }}
+      targetPort: fluke
+  selector:
+    {{- include "resurfaceio.selectorLabels" . | nindent 4 }}

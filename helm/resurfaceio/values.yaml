@@ -1,0 +1,35 @@
+# Default values for resurfaceio-logger.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+service:
+  port:
+    apiExplorer: 7700
+    flukeServer: 7701
+
+# multinode:
+#   enabled: true
+#   replicaCount: 2
+
+# persistence:
+#   enabled: true
+#   storageClass:
+#   - name: "azure"
+#     params:
+#       foo: "bar"
+
+# resources:
+#   limits:
+#     cpu: 4
+#     memory: 8Gi
+#   requests:
+#     cpu: 4
+#     memory: 4Gi
+
+# autoscaling:
+#   enabled: false
+#   minReplicas: 1
+#   maxReplicas: 100
+#   targetCPUUtilizationPercentage: 80
+#   targetMemoryUtilizationPercentage: 80
