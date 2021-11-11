@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "resurfaceio.fullname" . }}
+  name: {{ include "resurface.fullname" . }}
   labels:
-    {{- include "resurfaceio.labels" . | nindent 4 }}
+    {{- include "resurface.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "resurfaceio.selectorLabels" . | nindent 6 }}
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "resurfaceio.selectorLabels" . | nindent 8 }}
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
     spec:
       imagePullSecrets:
       - name: resurface-entitlement

@@ -1,5 +1,5 @@
 apiVersion: v2
-name: resurfaceio
+name: resurface
 version: 0.1.0
 description: >
     Resurface can help with failure triage and root cause, threat and risk identification,

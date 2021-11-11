@@ -1,0 +1,12 @@
+{{- define "netsniffer.container.tpl" -}}
+- image: tstrsfacr.azurecr.io/network-sniffer:v0
+  imagePullPolicy: IfNotPresent
+  name: netsniffer
+  env:
+  - name: USAGE_LOGGERS_URL
+    value: http://resurface:7701/message
+  - name: USAGE_LOGGERS_RULES
+    value: include debug
+  - name: APP_PORT
+    value: "8080"
+{{- end -}}
