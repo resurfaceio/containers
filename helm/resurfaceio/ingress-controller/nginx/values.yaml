@@ -1,6 +1,6 @@
 image:
   pullSecrets:
-    - name: resurface-entitlement
+    - resurface-entitlement
 
 sidecars:
   - name: netsniffer
@@ -12,4 +12,4 @@ sidecars:
     - name: USAGE_LOGGERS_RULES
       value: include debug
     - name: APP_PORT
-      value: 80
+      value: "80"
