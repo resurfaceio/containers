@@ -26,11 +26,3 @@ spec:
             - name: fluke
               containerPort: {{ .Values.service.port.flukeServer }}
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: fluke
-          readinessProbe:
-            httpGet:
-              path: /
-              port: db
