@@ -2,7 +2,7 @@ FROM adoptopenjdk/openjdk11:jdk-11.0.13_8-alpine-slim
 
 # Download and configure packages
 # Do as one big step to reduce container size!
-RUN apk add --no-cache --upgrade apk-tools less libcrypto1.1 libssl1.1 musl musl-utils python3 supervisor wget &&\
+RUN apk add --no-cache --upgrade apk-tools busybox less libcrypto1.1 libssl1.1 musl musl-utils python3 ssl_client supervisor wget &&\
 mkdir /var/log/supervisord && mkdir /etc/supervisord &&\
 wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/364/trino-server-364.tar.gz &&\
 mkdir -p /opt &&\
