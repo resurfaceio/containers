@@ -28,5 +28,4 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-        {{- dict "rules" "include debug" "port" "8080" | include "netsniffer.logger" | nindent 8 }}
-
+        {{- include "resurface.sniffer.sidecar" . | indent 8 -}}

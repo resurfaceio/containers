@@ -17,7 +17,7 @@ spec:
       - name: resurface-entitlement
       containers:
         - name: {{ .Chart.Name }}
-          image: docker.resurface.io/release/resurface:3.0.18
+          image: docker.resurface.io/release/resurface:{{ .Chart.AppVersion }}
           imagePullPolicy: IfNotPresent
           ports:
             - name: db

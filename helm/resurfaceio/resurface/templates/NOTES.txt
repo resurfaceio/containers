@@ -1,2 +1,13 @@
-1. Get the application URL by running these commands:
-// TODO
+Thank you for installing {{ .Chart.Name | title }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+  
+You can get the API Explorer URL by running the following commands:
+
+export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} db-svc --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+echo http://$SERVICE_IP:7700

@@ -1,0 +1,14 @@
+# How to use this helper template:
+# 1. Create a new .yaml file inside your /templates directory with only one line:
+# {{- include "resurface.entitlement" . }}
+
+{{- define "resurface.entitlement" -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: resurface-entitlement
+  namespace: {{ .Release.Namespace }}
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: {{ printf "%s%s%s%s%s" "{\"auths\":{\"docker.resurface.io\":{\"username\":\"resurfacelabs/release\",\"password\":" (.Values.resurface.entitlementToken | quote) ",\"auth\":" (printf "%s:%s" "resurfacelabs/release" .Values.resurface.entitlementToken | b64enc | quote) "}}}" | b64enc }}
+{{- end -}}

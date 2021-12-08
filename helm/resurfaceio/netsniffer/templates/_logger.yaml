@@ -1,22 +1,36 @@
-# Note: Invoking a subchart's named template is supported for Helm version >=3.7
 # How to use this helper template:
+#
+# 1. Inside you deployment.yaml file:
 # ...
 # imagePullSecrets:
-# - name: resurface-entitlement
+#   - name: resurface-entitlement
 # containers:
-# {{- dict "rules" "include debug" "port" "8080" | include "resurface.logger"  | nindent 8 }}
+# {{- include "resurface.sniffer.sidecar" . | indent [ N ] -}}
 # ...
-# Replace "include debug", "8080", and 8, for your logging rules, application port and indentation respectively.
+$
+# NOTE: Replace [ N ] with the correct indentation for your case.
+#
+# 2. Inside your values.yaml chart:
+# imagePullSecrets:
+#   - name: resurface-entitlement
+# resurface:
+#   namespace: resurface
+#   entitlementToken: [ TOKEN ]
+#   sniffer:
+#     rules: include debug
+#     port: 8080
+#
+# NOTE: Replace [ TOKEN ] with the entitlement token provided via email after registration
 
-{{- define "netsniffer.logger" -}}
+{{- define "resurface.sniffer.sidecar" }}
 - name: resurface-logger
   image: docker.resurface.io/release/network-sniffer:1.0.0
   imagePullPolicy: IfNotPresent
   env:
   - name: USAGE_LOGGERS_URL
-    value: "http://resurface:7701/message"
+    value: "http://fluke-svc.{{ .Values.resurface.namespace }}:{{ .Values.resurface.messageport }}/message"
   - name: USAGE_LOGGERS_RULES
-    value: {{ .rules }}
+    value: {{ .Values.resurface.sniffer.rules }}
   - name: APP_PORT
-    value: {{ quote .port }}
+    value: {{ .Values.resurface.sniffer.port | quote }}
 {{- end -}}

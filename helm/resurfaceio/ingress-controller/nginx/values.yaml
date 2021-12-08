@@ -8,7 +8,7 @@ sidecars:
     imagePullPolicy: Always
     env:
     - name: USAGE_LOGGERS_URL
-      value: "http://resurfacedb-resurface:7701/message"
+      value: "http://resurface.fluke-svc:7701/message"
     - name: USAGE_LOGGERS_RULES
       value: include debug
     - name: APP_PORT

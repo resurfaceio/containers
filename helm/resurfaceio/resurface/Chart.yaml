@@ -1,6 +1,6 @@
 apiVersion: v2
 name: resurface
-version: 0.1.0
+version: 1.0.0
 description: >
     Resurface can help with failure triage and root cause, threat and risk identification,
     and simply just knowing how your APIs are being used. It identifies what's important
@@ -20,4 +20,4 @@ home: https://resurface.io
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: "3.0.18"
+appVersion: 3.0.24

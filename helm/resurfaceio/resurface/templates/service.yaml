@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "resurface.fullname" . }}-db
+  name: db-svc
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
@@ -15,7 +15,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "resurface.fullname" . }}
+  name: fluke-svc
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:

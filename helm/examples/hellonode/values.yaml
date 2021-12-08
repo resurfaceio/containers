@@ -12,6 +12,14 @@ image:
 
 imagePullSecrets:
   - name: resurface-entitlement
+
+resurface:
+  namespace: resurface
+  messageport: 7701
+  entitlementToken: [ TOKEN ]
+  sniffer:
+    rules: include debug
+    port: 8080
 # nameOverride: ""
 # fullnameOverride: ""
 

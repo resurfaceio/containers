@@ -1,32 +1,17 @@
-# Default values for resurfaceio-logger.
+# Default values for Resurface
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
-fullnameOverride: resurface
 
 service:
   port:
     apiExplorer: 7700
     flukeServer: 7701
 
+entitlementToken:
+
 # multinode:
 #   enabled: true
 #   replicaCount: 2
-
-# persistence:
-#   enabled: true
-#   storageClass:
-#   - name: "azure"
-#     params:
-#       foo: "bar"
-
-# resources:
-#   limits:
-#     cpu: 4
-#     memory: 8Gi
-#   requests:
-#     cpu: 4
-#     memory: 4Gi
 
 # autoscaling:
 #   enabled: false
