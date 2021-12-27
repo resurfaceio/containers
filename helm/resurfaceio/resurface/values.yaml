@@ -16,7 +16,9 @@ sniffer:
   port: 80
   logger:
     enabled: true
-    rules: include debug
+    rules: |
+      include debug
+      skip_compression
 
 # multinode:
 #   enabled: true

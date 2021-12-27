@@ -26,7 +26,8 @@ spec:
         - name: USAGE_LOGGERS_URL
           value: {{ printf "http://fluke-svc.%s:%v/message" (include "resurface.name" .) .Values.service.flukeServer.port }}
         - name: USAGE_LOGGERS_RULES
-          value: {{ .Values.sniffer.logger.rules | default "include default" }}
+          value: |
+          {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}
         - name: USAGE_LOGGERS_DISABLE
           value: {{ not .Values.sniffer.logger.enabled | default nil }}
         - name: APP_PORT
