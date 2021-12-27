@@ -1,0 +1,32 @@
+# Default values for Resurface
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+entitlementToken:
+
+service:
+  apiExplorer:
+    port: 80
+    type: LoadBalancer
+  flukeServer:
+    port: 7701
+
+sniffer:
+  deploy: true
+  port: 80
+  logger:
+    enabled: true
+    rules: |
+      include debug
+      skip_compression
+
+# multinode:
+#   enabled: true
+#   replicaCount: 2
+
+# autoscaling:
+#   enabled: false
+#   minReplicas: 1
+#   maxReplicas: 100
+#   targetCPUUtilizationPercentage: 80
+#   targetMemoryUtilizationPercentage: 80

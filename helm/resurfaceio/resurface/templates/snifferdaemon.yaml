@@ -1,0 +1,37 @@
+{{- if .Values.sniffer.deploy -}}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "resurface.fullname" . }}-netsniffer
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:  
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+      - name: resurface-entitlement
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: resurface-logger
+        image: docker.resurface.io/release/network-sniffer:1.0.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USAGE_LOGGERS_URL
+          value: {{ printf "http://fluke-svc.%s:%v/message" (include "resurface.name" .) .Values.service.flukeServer.port }}
+        - name: USAGE_LOGGERS_RULES
+          value: |
+          {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}
+        - name: USAGE_LOGGERS_DISABLE
+          value: {{ not .Values.sniffer.logger.enabled | default nil }}
+        - name: APP_PORT
+          value: {{ .Values.sniffer.port | default 80 | quote }}
+        - name: VPC_MIRROR_DEVICE
+          value: {{ .Values.sniffer.device | default "cbr0" }}
+{{- end -}}

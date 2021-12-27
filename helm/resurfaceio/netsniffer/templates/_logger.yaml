@@ -1,0 +1,36 @@
+# How to use this helper template:
+#
+# 1. Inside you deployment.yaml file:
+# ...
+# imagePullSecrets:
+#   - name: resurface-entitlement
+# containers:
+# {{- include "resurface.sniffer.sidecar" . | indent [ N ] -}}
+# ...
+$
+# NOTE: Replace [ N ] with the correct indentation for your case.
+#
+# 2. Inside your values.yaml chart:
+# imagePullSecrets:
+#   - name: resurface-entitlement
+# resurface:
+#   namespace: resurface
+#   entitlementToken: [ TOKEN ]
+#   sniffer:
+#     rules: include debug
+#     port: 8080
+#
+# NOTE: Replace [ TOKEN ] with the entitlement token provided via email after registration
+
+{{- define "resurface.sniffer.sidecar" }}
+- name: resurface-logger
+  image: docker.resurface.io/release/network-sniffer:1.0.0
+  imagePullPolicy: IfNotPresent
+  env:
+  - name: USAGE_LOGGERS_URL
+    value: "http://fluke-svc.{{ .Values.resurface.namespace }}:{{ .Values.resurface.messageport }}/message"
+  - name: USAGE_LOGGERS_RULES
+    value: {{ .Values.resurface.sniffer.rules }}
+  - name: APP_PORT
+    value: {{ .Values.resurface.sniffer.port | quote }}
+{{- end -}}
