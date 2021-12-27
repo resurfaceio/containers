@@ -7,6 +7,6 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
   
-You can get the API Explorer URL by running the following commands:
+You can get the API Explorer URL by running the following command:
 
 echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} db-svc --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"):{{ .Values.service.apiExplorer.port }}

@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.apiExplorer.type | default LoadBalancer }}
+  type: {{ .Values.service.apiExplorer.type | default "LoadBalancer" }}
   ports:
     - port: {{ .Values.service.apiExplorer.port }}
       targetPort: db
@@ -19,7 +19,7 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.flukeServer.type | default ClusterIP }}
+  type: {{ .Values.service.flukeServer.type | default "ClusterIP" }}
   ports:
     - port: {{ .Values.service.flukeServer.port }}
       targetPort: fluke

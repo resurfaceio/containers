@@ -6,7 +6,7 @@ entitlementToken:
 
 service:
   apiExplorer:
-    port: 7700
+    port: 80
     type: LoadBalancer
   flukeServer:
     port: 7701

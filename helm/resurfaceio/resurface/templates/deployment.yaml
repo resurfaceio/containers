@@ -21,8 +21,8 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: db
-              containerPort: {{ .Values.service.port.apiExplorer }}
+              containerPort: 7700
               protocol: TCP
             - name: fluke
-              containerPort: {{ .Values.service.port.flukeServer }}
+              containerPort: 7701
               protocol: TCP
