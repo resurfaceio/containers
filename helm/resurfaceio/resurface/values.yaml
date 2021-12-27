@@ -2,17 +2,20 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-service:
-  port:
-    apiExplorer: 7700
-    flukeServer: 7701
-
 entitlementToken:
 
+service:
+  apiExplorer:
+    port: 7700
+    type: LoadBalancer
+  flukeServer:
+    port: 7701
+
 sniffer:
-  daemon: true
+  deploy: true
   port: 80
   logger:
+    enabled: true
     rules: include debug
 
 # multinode:

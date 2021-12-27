@@ -9,5 +9,4 @@ To learn more about the release, try:
   
 You can get the API Explorer URL by running the following commands:
 
-export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} db-svc --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
-echo http://$SERVICE_IP:7700
+echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} db-svc --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"):{{ .Values.service.apiExplorer.port }}

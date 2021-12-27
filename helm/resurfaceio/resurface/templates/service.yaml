@@ -5,9 +5,9 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.apiExplorer.type | default LoadBalancer }}
   ports:
-    - port: {{ .Values.service.port.apiExplorer }}
+    - port: {{ .Values.service.apiExplorer.port }}
       targetPort: db
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}
@@ -19,8 +19,9 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
+  type: {{ .Values.service.flukeServer.type | default ClusterIP }}
   ports:
-    - port: {{ .Values.service.port.flukeServer }}
+    - port: {{ .Values.service.flukeServer.port }}
       targetPort: fluke
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}

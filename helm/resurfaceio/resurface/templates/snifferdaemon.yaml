@@ -1,4 +1,4 @@
-{{- if .Values.sniffer.daemon -}}
+{{- if .Values.sniffer.deploy -}}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -26,7 +26,9 @@ spec:
         - name: USAGE_LOGGERS_URL
           value: {{ printf "http://fluke-svc.%s:%v/message" (include "resurface.name" .) .Values.service.port.flukeServer }}
         - name: USAGE_LOGGERS_RULES
-          value: {{ .Values.sniffer.logger.rules }}
+          value: {{ .Values.sniffer.logger.rules | default "include default" }}
+        - name: USAGE_LOGGERS_DISABLE
+          value: {{ not .Values.sniffer.logger.enabled | default false }}
         - name: APP_PORT
           value: {{ .Values.sniffer.port | default 80 | quote }}
         - name: VPC_MIRROR_DEVICE
