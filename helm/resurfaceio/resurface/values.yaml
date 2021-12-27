@@ -9,6 +9,12 @@ service:
 
 entitlementToken:
 
+sniffer:
+  daemon: true
+  port: 80
+  logger:
+    rules: include debug
+
 # multinode:
 #   enabled: true
 #   replicaCount: 2
