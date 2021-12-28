@@ -18,3 +18,4 @@ To install the resurface chart:
 To uninstall the chart:
 
     helm delete my-resurface
+
