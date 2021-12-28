@@ -1,5 +1,8 @@
 # resurfaceio-containers
-Containers and deployment scripts
+
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/resurfaceio)](https://artifacthub.io/packages/search?repo=resurfaceio)
+
+Containers, deployment scripts, and helm charts
 
 ## System requirements
 
