@@ -4,5 +4,6 @@ title: resurface.io
 description: |
   Continuous API Intelligence.
   Dive deeper and find out how your APIs are being used (and misused).
-  See API attacks, failures, and quality issues at runtime —"A linter in production!", some might say. Resurface provides deeper insights into both observability and security.
+  See API attacks, failures, and quality issues at runtime.
+  Resurface provides deeper insights into both observability and security.
   Don't worry about guessing what's going on with your APIs ever again.
