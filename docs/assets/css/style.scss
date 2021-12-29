@@ -12,6 +12,13 @@
 	background-size: cover;
 }
 
+.project-tagline {
+	margin-bottom: 2rem;
+	font-weight: normal;
+	opacity: 0.7;
+	margin-left: 40%;
+}
+
 .btn {
 	display: inline-block;
 	margin-bottom: 1rem;
@@ -26,15 +33,23 @@
 }
 
 .btn:hover {
- color:rgba(255,255,255,0.8);
- text-decoration:none;
- background-color:#9400FF;
- border-color:rgba(255,255,255,0.3)
+    color:rgba(255,255,255,0.8);
+    text-decoration:none;
+    background-color:#9400FF;
+    border-color:rgba(255,255,255,0.3)
 }
 
 .main-content {
-	max-width: 84rem;
+    margin
+	max-width: 75rem;
 	padding: 0rem 6rem;
 	margin: 0 auto;
 	font-size: 1.1rem;
+}
+
+.main-content h2 {
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+	font-weight: normal;
+	color: #253551;
 }
