@@ -5,7 +5,7 @@ on:
     branches:
       - v3.0.x
     paths:
-      - charts/*
+      - helm/*
   workflow_dispatch:
 
 jobs:
