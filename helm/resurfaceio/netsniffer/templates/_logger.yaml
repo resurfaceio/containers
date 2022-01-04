@@ -7,7 +7,6 @@
 # containers:
 # {{- include "resurface.sniffer.sidecar" . | indent [ N ] -}}
 # ...
-$
 # NOTE: Replace [ N ] with the correct indentation for your case.
 #
 # 2. Inside your values.yaml chart:
@@ -24,13 +23,18 @@ $
 
 {{- define "resurface.sniffer.sidecar" }}
 - name: resurface-logger
-  image: docker.resurface.io/release/network-sniffer:1.0.0
+  image: docker.resurface.io/release/network-sniffer{{ if .Values.resurface.sniffer.debug }}-debug:1.0.2{{ else }}:1.0.1{{ end }}
   imagePullPolicy: IfNotPresent
   env:
   - name: USAGE_LOGGERS_URL
-    value: "http://fluke-svc.{{ .Values.resurface.namespace }}:{{ .Values.resurface.messageport }}/message"
+    value: "http://fluke-svc.{{ .Values.resurface.namespace }}:{{ .Values.resurface.messageport | default 7701 }}/message"
   - name: USAGE_LOGGERS_RULES
-    value: {{ .Values.resurface.sniffer.rules }}
+    value: |
+    {{- .Values.resurface.sniffer.rules | default "include default" | nindent 6 }}
+  - name: USAGE_LOGGERS_DISABLE
+    value: {{ not .Values.resurface.sniffer.enabled | default nil }}
   - name: APP_PORT
-    value: {{ .Values.resurface.sniffer.port | quote }}
+    value: {{ .Values.resurface.sniffer.port | default 80 | quote }}
+  - name: VPC_MIRROR_DEVICE
+    value: {{ .Values.resurface.sniffer.device | default "cbr0" }}
 {{- end -}}
