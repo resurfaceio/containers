@@ -9,4 +9,4 @@ To learn more about the release, try:
   
 You can get the API Explorer URL by running the following command:
 
-echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} db-svc --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"):{{ .Values.service.apiExplorer.port }}
+echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} db-svc --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.service.apiExplorer.port) 80 }}:{{ .Values.service.apiExplorer.port }}{{ end }}/

@@ -12,12 +12,12 @@ service:
     port: 7701
 
 sniffer:
-  deploy: true
+  deploy: false
   port: 80
   logger:
     enabled: true
     rules: |
-      include debug
+      include default
       skip_compression
 
 # multinode:

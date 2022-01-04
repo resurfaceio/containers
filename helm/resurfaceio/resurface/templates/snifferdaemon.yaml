@@ -20,7 +20,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: resurface-logger
-        image: docker.resurface.io/release/network-sniffer:1.0.1
+        image: docker.resurface.io/release/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.2{{ else }}:1.0.1{{ end }}
         imagePullPolicy: IfNotPresent
         env:
         - name: USAGE_LOGGERS_URL
