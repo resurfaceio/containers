@@ -5,7 +5,7 @@ on:
     branches:
       - v3.0.x
     paths:
-      - helm/**
+      - helm/resurfaceio/**
   workflow_dispatch:
 
 jobs:
