@@ -5,7 +5,7 @@ on:
     branches:
       - v3.0.x
     paths:
-      - helm/*
+      - helm/**
   workflow_dispatch:
 
 jobs:
@@ -43,4 +43,5 @@ jobs:
         run: |
           git mv index.yaml docs/index.yaml
           git commit -m "chore(helm): Update docs/index.yaml"
-          git push
+          git rebase v3.0.x
+          git push origin +gh-pages
