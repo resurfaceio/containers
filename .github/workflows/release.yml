@@ -41,7 +41,7 @@ jobs:
 
       - name: Move index.yaml
         run: |
-          git mv index.yaml docs/index.yaml
+          git mv -f index.yaml docs/index.yaml
           git commit -m "chore(helm): Update docs/index.yaml"
           git rebase v3.0.x
           git push origin +gh-pages
