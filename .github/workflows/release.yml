@@ -34,15 +34,15 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       
-      - name: Checkout gh-pages
+      - name: Checkout 2
         uses: actions/checkout@v2
         with:
-          ref: gh-pages
+          fetch-depth: 0
 
       - name: Move index.yaml
         run: |
+          git checkout --progress --force -B gh-pages origin/gh-pages
           git mv -f index.yaml docs/index.yaml
           git commit -m "chore(helm): Update docs/index.yaml"
-          git branch -a
           git rebase v3.0.x
           git push origin +gh-pages
