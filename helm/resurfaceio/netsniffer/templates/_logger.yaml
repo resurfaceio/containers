@@ -5,9 +5,9 @@
 # imagePullSecrets:
 #   - name: resurface-entitlement
 # containers:
-# {{- include "resurface.sniffer.sidecar" . | indent [ N ] -}}
+# \{\{- include "resurface.sniffer.sidecar" . | indent [ N ] -\}\}
 # ...
-# NOTE: Replace [ N ] with the correct indentation for your case.
+# NOTE: Remove backslashes (\) and replace [ N ] with the correct indentation for your case.
 #
 # 2. Inside your values.yaml chart:
 # imagePullSecrets:
