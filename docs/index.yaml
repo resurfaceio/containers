@@ -84,6 +84,33 @@ entries:
     version: 1.0.0
   resurface:
   - apiVersion: v2
+    appVersion: 3.0.34
+    created: "2022-01-12T21:18:27.366279232Z"
+    description: 'Resurface can help with failure triage and root cause, threat and
+      risk identification, and simply just knowing how your APIs are being used. It
+      identifies what''s important in your API data, and can send warnings and alerts
+      in real-time for fast action. '
+    digest: b25066751cb7d4e350387893a9dd59596182727009f7d91758a85018690f055c
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-1.2.0/resurface-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
     appVersion: 3.0.30
     created: "2022-01-04T20:09:36.009563459Z"
     description: 'Resurface can help with failure triage and root cause, threat and
@@ -137,4 +164,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-1.0.0/resurface-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-04T20:24:11.239239077Z"
+generated: "2022-01-12T21:18:27.366460634Z"
