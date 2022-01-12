@@ -20,4 +20,4 @@ home: https://resurface.io
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.0.30
+appVersion: 3.0.34
