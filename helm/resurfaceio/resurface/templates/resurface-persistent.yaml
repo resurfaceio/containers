@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: resurface
-        image: docker.resurface.io/release/resurface:3.0.34
+        image: docker.resurface.io/release/resurface:3.0.36
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: resurface-db
