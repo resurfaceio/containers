@@ -4,7 +4,7 @@ services:
   coordinator:
     image: docker.resurface.io/release/resurface:3.0.36
     ports:
-      - '7700:7700'
+      - 7700
       - 7701
     tmpfs:
       - /db
@@ -17,7 +17,22 @@ services:
     tmpfs:
       - /db
 
-  haproxy:
+  coordinator_proxy:
+    image: eeacms/haproxy
+    depends_on:
+      - coordinator
+    ports:
+      - '7700:7700'
+    environment:
+      FRONTEND_PORT: "7700"
+      BACKENDS: "coordinator"
+      BACKENDS_PORT: "7700"
+      DNS_ENABLED: "True"
+      HTTPCHK: "GET /"
+      INTER: "5s"
+      LOG_LEVEL: "info"
+
+  fluke_proxy:
     image: eeacms/haproxy
     depends_on:
       - coordinator

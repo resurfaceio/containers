@@ -1,21 +1,17 @@
-# Compose deployments
+# Testing on compose
 
-## Run volatile cluster with 2 nodes
+Although `docker-compose` isn't recommended for production deployments, this is still useful for local cluster testing.
 
 ```
-wget https://raw.githubusercontent.com/resurfaceio/containers/master/compose/resurface-compose-volatile.yml
-docker-compose -f resurface-compose-volatile.yml up --detach --scale worker=1
-docker-compose -f resurface-compose-volatile.yml down
+wget https://raw.githubusercontent.com/resurfaceio/containers/master/compose/resurface.yml
+docker-compose -f resurface.yml up --detach --scale worker=1
+docker-compose -f resurface.yml down
 ```
 
 🔥 specify `worker=2` or `worker=3` above for a larger cluster
 
-## Run persistent cluster with 2 nodes
+⚠️ no container resource limits are set
 
-```
-wget https://raw.githubusercontent.com/resurfaceio/containers/master/compose/resurface-compose-persistent.yml
-docker-compose -f resurface-compose-persistent.yml up --detach
-docker-compose -f resurface-compose-persistent.yml down
-```
+⚠️ volatile storage only
 
-😢 adding more nodes requires editing this yaml template
+☠️ not intended for use in production environments
