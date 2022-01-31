@@ -8,3 +8,4 @@ Open source containers and helm charts.
 * helm - sources for Resurface database and sniffer deployments
 * trino - for lightweight Trino containers based on alpine
 * test - for automated testing with python across different environments 
+* compose - for local cluster testing (not for production)
