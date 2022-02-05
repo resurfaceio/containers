@@ -1,13 +1,12 @@
 # Default values for Resurface
 # This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
 
 entitlementToken:
 
 service:
   apiExplorer:
-    port: 80
-    type: LoadBalancer
+    port: 7700
+    type: ClusterIP
   flukeServer:
     port: 7701
 
@@ -19,6 +18,14 @@ sniffer:
     rules: |
       include default
       skip_compression
+
+workers: 1
+
+storage:
+  provider: "azure"
+  coordinatorSize: 5Gi
+  workerSize: 4Gi
+
 
 # multinode:
 #   enabled: true

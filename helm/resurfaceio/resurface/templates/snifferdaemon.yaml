@@ -24,7 +24,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: USAGE_LOGGERS_URL
-          value: {{ printf "http://fluke-svc.%s:%v/message" (include "resurface.name" .) .Values.service.flukeServer.port }}
+          value: {{ printf "http://worker.%s:%v/message" (include "resurface.name" .) .Values.service.flukeServer.port }}
         - name: USAGE_LOGGERS_RULES
           value: |
           {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}

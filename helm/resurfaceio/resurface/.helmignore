@@ -23,3 +23,6 @@
 .vscode/
 # In development
 resurface-persistent.yaml
+#stateful-coordinator.yaml
+# Deprecated
+deployment.yaml

@@ -1,21 +1,26 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-svc
+  name: coordinator
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
+  {{- if eq .Values.service.apiExplorer.type "Headless" }}
+  clusterIP: None
+  {{- else }}
   type: {{ .Values.service.apiExplorer.type | default "LoadBalancer" }}
+  {{- end }}
   ports:
     - port: {{ .Values.service.apiExplorer.port }}
       targetPort: db
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}
+    db.resurface.io/role: "coordinator"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: fluke-svc
+  name: worker
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:

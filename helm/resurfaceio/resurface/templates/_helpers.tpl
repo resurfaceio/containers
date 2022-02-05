@@ -51,6 +51,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Storage class names dictionary
+*/}}
+{{- define "resurface.classByProvider" -}}
+{{- if eq .Values.storage.provider "azure" }}
+{{- print "managed-csi" }}
+{{- else if eq .Values.storage.provider "aws" }}
+{{- print "gp2" }}
+{{- else if eq .Values.storage.provider "gcp" }}
+{{- print "pd-standard" }}
+{{- end }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "resurface.serviceAccountName" -}}

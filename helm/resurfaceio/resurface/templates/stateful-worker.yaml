@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "resurface.fullname" . }}-worker
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  serviceName: worker
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.workers }}
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+      - name: resurface-entitlement
+      containers:
+        - name: worker
+          image: docker.resurface.io/release/resurface-worker:{{ .Chart.AppVersion }}
+          ports:
+            - name: fluke
+              containerPort: 7701
+          volumeMounts:
+            - name: {{ include "resurface.fullname" . }}-pvc
+              mountPath: /db
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "resurface.fullname" . }}-pvc
+      spec:
+        storageClassName: {{ include "resurface.classByProvider" . }}
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.workerSize }}
