@@ -3,33 +3,45 @@
 
 entitlementToken:
 
+size: "orca"
+
 service:
+  ingress:
+    enabled: false
+    tls: false
   apiExplorer:
     port: 7700
     type: ClusterIP
   flukeServer:
     port: 7701
 
+custom:
+  resources:
+    cpu: 4
+    memory: 8
+  config:
+    dbsize:
+    dbheap:
+    dbslabs:
+
+storage:
+  volatile: false
+  provider: "azure"
+  coordinatorSize: 5Gi
+  workerSize: 4Gi
+
+multinode:
+  enabled: true
+  workers: 2
+
 sniffer:
-  deploy: false
+  enabled: false
   port: 80
   logger:
     enabled: true
     rules: |
       include default
       skip_compression
-
-workers: 1
-
-storage:
-  provider: "azure"
-  coordinatorSize: 5Gi
-  workerSize: 4Gi
-
-
-# multinode:
-#   enabled: true
-#   replicaCount: 2
 
 # autoscaling:
 #   enabled: false

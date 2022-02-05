@@ -1,3 +1,4 @@
+{{- if .Values.multinode.enabled -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -7,7 +8,7 @@ metadata:
 spec:
   serviceName: worker
   podManagementPolicy: Parallel
-  replicas: {{ .Values.workers }}
+  replicas: {{ .Values.multinode.workers }}
   selector:
     matchLabels:
       {{- include "resurface.selectorLabels" . | nindent 6 }}
@@ -24,15 +25,24 @@ spec:
           ports:
             - name: fluke
               containerPort: 7701
+          {{- include "resurface.containerConfig" . | nindent 10 }}
           volumeMounts:
-            - name: {{ include "resurface.fullname" . }}-pvc
+            - name: {{ include "resurface.fullname" . }}-{{ if .Values.storage.volatile }}tmpfs{{ else }}pvc{{ end }}
               mountPath: /db
+  {{- if .Values.storage.volatile }}
+      volumes:
+        - name: {{ include "resurface.fullname" . }}-tmpfs
+          emptyDir:
+            medium: "memory"
+  {{- else }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
-        storageClassName: {{ include "resurface.classByProvider" . }}
+        storageClassName: {{ include "resurface.getProvidedClass" . }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
             storage: {{ .Values.storage.workerSize }}
+  {{- end }}
+{{- end -}}
