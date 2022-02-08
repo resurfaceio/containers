@@ -6,35 +6,35 @@ metadata:
   annotations:
     haproxy.org/load-balance: "roundrobin"
     haproxy.org/path-rewrite: /fluke/(.*) /\1
-    {{ - if and .Values.service.ingress.tls.enabled .Values.service.ingress.tls.selfmanaged }}
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    {{- if and .Values.service.ingress.tls.enabled .Values.service.ingress.tls.autoissue.enabled }}
+    cert-manager.io/cluster-issuer: letsencrypt{{ if .Values.service.ingress.tls.autoissue.staging }}-staging{{ end }}
     {{- end }}
 spec:
   ingressClassName: haproxy
   rules:
-  - http:
-    {{ - if .Values.service.ingress.tls.enabled }}
-    host: {{ .Values.ingress.tls.host }}
-    {{- end }}
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: coordinator
-            port:
-              number: 7700
-      - path: /fluke
-        pathType: Prefix
-        backend:
-          service:
-            name: worker
-            port:
-              number: 7701
-{{ - if .Values.service.ingress.tls.enabled }}
-tls:
-  - secretName: {{ .Values.custom.tls.secretName | default "resurface-tls" }}
-    hosts:
-      - {{ .Values.ingress.tls.host }}
-{{- end }}
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: coordinator
+                port:
+                  number: 7700
+          - path: /fluke
+            pathType: Prefix
+            backend:
+              service:
+                name: worker
+                port:
+                  number: 7701
+      {{- if .Values.service.ingress.tls.enabled }}
+      host: {{ .Values.service.ingress.tls.host }}
+      {{- end }}
+  {{- if .Values.service.ingress.tls.enabled }}
+  tls:
+    - secretName: {{ .Values.service.ingress.tls.secretName | default "resurface-tls" }}
+      hosts:
+        - {{ .Values.service.ingress.tls.host }}
+  {{- end }}
 {{- end }}

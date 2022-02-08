@@ -24,5 +24,6 @@
 # In development
 resurface-persistent.yaml
 #stateful-coordinator.yaml
+ns.yaml
 # Deprecated
 deployment.yaml

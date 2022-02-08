@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  {{- if eq .Values.service.apiExplorer.type "Headless" }}
+  {{- if or .Values.service.ingress.enabled (eq .Values.service.apiExplorer.type "Headless") }}
   clusterIP: None
   {{- else }}
   type: {{ .Values.service.apiExplorer.type | default "LoadBalancer" }}

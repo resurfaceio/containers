@@ -29,9 +29,9 @@ spec:
               containerPort: 7701
           {{- include "resurface.containerConfig" . | nindent 10 }}
           volumeMounts:
-            - name: {{ include "resurface.fullname" . }}-{{ if .Values.storage.volatile }}tmpfs{{ else }}pvc{{ end }}
+            - name: {{ include "resurface.fullname" . }}-{{ if .Values.custom.storage.volatile }}tmpfs{{ else }}pvc{{ end }}
               mountPath: /db
-  {{- if .Values.storage.volatile }}
+  {{- if .Values.custom.storage.volatile }}
       volumes:
         - name: {{ include "resurface.fullname" . }}-tmpfs
           emptyDir:
@@ -45,5 +45,5 @@ spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: {{ .Values.storage.coordinatorSize }}
+            storage: {{ .Values.custom.storage.coordinatorSize }}
   {{- end }}

@@ -62,7 +62,7 @@ Default options
 {{- else if eq .Values.size "humpback" }}
 {{- $sizeDict = dict "cpu" 8 "memory" 16 "DB_SIZE" 12 "DB_HEAP" 3 "DB_SLABS" 4 }}
 {{- else }}
-{{- required ".Values.size must be \"pilot\", \"orca\" or \"humpback\"" ""}}
+{{- required "Size must be \"pilot\", \"orca\" or \"humpback\"" ""}}
 {{- end -}}
 resources:
   limits:
@@ -82,7 +82,29 @@ env:
 Storage class names dictionary
 */}}
 {{- define "resurface.getProvidedClass" -}}
-{{- get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.storageProvider }}
+{{- get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.provider }}
+{{- end }}
+
+{{/*
+Storage for statefulsets
+*/}}
+{{- define "resurface.volumes" -}}
+{{- if .Values.custom.storage.volatile }}
+      volumes:
+        - name: {{ include "resurface.fullname" . }}-tmpfs
+          emptyDir:
+            medium: "Memory"
+{{- else }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "resurface.fullname" . }}-pvc
+      spec:
+        storageClassName: {{ .Values.custom.storage.className | default (get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.provider) }}
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.custom.storage.size }}
+{{- end }}
 {{- end }}
 
 {{/*

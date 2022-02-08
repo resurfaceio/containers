@@ -4,16 +4,19 @@
 entitlementToken:
 
 size: "orca"
-storageProvider: "azure"
+provider: "azure"
 
 service:
   ingress:
     enabled: false
     tls:
       enabled: false
-      selfmanaged: true
       host:
-      email:
+      autoissue:
+        enabled: true
+        staging: true
+        email:
+      secretName:
   apiExplorer:
     port: 7700
     type: ClusterIP
@@ -32,8 +35,8 @@ custom:
     volatile: false
     coordinatorSize: 5Gi
     workerSize: 4Gi
-  tls:
-    secretName:
+    size:
+    className:
 
 multinode:
   enabled: true
