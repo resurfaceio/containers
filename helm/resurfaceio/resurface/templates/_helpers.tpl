@@ -74,7 +74,7 @@ env:
   - name: DB_HEAP
     value: {{ .Values.custom.config.dbheap | default (get $sizeDict "DB_HEAP") | printf "%dg" }}
   - name: DB_SLABS
-    value: {{ .Values.custom.config.dbslabs | default (get $sizeDict "DB_SLABS") }}
+    value: {{ .Values.custom.config.dbslabs | default (get $sizeDict "DB_SLABS") | quote }}
 {{- end }}
 
 
@@ -82,7 +82,7 @@ env:
 Storage class names dictionary
 */}}
 {{- define "resurface.getProvidedClass" -}}
-{{- get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.storage.provider }}
+{{- get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.storageProvider }}
 {{- end }}
 
 {{/*

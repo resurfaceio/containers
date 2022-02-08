@@ -1,0 +1,40 @@
+{{- if .Values.service.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resurface-ingress
+  annotations:
+    haproxy.org/load-balance: "roundrobin"
+    haproxy.org/path-rewrite: /fluke/(.*) /\1
+    {{ - if and .Values.service.ingress.tls.enabled .Values.service.ingress.tls.selfmanaged }}
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    {{- end }}
+spec:
+  ingressClassName: haproxy
+  rules:
+  - http:
+    {{ - if .Values.service.ingress.tls.enabled }}
+    host: {{ .Values.ingress.tls.host }}
+    {{- end }}
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: coordinator
+            port:
+              number: 7700
+      - path: /fluke
+        pathType: Prefix
+        backend:
+          service:
+            name: worker
+            port:
+              number: 7701
+{{ - if .Values.service.ingress.tls.enabled }}
+tls:
+  - secretName: {{ .Values.custom.tls.secretName | default "resurface-tls" }}
+    hosts:
+      - {{ .Values.ingress.tls.host }}
+{{- end }}
+{{- end }}

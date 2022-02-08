@@ -1,0 +1,15 @@
+{{ - if and .Values.service.ingress.tls.enabled .Values.service.ingress.tls.selfmanaged }}
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: {{ .Values.service.ingress.tls.email }}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: resurface-tls
+    solvers:
+    - http01:
+        ingress: {}
+{{- end }}

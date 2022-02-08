@@ -4,11 +4,16 @@
 entitlementToken:
 
 size: "orca"
+storageProvider: "azure"
 
 service:
   ingress:
     enabled: false
-    tls: false
+    tls:
+      enabled: false
+      selfmanaged: true
+      host:
+      email:
   apiExplorer:
     port: 7700
     type: ClusterIP
@@ -17,18 +22,18 @@ service:
 
 custom:
   resources:
-    cpu: 4
-    memory: 8
+    cpu:
+    memory:
   config:
     dbsize:
     dbheap:
     dbslabs:
-
-storage:
-  volatile: false
-  provider: "azure"
-  coordinatorSize: 5Gi
-  workerSize: 4Gi
+  storage:
+    volatile: false
+    coordinatorSize: 5Gi
+    workerSize: 4Gi
+  tls:
+    secretName:
 
 multinode:
   enabled: true

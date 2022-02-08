@@ -33,7 +33,7 @@ spec:
       volumes:
         - name: {{ include "resurface.fullname" . }}-tmpfs
           emptyDir:
-            medium: "memory"
+            medium: "Memory"
   {{- else }}
   volumeClaimTemplates:
     - metadata:
