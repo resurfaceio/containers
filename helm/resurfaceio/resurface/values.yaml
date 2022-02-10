@@ -26,15 +26,12 @@ service:
 custom:
   resources:
     cpu:
-    memory:
+    memory: 
   config:
     dbsize:
     dbheap:
     dbslabs:
   storage:
-    volatile: false
-    coordinatorSize: 5Gi
-    workerSize: 4Gi
     size:
     className:
 

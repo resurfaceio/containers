@@ -25,24 +25,8 @@ spec:
           ports:
             - name: fluke
               containerPort: 7701
-          {{- include "resurface.containerConfig" . | nindent 10 }}
           volumeMounts:
-            - name: {{ include "resurface.fullname" . }}-{{ if .Values.custom.storage.volatile }}tmpfs{{ else }}pvc{{ end }}
+            - name: {{ include "resurface.fullname" . }}-pvc
               mountPath: /db
-  {{- if .Values.custom.storage.volatile }}
-      volumes:
-        - name: {{ include "resurface.fullname" . }}-tmpfs
-          emptyDir:
-            medium: "Memory"
-  {{- else }}
-  volumeClaimTemplates:
-    - metadata:
-        name: {{ include "resurface.fullname" . }}-pvc
-      spec:
-        storageClassName: {{ include "resurface.getProvidedClass" . }}
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: {{ .Values.custom.storage.workerSize }}
-  {{- end }}
-{{- end -}}
+  {{- include "resurface.resources" . }}
+{{- end }}
