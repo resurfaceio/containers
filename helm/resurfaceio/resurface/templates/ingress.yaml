@@ -33,7 +33,7 @@ spec:
       {{- end }}
   {{- if .Values.service.ingress.tls.enabled }}
   tls:
-    - secretName: {{ .Values.service.ingress.tls.secretName | default "resurface-tls" }}
+    - secretName: {{ .Values.service.ingress.tls.byoc.secretName | default "resurface-tls" }}
       hosts:
         - {{ .Values.service.ingress.tls.host }}
   {{- end }}

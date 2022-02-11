@@ -8,7 +8,7 @@ provider: "azure"
 
 service:
   ingress:
-    enabled: false
+    enabled: true
     tls:
       enabled: false
       host:
@@ -16,10 +16,13 @@ service:
         enabled: true
         staging: true
         email:
-      secretName:
+      byoc:
+        secretName:
+        cert:
+        key:
   apiExplorer:
     port: 7700
-    type: ClusterIP
+    type: Headless
   flukeServer:
     port: 7701
 
@@ -36,8 +39,8 @@ custom:
     className:
 
 multinode:
-  enabled: true
-  workers: 2
+  enabled: false
+  workers: 1
 
 sniffer:
   enabled: false
