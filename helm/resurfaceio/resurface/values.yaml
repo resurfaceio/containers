@@ -1,10 +1,10 @@
 # Default values for Resurface
 # This is a YAML-formatted file.
 
-entitlementToken:
+etoken:
 
-size: "orca"
-provider: "azure"
+size: orca
+provider:
 
 service:
   ingress:
@@ -17,13 +17,13 @@ service:
         staging: true
         email:
       byoc:
-        secretName:
+        secretname:
         cert:
         key:
-  apiExplorer:
+  apiexplorer:
     port: 7700
     type: Headless
-  flukeServer:
+  flukeserver:
     port: 7701
 
 custom:
@@ -36,7 +36,7 @@ custom:
     dbslabs:
   storage:
     size:
-    className:
+    classname:
 
 multinode:
   enabled: false

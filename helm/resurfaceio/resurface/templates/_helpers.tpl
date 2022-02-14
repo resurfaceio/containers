@@ -60,7 +60,7 @@ Default options: container resources and persistent volumes
 {{- else if eq .Values.size "humpback" }}
 {{- $sizeDict = dict "cpu" 6 "memory" 16 "DB_SIZE" 12 "DB_HEAP" 3 "DB_SLABS" 4 -}}
 {{- else -}}
-{{- required "Size must be \"pilot\", \"orca\" or \"humpback\"" "" -}}
+{{- required "Size must be either \"orca\" or \"humpback\"" "" -}}
 {{- end }}
           resources:
             requests:
@@ -77,7 +77,7 @@ Default options: container resources and persistent volumes
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
-        storageClassName: {{ .Values.custom.storage.className | default (get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.provider) }}
+        storageClassName: {{ .Values.custom.storage.classname | default (get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.provider) }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:

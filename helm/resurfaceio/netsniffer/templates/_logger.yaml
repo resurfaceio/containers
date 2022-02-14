@@ -14,7 +14,7 @@
 #   - name: resurface-entitlement
 # resurface:
 #   namespace: resurface
-#   entitlementToken: [ TOKEN ]
+#   etoken: [ TOKEN ]
 #   sniffer:
 #     rules: include debug
 #     port: 8080

@@ -25,6 +25,5 @@
 resurface-persistent.yaml
 #stateful-coordinator.yaml
 ns.yaml
-tls-secret.yaml
 # Deprecated
 deployment.yaml

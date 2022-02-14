@@ -20,20 +20,20 @@ spec:
               service:
                 name: coordinator
                 port:
-                  number: 7700
+                  name: db-svcport
           - path: /fluke
             pathType: Prefix
             backend:
               service:
                 name: worker
                 port:
-                  number: 7701
+                  name: fluke-svcport
       {{- if .Values.service.ingress.tls.enabled }}
       host: {{ .Values.service.ingress.tls.host }}
       {{- end }}
   {{- if .Values.service.ingress.tls.enabled }}
   tls:
-    - secretName: {{ .Values.service.ingress.tls.byoc.secretName | default "resurface-tls" }}
+    - secretName: {{ .Values.service.ingress.tls.byoc.secretname | default "resurface-tls" }}
       hosts:
         - {{ .Values.service.ingress.tls.host }}
   {{- end }}

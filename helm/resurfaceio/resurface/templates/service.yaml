@@ -5,13 +5,14 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  {{- if or .Values.service.ingress.enabled (eq .Values.service.apiExplorer.type "Headless") }}
+  {{- if or .Values.service.ingress.enabled (eq .Values.service.apiexplorer.type "Headless") }}
   clusterIP: None
   {{- else }}
-  type: {{ .Values.service.apiExplorer.type | default "LoadBalancer" }}
+  type: {{ .Values.service.apiexplorer.type | default "LoadBalancer" }}
   {{- end }}
   ports:
-    - port: {{ .Values.service.apiExplorer.port }}
+    - name: db-svcport
+      port: {{ .Values.service.apiexplorer.port }}
       targetPort: db
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}
@@ -24,9 +25,10 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.flukeServer.type | default "ClusterIP" }}
+  type: {{ .Values.service.flukeserver.type | default "ClusterIP" }}
   ports:
-    - port: {{ .Values.service.flukeServer.port }}
+    - name: fluke-svcport
+      port: {{ .Values.service.flukeserver.port }}
       targetPort: fluke
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}

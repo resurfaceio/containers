@@ -10,11 +10,11 @@
 
 {{- define "resurface.logger" -}}
 - name: resurface-logger
-  image: docker.resurface.io/release/network-sniffer:1.0.0
+  image: docker.resurface.io/release/network-sniffer:1.0.1
   imagePullPolicy: IfNotPresent
   env:
   - name: USAGE_LOGGERS_URL
-    value: {{ printf "http://%s:%v/message" (include "resurface.name" .) .Values.service.port.flukeServer }}
+    value: {{ printf "http://%s:%v/message" (include "resurface.name" .) .Values.service.port.flukeserver }}
   - name: USAGE_LOGGERS_RULES
     value: {{ .loggerconfig.rules }}
   - name: APP_PORT

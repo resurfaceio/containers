@@ -33,18 +33,18 @@ With these charts, several resources are deployed in your cluster:
 
 ## Values
 
-The **entitlementToken** value is a string equal to the password sent to you after signing up for Resurface.
+The **etoken** value is a string equal to the password sent to you after signing up for Resurface.
 
-    entitlementToken: << paste it here! >>
+    etoken: << paste it here! >>
 
-The **service** value is where the configuration for both the **apiExplorer** and **flukeServer** can be found.
+The **service** value is where the configuration for both the **apiexplorer** and **flukeserver** can be found.
 Both the exposed **port** and **type** of service can be configured with their corresponding interger and string values, respectively.
 
     service:
-      apiExplorer:
+      apiexplorer:
         port: 7700
         type: LoadBalancer
-      flukeServer:
+      flukeserver:
         port: 7701
         type: ClusterIP
 

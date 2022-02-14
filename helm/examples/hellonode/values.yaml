@@ -15,7 +15,7 @@ imagePullSecrets:
 
 resurface:
   namespace: resurface
-  entitlementToken: 
+  etoken: 
   sniffer:
     rules: include debug
     port: 8080
