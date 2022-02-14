@@ -6,27 +6,31 @@ etoken:
 size: orca
 provider:
 
-service:
-  ingress:
-    enabled: true
-    tls:
-      enabled: false
-      host:
-      autoissue:
-        enabled: true
-        staging: true
-        email:
-      byoc:
-        secretname:
-        cert:
-        key:
-  apiexplorer:
-    port: 7700
-    type: Headless
-  flukeserver:
-    port: 7701
+ingress:
+  enabled: true
+  importer:
+    expose: true
+    path: "/fluke"
+  tls:
+    enabled: false
+    host:
+    autoissue:
+      enabled: true
+      staging: true
+      email:
+    byoc:
+      secretname:
+      cert:
+      key:
 
 custom:
+  service:
+    apiexplorer:
+      port:
+      type:
+    flukeserver:
+      port:
+      type:
   resources:
     cpu:
     memory: 
@@ -39,7 +43,7 @@ custom:
     classname:
 
 multinode:
-  enabled: false
+  enabled: true
   workers: 1
 
 sniffer:

@@ -12,6 +12,6 @@ spec:
       image: busybox
       command: ['wget']
       args:
-        - 'http://worker.{{ include "resurface.name" . }}:{{ .Values.service.flukeserver.port }}/'
-        - 'http://worker.{{ include "resurface.name" . }}:{{ .Values.service.apiexplorer.port }}/'
+        - 'http://worker.{{ include "resurface.name" . }}:{{ .Values.custom.service.flukeserver.port }}/'
+        - 'http://worker.{{ include "resurface.name" . }}:{{ .Values.custom.service.apiexplorer.port }}/'
   restartPolicy: Never

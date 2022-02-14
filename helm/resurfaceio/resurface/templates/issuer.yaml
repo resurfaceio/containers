@@ -1,12 +1,12 @@
-{{- if and .Values.service.ingress.tls.enabled .Values.service.ingress.tls.autoissue.enabled }}
+{{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt{{ if .Values.service.ingress.tls.autoissue.staging }}-staging{{ end }}
+  name: letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
 spec:
   acme:
-    email: {{ .Values.service.ingress.tls.autoissue.email }}
-    server: https://acme{{ if .Values.service.ingress.tls.autoissue.staging }}-staging{{ end }}-v02.api.letsencrypt.org/directory
+    email: {{ .Values.ingress.tls.autoissue.email }}
+    server: https://acme{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: resurface-pk
     solvers:

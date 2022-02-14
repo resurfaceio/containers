@@ -5,8 +5,10 @@ metadata:
   name: resurface-ingress
   annotations:
     haproxy.org/load-balance: "roundrobin"
-    haproxy.org/path-rewrite: /fluke/(.*) /\1
-    {{- if and .Values.service.ingress.tls.enabled .Values.service.ingress.tls.autoissue.enabled }}
+    {{- if .Values.ingress.importer.expose }}
+    haproxy.org/path-rewrite: {{ .Values.ingress.importer.path | default "/fluke" }}/(.*) /\1
+    {{- end }}
+    {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
     cert-manager.io/cluster-issuer: letsencrypt{{ if .Values.service.ingress.tls.autoissue.staging }}-staging{{ end }}
     {{- end }}
 spec:
@@ -14,27 +16,29 @@ spec:
   rules:
     - http:
         paths:
-          - path: /
+          - path: "/"
             pathType: Prefix
             backend:
               service:
                 name: coordinator
                 port:
                   name: db-svcport
-          - path: /fluke
+          {{- if .Values.ingress.importer.expose }}
+          - path: {{ .Values.ingress.importer.path | default "/fluke" }}
             pathType: Prefix
             backend:
               service:
                 name: worker
                 port:
                   name: fluke-svcport
-      {{- if .Values.service.ingress.tls.enabled }}
-      host: {{ .Values.service.ingress.tls.host }}
+          {{- end }}
+      {{- if .Values.ingress.tls.enabled }}
+      host: {{ .Values.ingress.tls.host }}
       {{- end }}
-  {{- if .Values.service.ingress.tls.enabled }}
+  {{- if .Values.ingress.tls.enabled }}
   tls:
-    - secretName: {{ .Values.service.ingress.tls.byoc.secretname | default "resurface-tls" }}
+    - secretName: {{ .Values.ingress.tls.byoc.secretname | default "resurface-tls" }}
       hosts:
-        - {{ .Values.service.ingress.tls.host }}
+        - {{ .Values.ingress.tls.host }}
   {{- end }}
 {{- end }}
