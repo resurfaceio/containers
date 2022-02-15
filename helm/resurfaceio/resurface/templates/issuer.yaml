@@ -2,15 +2,15 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
+  name: {{ include "resurface.fullname" . }}-letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
 spec:
   acme:
     email: {{ .Values.ingress.tls.autoissue.email }}
     server: https://acme{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
-      name: resurface-pk
+      name: {{ include "resurface.fullname" . }}-pk
     solvers:
       - http01:
           ingress:
-            name: resurface-ingress
+            name: {{ include "resurface.fullname" . }}-ingress
 {{- end }}

@@ -1,17 +1,22 @@
-{{- if .Values.service.ingress.enabled -}}
+{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: resurface-ingress
+  name: {{ include "resurface.fullname" . }}-ingress
   annotations:
     haproxy.org/load-balance: "roundrobin"
     {{- if .Values.ingress.importer.expose }}
     haproxy.org/path-rewrite: {{ .Values.ingress.importer.path | default "/fluke" }}/(.*) /\1
     {{- end }}
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
-    cert-manager.io/cluster-issuer: letsencrypt{{ if .Values.service.ingress.tls.autoissue.staging }}-staging{{ end }}
+    cert-manager.io/cluster-issuer: letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
     {{- end }}
 spec:
+  defaultBackend:
+    service:
+      name: kubernetes-ingress-default-backend
+      port:
+        number: 8080
   ingressClassName: haproxy
   rules:
     - http:
@@ -24,7 +29,7 @@ spec:
                 port:
                   name: db-svcport
           {{- if .Values.ingress.importer.expose }}
-          - path: {{ .Values.ingress.importer.path | default "/fluke" }}
+          - path: {{ .Values.ingress.importer.path | default "/fluke" | quote }}
             pathType: Prefix
             backend:
               service:
@@ -37,7 +42,7 @@ spec:
       {{- end }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
-    - secretName: {{ .Values.ingress.tls.byoc.secretname | default "resurface-tls" }}
+    - secretName: {{ .Values.ingress.tls.byoc.secretname | default (printf "%s-tls" (include "resurface.fullname" . )) }}
       hosts:
         - {{ .Values.ingress.tls.host }}
   {{- end }}

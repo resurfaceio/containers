@@ -14,7 +14,7 @@
   imagePullPolicy: IfNotPresent
   env:
   - name: USAGE_LOGGERS_URL
-    value: {{ printf "http://%s:%v/message" (include "resurface.name" .) .Values.custom.service.port.flukeserver }}
+    value: {{ printf "http://worker.%s:%v/message" .Release.Namespace (default 7701 .Values.custom.service.port.flukeserver) }}
   - name: USAGE_LOGGERS_RULES
     value: {{ .loggerconfig.rules }}
   - name: APP_PORT

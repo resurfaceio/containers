@@ -1,12 +1,31 @@
-Thank you for installing {{ .Chart.Name | title }}.
 
-Your release is named {{ .Release.Name }}.
+Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .Release.IsUpgrade }}upgraded{{end}}.
 
-To learn more about the release, try:
+· Your helm release is named {{ .Release.Name }}.
+· You are running Resurface version {{ .Chart.AppVersion }} in {{ if .Values.multinode.enabled }}multinode{{ else }}single-node{{end}} configuration.
+{{- if .Values.multinode.enabled }}
+· Number of worker nodes: {{ .Values.multinode.workers }}
+{{- end }}
+{{- if .Values.ingress.enabled }}
+· TLS is {{ if not .Values.ingress.tls.enabled }}not{{end}} enabled.
+{{- end}}
 
-  $ helm status {{ .Release.Name }}
-  $ helm get all {{ .Release.Name }}
-  
-You can get the API Explorer URL by running the following command:
+· Use the following command to list all the resources deployed with this release:
 
-echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} coordinator --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.service.apiexplorer.port) 80 }}:{{ .Values.service.apiexplorer.port }}{{ end }}/
+helm get all {{ .Release.Name }}
+{{ if and .Values.ingress.enabled .Values.ingress.tls.enabled }}
+· You can find the API Explorer for your Resurface instance here: https://{{ .Values.ingress.tls.host}}/ui
+{{- else }}
+· You can get the URL of the API Explorer for your Resurface instance by running the following command:
+{{- end }}
+{{- if .Values.ingress.enabled }}
+
+echo http://$(kubectl get svc kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")/ui
+{{- else }}
+
+echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} coordinator --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.custom.service.apiexplorer.port) 80 }}:{{ .Values.custom.service.apiexplorer.port | default 7700 }}{{ end }}/
+{{- end }}
+
+· Use the following command to print this status page again:
+
+helm status {{ .Release.Name }}

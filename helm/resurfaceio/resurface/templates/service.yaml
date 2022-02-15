@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  {{- if or .Values.ingress.enabled (eq .Values.custom.service.apiexplorer.type "Headless") }}
+  {{- if or .Values.ingress.enabled (quote .Values.custom.service.apiexplorer.type | eq "\"Headless\"") }}
   clusterIP: None
   {{- else }}
   type: {{ .Values.custom.service.apiexplorer.type | default "LoadBalancer" }}
@@ -16,7 +16,7 @@ spec:
       targetPort: db
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}
-    db.resurface.io/role: "coordinator"
+    db.resurface.io/role: coordinator
 ---
 apiVersion: v1
 kind: Service

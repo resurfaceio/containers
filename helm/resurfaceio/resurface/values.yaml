@@ -43,7 +43,7 @@ custom:
     classname:
 
 multinode:
-  enabled: true
+  enabled: false
   workers: 1
 
 sniffer:

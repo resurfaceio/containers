@@ -10,12 +10,12 @@ spec:
   selector:
     matchLabels:
       {{- include "resurface.selectorLabels" . | nindent 6 }}
-      db.resurface.io/role: "coordinator"
+      db.resurface.io/role: coordinator
   template:
     metadata:
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
-        db.resurface.io/role: "coordinator"
+        db.resurface.io/role: coordinator
     spec:
       imagePullSecrets:
         - name: resurface-entitlement
