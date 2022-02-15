@@ -20,8 +20,6 @@ ingress:
       email:
     byoc:
       secretname:
-      cert:
-      key:
 
 custom:
   service:

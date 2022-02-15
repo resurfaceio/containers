@@ -2,7 +2,7 @@
 Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .Release.IsUpgrade }}upgraded{{end}}.
 
 · Your helm release is named {{ .Release.Name }}.
-· You are running Resurface version {{ .Chart.AppVersion }} in {{ if .Values.multinode.enabled }}multinode{{ else }}single-node{{end}} configuration.
+· You are running Resurface version {{ .Chart.AppVersion }} in {{ if .Values.multinode.enabled }}multi{{ else }}single{{end}}-node configuration.
 {{- if .Values.multinode.enabled }}
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
