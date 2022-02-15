@@ -1,8 +1,8 @@
-{{- if .Values.sniffer.deploy -}}
+{{- if .Values.sniffer.enabled -}}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "resurface.fullname" . }}-netsniffer
+  name: {{ include "resurface.fullname" . }}-sniffer
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:  
@@ -24,7 +24,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
         - name: USAGE_LOGGERS_URL
-          value: {{ printf "http://fluke-svc.%s:%v/message" (include "resurface.name" .) .Values.service.flukeServer.port }}
+          value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
         - name: USAGE_LOGGERS_RULES
           value: |
           {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}

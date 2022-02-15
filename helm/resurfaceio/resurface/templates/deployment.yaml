@@ -8,13 +8,17 @@ spec:
   selector:
     matchLabels:
       {{- include "resurface.selectorLabels" . | nindent 6 }}
+      db.resurface.io/coordinator-role: "true"
+      db.resurface.io/worker-role: "true"
   template:
     metadata:
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
+        db.resurface.io/coordinator-role: "true"
+        db.resurface.io/worker-role: "true"
     spec:
       imagePullSecrets:
-      - name: resurface-entitlement
+        - name: resurface-entitlement
       containers:
         - name: {{ .Chart.Name }}
           image: docker.resurface.io/release/resurface:{{ .Chart.AppVersion }}
@@ -26,3 +30,22 @@ spec:
             - name: fluke
               containerPort: 7701
               protocol: TCP
+          volumeMounts:
+            - name: {{ include "resurface.fullname" . }}-pv
+              mountPath: /db
+      volumes:
+        - name: {{ include "resurface.fullname" . }}-pv
+          persistentVolumeClaim:
+            claimName: {{ include "resurface.fullname" . }}-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "resurface.fullname" . }}-pvc
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 5Gi

@@ -7,4 +7,4 @@ metadata:
     {{- include "resurface.labels" . | nindent 4 }}
 type: kubernetes.io/dockerconfigjson
 data:
-  .dockerconfigjson: {{ printf "%s%s%s%s%s" "{\"auths\":{\"docker.resurface.io\":{\"username\":\"resurfacelabs/release\",\"password\":" (.Values.entitlementToken | quote) ",\"auth\":" (printf "%s:%s" "resurfacelabs/release" .Values.entitlementToken | b64enc | quote) "}}}" | b64enc }}
+  .dockerconfigjson: {{ printf "%s%s%s%s%s" "{\"auths\":{\"docker.resurface.io\":{\"username\":\"resurfacelabs/release\",\"password\":" (.Values.etoken | quote) ",\"auth\":" (printf "%s:%s" "resurfacelabs/release" .Values.etoken | b64enc | quote) "}}}" | b64enc }}

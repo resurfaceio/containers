@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "resurface.fullname" . }}-coordinator
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  serviceName: coordinator
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+      db.resurface.io/role: coordinator
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+        db.resurface.io/role: coordinator
+    spec:
+      imagePullSecrets:
+        - name: resurface-entitlement
+      containers:
+        - name: coordinator
+          image: docker.resurface.io/release/resurface:{{ .Chart.AppVersion }}
+          ports:
+            - name: db
+              containerPort: 7700
+            - name: fluke
+              containerPort: 7701
+          volumeMounts:
+            - name: {{ include "resurface.fullname" . }}-pvc
+              mountPath: /db
+  {{- include "resurface.resources" . }}

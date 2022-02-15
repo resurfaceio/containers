@@ -22,4 +22,7 @@
 *.tmproj
 .vscode/
 # In development
-resurface-persistent.yaml
+ns.yaml
+tls-secret.yaml
+# Deprecated
+deployment.yaml
