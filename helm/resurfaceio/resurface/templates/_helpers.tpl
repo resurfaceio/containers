@@ -73,6 +73,10 @@ Default options: container resources and persistent volumes
               value: {{ .Values.custom.config.dbheap | default (get $sizeDict "DB_HEAP") | printf "%dg" }}
             - name: DB_SLABS
               value: {{ .Values.custom.config.dbslabs | default (get $sizeDict "DB_SLABS") | quote }}
+            {{- if .Values.custom.config.tz }}
+            - name: TZ
+              value: {{ .Values.custom.config.tz | quote }}
+            {{- end}}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc

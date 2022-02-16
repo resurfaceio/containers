@@ -36,6 +36,7 @@ custom:
     dbsize:
     dbheap:
     dbslabs:
+    tz:
   storage:
     size:
     classname:

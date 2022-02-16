@@ -67,7 +67,7 @@ The **ingress** values section is where the configuration for the Ingress resour
     - **ingress.tls.autoissue.enabled**: boolean. The TLS certificate automatic issuing and renewal process can be disabled by setting this value to `false`. Defaults to `true`.
     - **ingress.tls.autoissue.staging**: boolean. The TLS certificate automatic issuing and renewal process uses the "Let's Encrypt" ACME as CA. Let's Encrypt provides both a staging and a rate-limited production environments for the certificate issuing process. By setting this value to `true` cert-manager uses the former, and by setting it to `false` it then uses the latter. Learn more about each Let's Encrypt environment at: https://letsencrypt.org/docs/staging-environment/ and https://letsencrypt.org/docs/rate-limits/ Defaults to `true`.
     - **ingress.tls.autoissue.email**: string. Let's Encrypt will send notices only if a certificate is about to expire and the renewal process has failed. Required only if **ingress.tls.autoissue.enabled** is set to `true`.
-  - **ingress.tls.byoc**: this nested subsection corresponds to the bring-your-own-certificate configuration. This process is mutually exclusive with respect to the autoissing process. A user must supply the name of a Kubernetes TLS Secret that already exists in the same namespace.
+  - **ingress.tls.byoc**: this nested subsection corresponds to the bring-your-own-certificate configuration. This process is mutually exclusive with respect to the autoissuing process. A user must supply the name of a Kubernetes TLS Secret that already exists in the same namespace.
     - **ingress.tls.byoc.secretname**: string. Name of an already existing Kubernetes TLS Secret to be used by the Ingress resource. Required only if **ingress.tls.enabled** is set to `true` and **ingress.tls.autoissue.enabled** is set to `false`.
 
 ```yaml
@@ -99,6 +99,7 @@ The **custom** section holds the values for fields that can be overriden in any 
   - **custom.config.dbsize**: integer. Available memory (volatile and persistent) in GiB to be used by the Resurface database.
   - **custom.config.dbheap**: integer. Available memory in GiB to be used by the JVM running the application. It isn't recommended to set this value below `3`.
   - **custom.config.dbslabs**: integer. Used by the Resurface database to define a level of parallelism for queries.
+  - **custom.config.tz**: string. Used to specify a local timezone instead of the UTC timezone containers run with by default.
 
 - The **custom.storage** subsection refers to the persistent storage configuration. Persistent volume implementation is specific to each cloud provider.
   - **custom.storage.size**: integer. Size in GiB of the persistent volume that should be provisioned for each Resurface node. It should match both **custom.config.dbsize** and **custom.resource.memory** values.
