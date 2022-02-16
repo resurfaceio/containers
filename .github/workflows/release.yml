@@ -43,6 +43,7 @@ jobs:
         run: |
           git checkout --progress --force -B gh-pages origin/gh-pages
           git mv -f index.yaml docs/index.yaml
-          git commit -am "chore(helm): Update docs/index.yaml"
-          git rebase v3.0.x
+          git add -A
+          git commit -m "chore(helm): Update docs/index.yaml"
+          git rebase v3.0.x --continue
           git push origin +gh-pages
