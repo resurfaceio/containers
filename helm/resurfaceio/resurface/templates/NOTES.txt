@@ -12,20 +12,22 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 
 · Use the following command to list all the resources deployed with this release:
 
-helm get all {{ .Release.Name }}
+helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
 {{ if and .Values.ingress.enabled .Values.ingress.tls.enabled }}
 · You can find the API Explorer for your Resurface instance here: https://{{ .Values.ingress.tls.host}}/ui
-{{- else }}
-· You can get the URL of the API Explorer for your Resurface instance by running the following command:
-{{- end }}
-{{- if .Values.ingress.enabled }}
+{{- else if .Values.ingress.enabled }}
+· If you haven't already, please install the Ingress Controller to expose the internal services: https://resurface.io/docs#installing-the-ingress-controller
+
+· Once the EXTERNAL IP for the Ingress Controller has been assigned, you can get the URL of the API Explorer for your Resurface instance by running the following command:
 
 echo http://$(kubectl get svc kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")/ui
+
 {{- else }}
+· You can get the URL of the API Explorer for your Resurface instance by running the following command:
 
 echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} coordinator --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.custom.service.apiexplorer.port) 80 }}:{{ .Values.custom.service.apiexplorer.port | default 7700 }}{{ end }}/
 {{- end }}
 
 · Use the following command to print this status page again:
 
-helm status {{ .Release.Name }}
+helm status {{ .Release.Name }} -n {{ .Release.Namespace }}

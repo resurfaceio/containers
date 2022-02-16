@@ -56,9 +56,9 @@ Default options: container resources and persistent volumes
 {{- define "resurface.resources" -}}
 {{- $sizeDict := dict }}
 {{- if eq .Values.size "orca" -}}
-{{- $sizeDict = dict "cpu" 3 "memory" 8 "DB_SIZE" 4 "DB_HEAP" 3 "DB_SLABS" 2 -}}
+{{- $sizeDict = dict "cpu" 3 "memory" 7 "DB_SIZE" 3 "DB_HEAP" 3 "DB_SLABS" 1 -}}
 {{- else if eq .Values.size "humpback" }}
-{{- $sizeDict = dict "cpu" 6 "memory" 16 "DB_SIZE" 12 "DB_HEAP" 3 "DB_SLABS" 4 -}}
+{{- $sizeDict = dict "cpu" 6 "memory" 14 "DB_SIZE" 6 "DB_HEAP" 6 "DB_SLABS" 3 -}}
 {{- else -}}
 {{- required "Size must be either \"orca\" or \"humpback\"" "" -}}
 {{- end }}
