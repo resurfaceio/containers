@@ -23,11 +23,11 @@
 
 {{- define "resurface.sniffer.sidecar" }}
 - name: resurface-logger
-  image: docker.resurface.io/release/network-sniffer{{ if .Values.resurface.sniffer.debug }}-debug:1.0.2{{ else }}:1.0.1{{ end }}
+  image: docker.resurface.io/release/network-sniffer{{ if .Values.resurface.sniffer.debug }}-debug:1.0.2{{ else }}:{{ .Values.Chart.AppVersion }}{{ end }}
   imagePullPolicy: IfNotPresent
   env:
   - name: USAGE_LOGGERS_URL
-    value: "http://fluke-svc.{{ .Values.resurface.namespace }}:{{ .Values.resurface.messageport | default 7701 }}/message"
+    value: "http://worker.{{ .Values.resurface.namespace }}:{{ .Values.resurface.messageport | default 7701 }}/message"
   - name: USAGE_LOGGERS_RULES
     value: |
     {{- .Values.resurface.sniffer.rules | default "include default" | nindent 6 }}

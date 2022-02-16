@@ -1,6 +1,6 @@
 apiVersion: v2
 name: netsniffer
-version: 1.1.1
+version: 1.1.2
 description: >
     Resurface can log HTTP traffic from the network. This library gives you the possibility
     of running the network sniffer logger application as a sidecar container in your deployments.
@@ -20,4 +20,4 @@ home: https://resurface.io
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: "1.0.0"
+appVersion: "1.0.1"
