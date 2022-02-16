@@ -2,6 +2,33 @@ apiVersion: v1
 entries:
   netsniffer:
   - apiVersion: v2
+    appVersion: 1.0.1
+    created: "2022-02-16T18:43:14.726443342Z"
+    description: 'Resurface can log HTTP traffic from the network. This library gives
+      you the possibility of running the network sniffer logger application as a sidecar
+      container in your deployments. It is already configured to send all logged API
+      calls to a Resurface instance in your cluster. '
+    digest: f740f60088b21ebf5b7e7971f4acee30b7182cc21301d2c68e067fe9d519b24b
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    name: netsniffer
+    sources:
+    - https://github.com/resurfaceio
+    type: library
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/netsniffer-1.1.2/netsniffer-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2022-01-04T20:24:11.239221177Z"
     description: 'Resurface can log HTTP traffic from the network. This library gives
@@ -83,6 +110,33 @@ entries:
     - https://github.com/resurfaceio/containers/releases/download/netsniffer-1.0.0/netsniffer-1.0.0.tgz
     version: 1.0.0
   resurface:
+  - apiVersion: v2
+    appVersion: 3.0.36
+    created: "2022-02-16T18:43:14.954256356Z"
+    description: 'Resurface can help with failure triage and root cause, threat and
+      risk identification, and simply just knowing how your APIs are being used. It
+      identifies what''s important in your API data, and can send warnings and alerts
+      in real-time for fast action. '
+    digest: 41c16ef98b5a743f0f59065f56c3124155dfdc93c09708a0a51662f5a71efa14
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-2.0.0/resurface-2.0.0.tgz
+    version: 2.0.0
   - apiVersion: v2
     appVersion: 3.0.36
     created: "2022-01-26T16:52:07.186403034Z"
@@ -191,4 +245,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-1.0.0/resurface-1.0.0.tgz
     version: 1.0.0
-generated: "2022-01-26T16:52:07.186429834Z"
+generated: "2022-02-16T18:43:14.954760662Z"
