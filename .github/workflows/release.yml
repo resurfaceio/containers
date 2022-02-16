@@ -45,5 +45,5 @@ jobs:
           git mv -f index.yaml docs/index.yaml
           git add -A
           git commit -m "chore(helm): Update docs/index.yaml"
-          git rebase v3.0.x --continue
+          git rebase v3.0.x
           git push origin +gh-pages
