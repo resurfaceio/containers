@@ -81,7 +81,11 @@ Default options: container resources and persistent volumes
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
-        storageClassName: {{ .Values.custom.storage.classname | default (get (dict "azure" "managed-csi" "aws" "gp2" "gcp" "pd-standard") .Values.provider) }}
+        {{- $scndict := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" }}
+        {{- $scn := (.Values.custom.storage.classname | default (get $scndict (toString .Values.provider))) }}
+        {{- if not (empty $scn) }}
+        storageClassName: {{ $scn }}
+        {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
