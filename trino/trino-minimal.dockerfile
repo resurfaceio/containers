@@ -19,6 +19,7 @@ rm -rf /opt/trino/plugin/clickhouse &&\
 rm -rf /opt/trino/plugin/druid &&\
 rm -rf /opt/trino/plugin/elasticsearch &&\
 rm -rf /opt/trino/plugin/example-http &&\
+rm -rf /opt/trino/plugin/exchange &&\
 rm -rf /opt/trino/plugin/geospatial &&\
 rm -rf /opt/trino/plugin/google-sheets &&\
 rm -rf /opt/trino/plugin/hive &&\
@@ -29,6 +30,7 @@ rm -rf /opt/trino/plugin/kafka &&\
 rm -rf /opt/trino/plugin/kinesis &&\
 rm -rf /opt/trino/plugin/kudu &&\
 rm -rf /opt/trino/plugin/local-file &&\
+rm -rf /opt/trino/plugin/memory &&\
 rm -rf /opt/trino/plugin/memsql &&\
 rm -rf /opt/trino/plugin/ml &&\
 rm -rf /opt/trino/plugin/mongodb &&\
