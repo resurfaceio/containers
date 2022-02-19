@@ -52,6 +52,8 @@ The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It 
 provider: azure
 ```
 
+The **arch** value refers to the architecture for the underlying CPU infrastructure. It can be either `x86` or `arm`. Defaults to `x86`
+
 The **ingress** values section is where the configuration for the Ingress resource can be found. The following fields can be found nested in this section:
 
 - **ingress.enabled**: boolean. The Ingress resource can be disabled by setting this value to `false`. In that case, the services can still be exposed, albeit without SSL/TLS termination. See **custom.service** section. Defaults to `true`.
@@ -107,6 +109,7 @@ The **custom** section holds the values for fields that can be overriden in any 
 
 ```yaml
 custom:
+  arch: arm
   service:
     apiexplorer:
       port: 80

@@ -21,7 +21,7 @@ spec:
       - name: resurface-entitlement
       containers:
         - name: worker
-          image: docker.resurface.io/release/resurface-worker:{{ .Chart.AppVersion }}
+          image: docker.resurface.io/release/resurface-worker:{{ .Chart.AppVersion }}{{ if eq .Values.custom.arch "arm" }}-arm64{{ end }}
           ports:
             - name: fluke
               containerPort: 7701
