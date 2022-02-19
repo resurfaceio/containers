@@ -5,7 +5,7 @@ etoken:
 
 size: orca
 provider:
-arch:
+arch: x86
 
 ingress:
   enabled: true
