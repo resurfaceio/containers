@@ -6,6 +6,7 @@ Open source containers and helm charts.
 ## Available modules
 
 * helm - sources for Resurface database and sniffer deployments
+* alpine - patched alpine containers with JDK 11 & Python 3 preinstalled
 * trino - for lightweight Trino containers based on alpine
 * test - for automated testing with python across different environments 
 * compose - for local cluster testing (not for production)

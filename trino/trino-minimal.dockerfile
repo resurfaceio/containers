@@ -1,10 +1,8 @@
-FROM alpine:3.15.0
+FROM resurfaceio/alpine-jdk11:3.15.0
 
-# Download and configure packages
+# Download and configure Trino
 # Do as one big step to reduce container size!
-RUN apk add --no-cache --upgrade apk-tools busybox expat less libcrypto1.1 libssl1.1 musl musl-utils openjdk11 python3 ssl_client supervisor wget &&\
-mkdir /var/log/supervisord && mkdir /etc/supervisord &&\
-wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/371/trino-server-371.tar.gz &&\
+RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/371/trino-server-371.tar.gz &&\
 mkdir -p /opt &&\
 tar -xf trino-server-371.tar.gz -C /opt &&\
 mv /opt/trino-server-371 /opt/trino &&\
