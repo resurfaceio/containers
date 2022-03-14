@@ -1,0 +1,14 @@
+{{- if .Values.sniffer.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "resurface.fullname" . }}-sniffer-binding
+subjects:
+- kind: ServiceAccount
+  name: {{ include "resurface.fullname" . }}-sniffer-sa
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "resurface.fullname" . }}-pod-reader
+  apiGroup: ""
+{{- end }}

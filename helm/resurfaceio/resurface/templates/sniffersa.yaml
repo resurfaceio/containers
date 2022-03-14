@@ -1,0 +1,7 @@
+{{- if .Values.sniffer.enabled -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "resurface.fullname" . }}-sniffer-sa
+  namespace: {{ .Release.Namespace }}
+{{- end }}

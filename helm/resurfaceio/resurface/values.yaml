@@ -48,7 +48,14 @@ multinode:
 
 sniffer:
   enabled: false
-  port: 80
+  discovery:
+    enabled: false
+    skip:
+      ns: [ "kube-system" ]
+      svc: [ "kubernetes" ]
+  services:
+  pods:
+  labels:
   logger:
     enabled: true
     rules: |
