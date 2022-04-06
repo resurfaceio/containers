@@ -23,7 +23,6 @@ alerts in real-time for fast action.
 
 With these charts, several resources are deployed in your cluster:
 
-- Secret: Entitlement Token. It is used to pull images from the Resurface.io private container registry.
 - StatefulSets: Resurface database coordinator pod and worker replicas with persistent storage. Your very own Resurface instance.
 - Service: Coordinator. It exposes the API Explorer frontend for your Resurface instance.
 - Service: Worker. It exposes the fluke microservice used to import API calls into your Resurface instance.
@@ -34,25 +33,11 @@ With these charts, several resources are deployed in your cluster:
 
 ## Values
 
-The **etoken** value is a string equal to the password sent to you after signing up for Resurface. Required.
-
-```yaml
-etoken: << paste it here! >>
-```
-
-The **size** value is a string equal to either `orca` or `humpback`. It represents a predefined configuration for the resources necessary to run the container. See the **custom.resources**, **custom.config** and **custom.storage** values section. Defaults to `orca`.
-
-```yaml
-size: orca
-```
-
 The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It is used as an alias to request persistent volumes specific to each provider. See the **custom.storage** section.
 
 ```yaml
 provider: azure
 ```
-
-The **arch** value refers to the architecture for the underlying CPU infrastructure. It can be either `x86_64` or `arm`. Defaults to `x86_64`
 
 The **ingress** values section is where the configuration for the Ingress resource can be found. The following fields can be found nested in this section:
 
@@ -147,7 +132,7 @@ The **sniffer** value is where the configuration for the optional network packet
   - **sniffer.logger.rules**: string. The internal logger operates under a certain [set of rules](http://resurface.io/logging-rules) that determines which data is logged. These rules can be passed to the logger as a single-line or a multiline string.
 
 - **sniffer.ignore**: []string. Array containing the names of specific network interfaces to ignore for all nodes. Defaults to `[ "eth0", "cbr0" ]`
-- **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Default to `80`. Required only if **sniffer.enabled** is `true`.
+- **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Defaults to `80`. Required only if **sniffer.enabled** is `true`.
 - **sniffer.device**: (deprecated) string. Name of the network interface to attach the sniffer to. Defaults to the Kubernetes custom bridge interface `cbr0`.
 
 NOTE: When no services, pods, or labels are specified and discovery is disabled, the sniffer behavior falls back to logging from a specific network device on a specific port. This is not compatible with all Kubernetes environments and should be avoided by specifiying at least one service, pod or label, or enabling service discovery.

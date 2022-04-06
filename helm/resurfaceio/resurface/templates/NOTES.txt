@@ -40,5 +40,5 @@ helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
   For more information use the following command:
 
 helm show readme resurfaceio/resurface
-{{- end -}}
-{{- end }}
+{{ end }}
+{{ end }}

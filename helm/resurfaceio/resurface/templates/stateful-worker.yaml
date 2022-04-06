@@ -17,11 +17,9 @@ spec:
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
     spec:
-      imagePullSecrets:
-      - name: resurface-entitlement
       containers:
         - name: worker
-          image: docker.resurface.io/release/resurface-worker:{{ .Chart.AppVersion }}{{ if eq (default "x86" .Values.arch) "arm" }}-arm64{{ end }}
+          image: resurfaceio/resurface-worker:{{ .Chart.AppVersion }}
           ports:
             - name: fluke
               containerPort: 7701

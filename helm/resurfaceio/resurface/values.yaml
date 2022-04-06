@@ -1,11 +1,7 @@
 # Default values for Resurface
 # This is a YAML-formatted file.
 
-etoken:
-
-size: orca
 provider:
-arch: x86
 
 ingress:
   enabled: true

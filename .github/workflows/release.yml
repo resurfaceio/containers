@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - v3.0.x
+      - v3.1.x
     paths:
       - helm/resurfaceio/**
   workflow_dispatch:
@@ -44,5 +44,5 @@ jobs:
           git checkout --progress --force -B gh-pages origin/gh-pages
           git mv -f index.yaml docs/index.yaml
           git commit -m "chore(helm): Update docs/index.yaml"
-          git rebase v3.0.x
+          git rebase v3.1.x
           git push origin +gh-pages

@@ -53,26 +53,18 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Default options: container resources and persistent volumes
 */}}
-{{- define "resurface.resources" -}}
-{{- $sizeDict := dict }}
-{{- if eq .Values.size "orca" -}}
-{{- $sizeDict = dict "cpu" 3 "memory" 6 "DB_SIZE" 3 "DB_HEAP" 3 "DB_SLABS" 2 -}}
-{{- else if eq .Values.size "humpback" }}
-{{- $sizeDict = dict "cpu" 6 "memory" 12 "DB_SIZE" 9 "DB_HEAP" 3 "DB_SLABS" 4 -}}
-{{- else -}}
-{{- required "Size must be either \"orca\" or \"humpback\"" "" -}}
-{{- end }}
+{{- define "resurface.resources" }}
           resources:
             requests:
-              cpu: {{ .Values.custom.resources.cpu | default (get $sizeDict "cpu") }}
-              memory: {{ .Values.custom.resources.memory | default (get $sizeDict "memory") | printf "%vGi" }}
+              cpu: {{ .Values.custom.resources.cpu | default 6 }}
+              memory: {{ .Values.custom.resources.memory | default 12 | printf "%vGi" }}
           env:
             - name: DB_SIZE
-              value: {{ .Values.custom.config.dbsize | default (get $sizeDict "DB_SIZE") | printf "%dg" }}
+              value: {{ .Values.custom.config.dbsize | default 9 | printf "%dg" }}
             - name: DB_HEAP
-              value: {{ .Values.custom.config.dbheap | default (get $sizeDict "DB_HEAP") | printf "%dg" }}
+              value: {{ .Values.custom.config.dbheap | default 3 | printf "%dg" }}
             - name: DB_SLABS
-              value: {{ .Values.custom.config.dbslabs | default (get $sizeDict "DB_SLABS") | quote }}
+              value: {{ .Values.custom.config.dbslabs | default 3 | quote }}
             {{- if .Values.custom.config.tz }}
             - name: TZ
               value: {{ .Values.custom.config.tz | quote }}
@@ -89,7 +81,7 @@ Default options: container resources and persistent volumes
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: {{ .Values.custom.storage.size | default (get $sizeDict "DB_SIZE") | printf "%vGi" }}
+            storage: {{ .Values.custom.storage.size | default 9 | printf "%vGi" }}
 {{- end }}
 
 {{/*
