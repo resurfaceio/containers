@@ -1,4 +1,4 @@
-FROM alpine:3.15.2
+FROM alpine:3.15.4
 
 # Download and configure packages
 # Do as one big step to reduce container size!
