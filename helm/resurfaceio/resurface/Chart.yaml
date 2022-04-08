@@ -1,10 +1,7 @@
 apiVersion: v2
 name: resurface
-version: 3.0.0
-description: >
-    Resurface can help with failure triage and root cause, threat and risk identification,
-    and simply just knowing how your APIs are being used. It identifies what's important
-    in your API data, and can send warnings and alerts in real-time for fast action.
+version: 3.1.0
+description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 type: application
 keywords:
   - API
@@ -20,4 +17,4 @@ home: https://resurface.io
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.1.10
+appVersion: 3.1.11

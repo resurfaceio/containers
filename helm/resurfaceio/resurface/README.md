@@ -1,35 +1,22 @@
 # resurfaceio-helm-resurface
 
-## Contents
+Resurface is like an API analyst in a box. Resurface continuously scans your API traffic to discover attacks,
+leaks, and failures that are impacting your APIs. See [resurface.io](https://resurface.io) for more information.
 
-- [resurfaceio-helm-resurface](#resurfaceio-helm-resurface)
-  - [Contents](#contents)
-  - [Requirements](#requirements)
-  - [Description](#description)
-  - [Values](#values)
-
-## Requirements
-
-- [Resurface entitlement token](https://resurface.io/installation)
-- [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes/latest/installation/community/) (Only if using Ingress)
-- [Cert-manager utility](https://cert-manager.io/docs/installation/helm/) (Only if using Ingress with TLS autoissuing enabled)
-
-## Description
-
-Resurface can help with failure triage and root cause analysis, threat and
-risk identification, and simply just knowing how your APIs are being used.
-It identifies what's important in your API data, and can send warnings and
-alerts in real-time for fast action.
-
-With these charts, several resources are deployed in your cluster:
+## Components
 
 - StatefulSets: Resurface database coordinator pod and worker replicas with persistent storage. Your very own Resurface instance.
-- Service: Coordinator. It exposes the API Explorer frontend for your Resurface instance.
-- Service: Worker. It exposes the fluke microservice used to import API calls into your Resurface instance.
-- Ingress: (Optional) Gateway to services. Provides load balancing and SSL/TLS termination. Requires HAProxy ingress controller. Enabled by default.
+- Service: Coordinator. Exposes the API Explorer frontend for your Resurface instance.
+- Service: Worker. Exposes the fluke microservice used to import API calls into your Resurface instance.
+- Ingress: Requires HAProxy ingress controller. Enabled by default.
 - TLS Secret: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
 - ClusterIssuer: (Optional) Issues TLS certificate from Let's Encrypt. Resquires Cert-manager utility. Disabled by default.
-- Daemonset: (Optional) Packet-sniffer-based logger. It captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
+- Daemonset: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
+
+## Dependencies
+
+- [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes/latest/installation/community/)
+- [Cert-manager utility](https://cert-manager.io/docs/installation/helm/) (when TLS auto-issuing enabled)
 
 ## Values
 
