@@ -58,6 +58,23 @@ sniffer:
       include default
       skip_compression
 
+listener:
+  azure:
+    ehname: EHNAME
+    ehcstring: EHCONSTRING
+    partition: 0
+  aws:
+    kdsname: STREAMNAME
+    region: us-west-2
+    accesskeyid: SOMEKEY
+    accesskeysecret: SHH
+  logger:
+    enabled: true
+    rules: |
+      include default
+      skip_compression
+    
+
 # autoscaling:
 #   enabled: false
 #   minReplicas: 1

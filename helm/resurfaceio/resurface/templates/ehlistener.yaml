@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resurface.fullname" . }}-azure-eh-listener
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-azure-eh-listener
+          image: resurfaceio/azure-eh-listener:1.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: AZURE_EH_CONNECTION_STRING
+              value: {{ .Values.listener.azure.ehcstring }}
+            - name: PARTITION_NUMBER
+              value: {{ .Values.listener.azure.partition | quote }}
+            - name: EVENT_HUB_NAME
+              value: {{ .Values.listener.azure.ehname }}
+            - name: USAGE_LOGGERS_URL
+              value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+            - name: USAGE_LOGGERS_RULES
+              value: |
+              {{- .Values.sniffer.logger.rules | default "include default" | nindent 16 }}
+            - name: USAGE_LOGGERS_DISABLE
+              value: {{ not .Values.sniffer.logger.enabled | default nil }}

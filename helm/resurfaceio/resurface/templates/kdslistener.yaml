@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resurface.fullname" . }}-aws-kds-listener
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-aws-kds-listener
+          image: resurfaceio/aws-kds-listener:1.1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KINESIS_STREAM_NAME
+              value: {{ .Values.listener.aws.kdsname }}
+            - name: AWS_REGION
+              value: {{ .Values.listener.aws.region | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.listener.aws.accesskeyid }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.listener.aws.accesskeysecret }}
+            - name: USAGE_LOGGERS_URL
+              value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+            - name: USAGE_LOGGERS_RULES
+              value: |
+              {{- .Values.sniffer.logger.rules | default "include default" | nindent 16 }}
+            - name: USAGE_LOGGERS_DISABLE
+              value: {{ not .Values.sniffer.logger.enabled | default nil }}
