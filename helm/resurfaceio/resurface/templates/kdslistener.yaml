@@ -1,3 +1,4 @@
+{{- if .Values.listener.aws.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,7 +16,7 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}-aws-kds-listener
-          image: resurfaceio/aws-kds-listener:1.1.0
+          image: resurfaceio/aws-kds-listener:1.0.1
           imagePullPolicy: IfNotPresent
           env:
             - name: KINESIS_STREAM_NAME
@@ -30,6 +31,7 @@ spec:
               value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
             - name: USAGE_LOGGERS_RULES
               value: |
-              {{- .Values.sniffer.logger.rules | default "include default" | nindent 16 }}
+              {{- .Values.listener.logger.rules | default "include default" | nindent 16 }}
             - name: USAGE_LOGGERS_DISABLE
-              value: {{ not .Values.sniffer.logger.enabled | default nil }}
+              value: {{ not .Values.listener.logger.enabled | default nil }}
+{{- end -}}
