@@ -17,6 +17,13 @@ spec:
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
     spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: trino-worker-config
+            items:
+              - key: config.properties
+                path: config.properties
       containers:
         - name: worker
           image: resurfaceio/resurface-worker:{{ .Chart.AppVersion }}
@@ -24,6 +31,9 @@ spec:
             - name: fluke
               containerPort: 7701
           volumeMounts:
+            - name: config-volume
+              mountPath: /opt/trino/etc/config.properties
+              subPath: config.properties
             - name: {{ include "resurface.fullname" . }}-pvc
               mountPath: /db
   {{- include "resurface.resources" . }}

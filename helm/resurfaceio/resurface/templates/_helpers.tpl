@@ -85,6 +85,33 @@ Default options: container resources and persistent volumes
 {{- end }}
 
 {{/*
+Common config.properties for both coordinator and workers
+*/}}
+{{- define "resurface.config.common" }}
+http-server.http.port=7700
+{{ if .Values.ingress.tls.enabled -}}
+internal-communication.shared-secret={{ randAscii 32  | b64enc }}
+{{ end -}}
+query.max-history=20
+query.max-length=1000000
+query.max-memory=1000MB
+query.max-memory-per-node=1000MB
+query.max-total-memory=1000MB
+query.min-expire-age=1s
+{{- end }}
+
+{{/*
+Auth file
+*/}}
+{{- define "resurface.auth.creds" }}
+{{- $builder := list -}}
+{{- range $_, $v := .Values.auth.credentials }}
+  {{- $builder = append $builder (htpasswd $v.username $v.password | replace "$2a$" "$2y$" | println) -}}
+{{ end -}}
+{{ print (join "" $builder | b64enc) }}
+{{- end }}
+
+{{/*
 Sniffer options
 */}}
 {{- define "resurface.sniffer.options" -}}

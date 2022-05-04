@@ -18,6 +18,12 @@ ingress:
     byoc:
       secretname:
 
+auth:
+  enabled: false
+  credentials:
+    - username: 
+      password: 
+
 custom:
   service:
     apiexplorer:
