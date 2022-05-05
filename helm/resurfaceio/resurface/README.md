@@ -20,12 +20,6 @@ leaks, and failures that are impacting your APIs. See [resurface.io](https://res
 
 ## Values
 
-The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It is used as an alias to request persistent volumes specific to each provider. See the **custom.storage** section.
-
-```yaml
-provider: azure
-```
-
 The **ingress** values section is where the configuration for the Ingress resource can be found. The following fields can be found nested in this section:
 
 - **ingress.enabled**: boolean. The Ingress resource can be disabled by setting this value to `false`. In that case, the services can still be exposed, albeit without SSL/TLS termination. See **custom.service** section. Defaults to `true`.
@@ -55,6 +49,38 @@ ingress:
       email: admin@thisisanexample.com
 ```
 
+Basic authorization can be configured in the **auth** section.
+
+- **auth.enabled**: boolean. If set to `true`, password will be required at login page of the API Explorer and, for any transaction using the Trino REST API. Otherwise, no password is required. Defaults to `false`. Basic auth will work only when TLS is enabled.
+- **auth.credentials**: Sequence of credentials allowed. Both a **username** and **password** are required for each item. At least one credential must be passed when **auth.enabled** is set to `true`.
+
+```yaml
+auth:
+  enabled: true
+  credentials:
+    - username: admin
+      password: irtRUqUp7fkfL
+    - username: msmith
+      password: qPBceDWjPJFYKfX7QAXfmy1b33tBE
+```
+
+The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It is used as an alias to request persistent volumes specific to each provider. See the **custom.storage** section.
+
+```yaml
+provider: azure
+```
+
+The **multinode** section is where the configuration to set multiple database nodes can be found.
+
+- **multinode.enabled**: boolean. If set to `true` worker nodes are enabled. Otherwise, the single-node configuration is used. Defaults to `false`
+- **multinode.workers**: integer. Number of stateful worker nodes to deploy. Resources must be available in the cluster in order to succesfully scale accordingly. The total number of nodes in the database will be **multinode.workers** + 1, since the coordinator node always acts as a worker node.
+
+```yaml
+multinode:
+  enabled: true
+  workers: 3
+```
+
 The **custom** section holds the values for fields that can be overriden in any default configuration. None of its fields are required. The following fields can be found nested in this section:
 
 - The **custom.service** subsection is where the configuration for both the internal service resources can be found.
@@ -81,7 +107,6 @@ The **custom** section holds the values for fields that can be overriden in any 
 
 ```yaml
 custom:
-  arch: arm
   service:
     apiexplorer:
       port: 80
@@ -93,11 +118,6 @@ custom:
   storage:
     classname: managed-csi-premium
 ```
-
-The **multinode** section is where the configuration to set multiple nodes can be found.
-
-- **multinode.enabled**: boolean. If set to `true` worker nodes are enabled. Otherwise, the single-node configuration is used. Defaults to `false`
-- **multinode.workers**: integer. Number of stateful worker nodes to deploy. Resources must be available in the cluster in order to succesfully scale accordingly.
 
 The **sniffer** value is where the configuration for the optional network packet sniffer can be found.
 
