@@ -10,11 +10,11 @@ ingress:
     path: "/fluke"
   tls:
     enabled: false
-    host:
+    host: 
     autoissue:
       enabled: true
       staging: true
-      email:
+      email: 
     byoc:
       secretname:
 
@@ -23,6 +23,10 @@ auth:
   credentials:
     - username: 
       password: 
+
+multinode:
+  enabled: false
+  workers: 1
 
 custom:
   service:
@@ -43,10 +47,6 @@ custom:
   storage:
     size:
     classname:
-
-multinode:
-  enabled: false
-  workers: 1
 
 sniffer:
   enabled: false

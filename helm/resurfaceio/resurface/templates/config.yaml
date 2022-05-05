@@ -13,7 +13,7 @@ data:
     {{ end -}}
     node-scheduler.include-coordinator=true
     {{- include "resurface.config.common" . | nindent 4 }}
-  {{ if .Values.auth.enabled -}}
+{{- if .Values.auth.enabled }}
   password-authenticator.properties: |
     password-authenticator.name=file
     file.password-file=etc/creds/password.db
@@ -26,7 +26,7 @@ metadata:
 type: Opaque
 data:
   password.db: {{ include "resurface.auth.creds" . }}
-{{ end -}}
+{{ end }}
 ---
 apiVersion: v1
 kind: ConfigMap

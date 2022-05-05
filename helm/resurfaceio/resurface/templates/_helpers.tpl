@@ -105,8 +105,10 @@ Auth file
 */}}
 {{- define "resurface.auth.creds" }}
 {{- $builder := list -}}
+{{- if .Values.auth.enabled -}}
 {{- range $_, $v := .Values.auth.credentials }}
   {{- $builder = append $builder (htpasswd $v.username $v.password | replace "$2a$" "$2y$" | println) -}}
+{{ end -}}
 {{ end -}}
 {{ print (join "" $builder | b64enc) }}
 {{- end }}
