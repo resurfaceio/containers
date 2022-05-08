@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-coordinator-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.properties: |
+    coordinator=true
+    discovery.uri=http://localhost:7700
+    {{ if .Values.ingress.tls.enabled -}}
+    http-server.authentication.allow-insecure-over-http=true
+    http-server.process-forwarded=true
+    {{ if .Values.auth.enabled }}http-server.authentication.type=PASSWORD{{ end }}
+    {{ end -}}
+    node-scheduler.include-coordinator=true
+    {{- include "resurface.config.common" . | nindent 4 }}
+{{- if .Values.auth.enabled }}
+  password-authenticator.properties: |
+    password-authenticator.name=file
+    file.password-file=etc/creds/password.db
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trino-creds
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+data:
+  password.db: {{ include "resurface.auth.creds" . }}
+{{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-worker-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.properties: |
+    coordinator=false
+    discovery.uri=http://coordinator:7700
+    {{- include "resurface.config.common" . | nindent 4 }}

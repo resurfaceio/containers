@@ -17,6 +17,27 @@ spec:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
         db.resurface.io/role: coordinator
     spec:
+      volumes:
+        - name: config-volume
+          configMap:
+            name: trino-coordinator-config
+            items:
+              - key: config.properties
+                path: config.properties
+        {{ if .Values.auth.enabled -}}
+        - name: auth-volume
+          configMap:
+            name: trino-coordinator-config
+            items:
+              - key: password-authenticator.properties
+                path: password-authenticator.properties
+        - name: passwd-volume
+          secret:
+            secretName: trino-creds
+            items:
+              - key: password.db
+                path: password.db
+        {{- end }}
       containers:
         - name: coordinator
           image: resurfaceio/resurface:{{ .Chart.AppVersion }}
@@ -26,6 +47,16 @@ spec:
             - name: fluke
               containerPort: 7701
           volumeMounts:
+            - name: config-volume
+              mountPath: /opt/trino/etc/config.properties
+              subPath: config.properties
+            {{ if .Values.auth.enabled -}}
+            - name: auth-volume
+              mountPath: /opt/trino/etc/password-authenticator.properties
+              subPath: password-authenticator.properties
+            - name: passwd-volume
+              mountPath: /opt/trino/etc/creds
+            {{- end }}
             - name: {{ include "resurface.fullname" . }}-pvc
               mountPath: /db
   {{- include "resurface.resources" . }}
