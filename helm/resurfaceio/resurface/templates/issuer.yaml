@@ -1,6 +1,6 @@
 {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata:
   name: {{ include "resurface.fullname" . }}-letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
 spec:
