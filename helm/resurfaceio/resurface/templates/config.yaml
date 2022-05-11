@@ -8,13 +8,13 @@ data:
     coordinator=true
     discovery.uri=http://localhost:7700
     {{ if .Values.ingress.tls.enabled -}}
-    http-server.authentication.allow-insecure-over-http=true
     http-server.process-forwarded=true
-    {{ if .Values.auth.enabled }}http-server.authentication.type=PASSWORD{{ end }}
-    {{ end -}}
+    http-server.authentication.allow-insecure-over-http=true
+    {{- include "resurface.config.auth" . | nindent 4 -}}
+    {{- end }}
     node-scheduler.include-coordinator=true
     {{- include "resurface.config.common" . | nindent 4 }}
-{{- if .Values.auth.enabled }}
+{{- if and .Values.auth.enabled .Values.auth.passwdfile.enabled }}
   password-authenticator.properties: |
     password-authenticator.name=file
     file.password-file=etc/creds/password.db
