@@ -43,6 +43,8 @@ rm -rf /opt/trino/plugin/prometheus &&\
 rm -rf /opt/trino/plugin/raptor-legacy &&\
 rm -rf /opt/trino/plugin/redis &&\
 rm -rf /opt/trino/plugin/redshift &&\
+rm -rf /opt/trino/plugin/resource-group-managers &&\
+rm -rf /opt/trino/plugin/session-property-managers &&\
 rm -rf /opt/trino/plugin/singlestore &&\
 rm -rf /opt/trino/plugin/sqlserver &&\
 rm -rf /opt/trino/plugin/teradata-functions &&\
