@@ -89,9 +89,7 @@ Common config.properties for both coordinator and workers
 */}}
 {{- define "resurface.config.common" }}
 http-server.http.port=7700
-{{ if .Values.ingress.tls.enabled -}}
 internal-communication.shared-secret={{ randAscii 32  | b64enc }}
-{{ end -}}
 query.max-history=20
 query.max-length=1000000
 query.max-memory=1000MB

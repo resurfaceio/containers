@@ -8,6 +8,7 @@ data:
     coordinator=true
     discovery.uri=http://localhost:7700
     {{ if .Values.ingress.tls.enabled -}}
+    http-server.authentication.allow-insecure-over-http=true
     http-server.process-forwarded=true
     {{ if .Values.auth.enabled }}http-server.authentication.type=PASSWORD{{ end }}
     {{ end -}}
@@ -37,4 +38,8 @@ data:
   config.properties: |
     coordinator=false
     discovery.uri=http://coordinator:7700
+<<<<<<< HEAD
     {{- include "resurface.config.common" . | nindent 4 }}
+=======
+    {{- include "resurface.config.common" . | nindent 4 }}
+>>>>>>> origin/v3.1.x
