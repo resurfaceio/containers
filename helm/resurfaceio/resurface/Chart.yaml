@@ -1,6 +1,6 @@
 apiVersion: v2
 name: resurface
-version: 3.1.8
+version: 3.1.9
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 type: application
 keywords:
@@ -17,4 +17,4 @@ home: https://resurface.io
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.1.28
+appVersion: 3.1.29
