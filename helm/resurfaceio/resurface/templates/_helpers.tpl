@@ -111,6 +111,9 @@ Auth-related config.properties for the coordinator
 {{- if .Values.auth.basic.enabled -}}
   {{- $builder = append $builder "PASSWORD" -}}
 {{- end -}}
+{{- if .Values.auth.jwt.enabled -}}
+  {{- $builder = append $builder "JWT" -}}
+{{- end -}}
 http-server.authentication.type={{ join "," $builder | required "At least one authentication method must be enabled when auth is enabled." }}
 {{- if .Values.auth.oauth2.enabled }}
 web-ui.authentication.type=oauth2
@@ -121,6 +124,9 @@ http-server.authentication.oauth2.jwks-url={{ required "The jwks URL is required
 http-server.authentication.oauth2.userinfo-url={{ .Values.auth.oauth2.userinfourl }}
 http-server.authentication.oauth2.client-id={{ required "The client ID is required for the OAuth2.0 configuration" .Values.auth.oauth2.clientid }}
 http-server.authentication.oauth2.client-secret={{ required "The client secret is required for the OAuth2.0 configuration" .Values.auth.oauth2.clientsecret }}
+{{- end -}}
+{{- if .Values.auth.jwt.enabled }}
+http-server.authentication.jwt.key-file={{ required "URL to a JWKS service or the path to a PEM or HMAC file is required for JWT configuration" .Values.auth.jwt.jwksurl }}
 {{- end -}}
 {{- end -}}
 {{- end }}

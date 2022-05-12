@@ -25,6 +25,9 @@ auth:
     credentials:
       - username: 
         password: 
+  jwt:
+    enabled: false
+    jwksurl: 
   oauth2:
     enabled: false
     issuer: 

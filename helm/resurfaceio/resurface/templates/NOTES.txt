@@ -9,8 +9,9 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 {{- if .Values.ingress.enabled }}
 · TLS is{{ if not .Values.ingress.tls.enabled }} not{{ end }} enabled.
 · Authentication is{{ if and .Values.ingress.tls.enabled .Values.auth.enabled }} enabled.
-  · Basic auth is {{ if not .Values.auth.basic.enabled }} not{{end}} enabled.
-  · OAuth 2.0 is {{ if not .Values.auth.oauth2.enabled }} not{{end}} enabled.
+  · Basic auth is{{ if not .Values.auth.basic.enabled }} not{{end}} enabled.
+  · JWT auth is{{ if not .Values.auth.jwt.enabled }} not{{end}} enabled.
+  · OAuth 2.0 is{{ if not .Values.auth.oauth2.enabled }} not{{end}} enabled.
 {{- else }} not enabled. {{ end }}
 {{- end}}
 
