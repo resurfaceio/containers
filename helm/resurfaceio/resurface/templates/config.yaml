@@ -38,8 +38,4 @@ data:
   config.properties: |
     coordinator=false
     discovery.uri=http://coordinator:7700
-<<<<<<< HEAD
     {{- include "resurface.config.common" . | nindent 4 }}
-=======
-    {{- include "resurface.config.common" . | nindent 4 }}
->>>>>>> origin/v3.1.x
