@@ -108,7 +108,7 @@ Auth-related config.properties for the coordinator
 {{- if .Values.auth.oauth2.enabled -}}
   {{- $builder = append $builder "oauth2" -}}
 {{- end -}}
-{{- if .Values.auth.passwdfile.enabled -}}
+{{- if .Values.auth.basic.enabled -}}
   {{- $builder = append $builder "PASSWORD" -}}
 {{- end -}}
 http-server.authentication.type={{ join "," $builder | required "At least one authentication method must be enabled when auth is enabled." }}
@@ -130,8 +130,8 @@ Auth file
 */}}
 {{- define "resurface.auth.creds" }}
 {{- $builder := list -}}
-{{- if and .Values.auth.enabled .Values.auth.passwdfile.enabled -}}
-{{- range $_, $v := .Values.auth.passwdfile.credentials }}
+{{- if and .Values.auth.enabled .Values.auth.basic.enabled -}}
+{{- range $_, $v := .Values.auth.basic.credentials }}
   {{- $builder = append $builder (htpasswd $v.username $v.password | replace "$2a$" "$2y$" | println) -}}
 {{ end -}}
 {{ end -}}

@@ -20,6 +20,11 @@ ingress:
 
 auth:
   enabled: false
+  basic:
+    enabled: false
+    credentials:
+      - username: 
+        password: 
   oauth2:
     enabled: false
     issuer: 
@@ -29,11 +34,6 @@ auth:
     userinfourl: 
     clientid: 
     clientsecret: 
-  passwdfile:
-    enabled: false
-    credentials:
-      - username: 
-        password: 
 
 multinode:
   enabled: false
