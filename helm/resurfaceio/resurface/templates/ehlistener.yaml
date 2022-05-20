@@ -20,11 +20,15 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: AZURE_EH_CONNECTION_STRING
-              value: {{ .Values.listener.azure.ehcstring }}
-            - name: PARTITION_NUMBER
-              value: {{ .Values.listener.azure.partition | quote }}
+              value: {{ .Values.listener.azure.ehconnstring }}
             - name: EVENT_HUB_NAME
               value: {{ .Values.listener.azure.ehname }}
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              value: {{ .Values.listener.azure.storageconnstring }}
+            - name: STORAGE_CONTAINER_NAME
+              value: {{ .Values.listener.azure.storagecontainername }}
+            - name: PARTITION_NUMBER
+              value: {{ .Values.listener.azure.partition | default 0 | quote }}
             - name: USAGE_LOGGERS_URL
               value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker:%v/message" }}
             - name: USAGE_LOGGERS_RULES

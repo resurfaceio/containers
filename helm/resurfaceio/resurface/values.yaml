@@ -60,9 +60,10 @@ sniffer:
 
 listener:
   azure:
+    ehconnstring: EHCONNSTRING
     ehname: EHNAME
-    ehcstring: EHCONSTRING
-    partition: 0
+    storageconnstring: STORAGECONNSTRING
+    storagecontainername: STORAGECONTAINERNAME
   aws:
     kdsname: STREAMNAME
     region: us-west-2
