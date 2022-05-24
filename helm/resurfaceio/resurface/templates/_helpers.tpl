@@ -87,9 +87,10 @@ Default options: container resources and persistent volumes
 {{/*
 Common config.properties for both coordinator and workers
 */}}
-{{- define "resurface.config.common" }}
+{{- define "resurface.config.common" -}}
+internal-communication.shared-secret={{ randAscii 32 | b64enc }}
 http-server.http.port=7700
-internal-communication.shared-secret={{ randAscii 32  | b64enc }}
+
 query.max-history=20
 query.max-length=1000000
 query.max-memory=1000MB
@@ -99,12 +100,44 @@ query.min-expire-age=1s
 {{- end }}
 
 {{/*
+Auth-related config.properties for the coordinator
+*/}}
+{{- define "resurface.config.auth" }}
+{{- if .Values.auth.enabled -}}
+{{- $builder := list -}}
+{{- if .Values.auth.oauth2.enabled -}}
+  {{- $builder = append $builder "oauth2" -}}
+{{- end -}}
+{{- if .Values.auth.basic.enabled -}}
+  {{- $builder = append $builder "PASSWORD" -}}
+{{- end -}}
+{{- if .Values.auth.jwt.enabled -}}
+  {{- $builder = append $builder "JWT" -}}
+{{- end -}}
+http-server.authentication.type={{ join "," $builder | required "At least one authentication method must be enabled when auth is enabled." }}
+{{- if .Values.auth.oauth2.enabled }}
+web-ui.authentication.type=oauth2
+http-server.authentication.oauth2.issuer={{ required "The service issuer URL is required for the OAuth2.0 configuration" .Values.auth.oauth2.issuer }}
+http-server.authentication.oauth2.auth-url={{ required "The auth URL is required for the OAuth2.0 configuration" .Values.auth.oauth2.authurl }}
+http-server.authentication.oauth2.token-url={{ required "The token URL is required for the OAuth2.0 configuration" .Values.auth.oauth2.tokenurl }}
+http-server.authentication.oauth2.jwks-url={{ required "The jwks URL is required for the OAuth2.0 configuration" .Values.auth.oauth2.jwksurl }}
+http-server.authentication.oauth2.userinfo-url={{ .Values.auth.oauth2.userinfourl }}
+http-server.authentication.oauth2.client-id={{ required "The client ID is required for the OAuth2.0 configuration" .Values.auth.oauth2.clientid }}
+http-server.authentication.oauth2.client-secret={{ required "The client secret is required for the OAuth2.0 configuration" .Values.auth.oauth2.clientsecret }}
+{{- end -}}
+{{- if .Values.auth.jwt.enabled }}
+http-server.authentication.jwt.key-file={{ required "URL to a JWKS service or the path to a PEM or HMAC file is required for JWT configuration" .Values.auth.jwt.jwksurl }}
+{{- end -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Auth file
 */}}
 {{- define "resurface.auth.creds" }}
 {{- $builder := list -}}
-{{- if .Values.auth.enabled -}}
-{{- range $_, $v := .Values.auth.credentials }}
+{{- if and .Values.auth.enabled .Values.auth.basic.enabled -}}
+{{- range $_, $v := .Values.auth.basic.credentials }}
   {{- $builder = append $builder (htpasswd $v.username $v.password | replace "$2a$" "$2y$" | println) -}}
 {{ end -}}
 {{ end -}}

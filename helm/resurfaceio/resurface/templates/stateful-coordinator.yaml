@@ -24,7 +24,7 @@ spec:
             items:
               - key: config.properties
                 path: config.properties
-        {{ if .Values.auth.enabled -}}
+        {{ if and .Values.auth.enabled .Values.auth.basic.enabled -}}
         - name: auth-volume
           configMap:
             name: trino-coordinator-config
@@ -50,7 +50,7 @@ spec:
             - name: config-volume
               mountPath: /opt/trino/etc/config.properties
               subPath: config.properties
-            {{ if .Values.auth.enabled -}}
+            {{ if and .Values.auth.enabled .Values.auth.basic.enabled -}}
             - name: auth-volume
               mountPath: /opt/trino/etc/password-authenticator.properties
               subPath: password-authenticator.properties

@@ -20,9 +20,23 @@ ingress:
 
 auth:
   enabled: false
-  credentials:
-    - username: 
-      password: 
+  basic:
+    enabled: false
+    credentials:
+      - username: 
+        password: 
+  jwt:
+    enabled: false
+    jwksurl: 
+  oauth2:
+    enabled: false
+    issuer: 
+    authurl: 
+    tokenurl: 
+    jwksurl: 
+    userinfourl: 
+    clientid: 
+    clientsecret: 
 
 multinode:
   enabled: false
