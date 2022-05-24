@@ -54,6 +54,8 @@ Basic authorization can be configured in the **auth** section.
 - **auth.enabled**: boolean. If set to `true`, password will be required at the login page of the API Explorer and, for any transaction using the Trino REST API. Otherwise, no password is required. Defaults to `false`. Auth will work only when TLS is enabled. At least one authentication method must be enabled when auth is enabled.
 - **auth.basic.enabled**: If set to `true`, basic authentication will be enabled. A secret containing an encrypted list of allowed credentials will be mounted in the file system. Defaults to `false`.
 - **auth.basic.credentials**: Sequence of credentials allowed. Both a **username** and **password** are required for each item. At least one credential must be passed when **auth.basic.enabled** is set to `true`.
+- **auth.jwt.enabled**: If set to `true`, JWT authentication will be enabled. Defaults to `false`.
+- **auth.jwt.jwksurl**: String. The URL pointing to a JWKS service, a PEM or HMAC file that can be used to validate the JWT signature of each token.
 - **auth.oauth2.enabled**: If set to `true`, OAuth 2.0 will be enabled. All the corresponding endpoints for an external OAuth 2.0 Authorization Code service must be configured, as well as a Client ID and Client Secret provided by this third party. Users will be redirected to the external provider Log In page, and redirected back to the API Explorer once authenticated. Defaults to `false`.
 - **auth.oauth2.issuer**: String. The issuer URL for the external OAuth 2.0 service. All tokens issued by the service must have this in the `iss` field. Required only if **auth.aouth2.enabled** is set to `true`.
 - **auth.oauth2.authurl**: String. The service authorization URL. The browser will be redirected to this URL when accessing the API Explorer for the first time. Required only if **auth.aouth2.enabled** is set to `true`.
@@ -73,15 +75,18 @@ auth:
         password: irtRUqUp7fkfL
       - username: msmith
         password: qPBceDWjPJFYKfX7QAXfmy1b33tBE
-    oauth2:
-      enabled: true
-      issuer: https://accounts.google.com
-      authurl: https://accounts.google.com/o/oauth2/v2/auth
-      tokenurl: https://oauth2.googleapis.com/token
-      jwksurl: https://www.googleapis.com/oauth2/v3/certs
-      userinfourl: https://openidconnect.googleapis.com/v1/userinfo
-      clientid: sampleid123.apps.googleusercontent.com
-      clientsecret: samplesecret456
+  jwt:
+    enabled: true
+    jwksurl: https://cluster.example.net/.well-known/jwks.json
+  oauth2:
+    enabled: true
+    issuer: https://accounts.google.com
+    authurl: https://accounts.google.com/o/oauth2/v2/auth
+    tokenurl: https://oauth2.googleapis.com/token
+    jwksurl: https://www.googleapis.com/oauth2/v3/certs
+    userinfourl: https://openidconnect.googleapis.com/v1/userinfo
+    clientid: sampleid123.apps.googleusercontent.com
+    clientsecret: samplesecret456
 ```
 
 The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It is used as an alias to request persistent volumes specific to each provider. See the **custom.storage** section.
