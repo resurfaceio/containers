@@ -49,10 +49,10 @@ ingress:
       email: admin@thisisanexample.com
 ```
 
-Basic authorization can be configured in the **auth** section.
+Authentication can be configured in the **auth** section.
 
-- **auth.enabled**: boolean. If set to `true`, password will be required at the login page of the API Explorer and, for any transaction using the Trino REST API. Otherwise, no password is required. Defaults to `false`. Auth will work only when TLS is enabled. At least one authentication method must be enabled when auth is enabled.
-- **auth.basic.enabled**: If set to `true`, basic authentication will be enabled. A secret containing an encrypted list of allowed credentials will be mounted in the file system. Defaults to `false`.
+- **auth.enabled**: boolean. If set to `true`, an authentication header will be required for any DB transaction. Defaults to `false`. Auth will work only when TLS is enabled. At least one authentication method must be enabled when auth is enabled.
+- **auth.basic.enabled**: If set to `true`, basic authentication will be enabled. A secret containing an encrypted list of allowed credentials will be mounted in the file system. When basic auth is enabled, a valid username and password combination will be required at the login page of the API Explorer. Otherwise, no password is required. Defaults to `false`.
 - **auth.basic.credentials**: Sequence of credentials allowed. Both a **username** and **password** are required for each item. At least one credential must be passed when **auth.basic.enabled** is set to `true`.
 - **auth.jwt.enabled**: If set to `true`, JWT authentication will be enabled. Defaults to `false`.
 - **auth.jwt.jwksurl**: String. The URL pointing to a JWKS service, a PEM or HMAC file that can be used to validate the JWT signature of each token.
