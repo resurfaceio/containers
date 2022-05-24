@@ -112,6 +112,31 @@ entries:
   resurface:
   - apiVersion: v2
     appVersion: 3.1.33
+    created: "2022-05-24T20:10:31.465888672Z"
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 67b678455d10b2d353c84b684326ad0168fffe502747ce3c795b27a642b1ee2c
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.1.13/resurface-3.1.13.tgz
+    version: 3.1.13
+  - apiVersion: v2
+    appVersion: 3.1.33
     created: "2022-05-24T04:37:54.878033462Z"
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
@@ -705,4 +730,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-1.0.0/resurface-1.0.0.tgz
     version: 1.0.0
-generated: "2022-05-24T04:37:54.878225763Z"
+generated: "2022-05-24T20:10:31.466358563Z"
