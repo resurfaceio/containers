@@ -1,0 +1,49 @@
+{{- if .Values.consumer.azure.enabled -}}
+{{- if and .Values.consumer.azure.ehconnstring .Values.consumer.azure.storageconnstring -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: resurface-azure-cstrings
+type: Opaque
+data:
+  AZURE_EH_CONNECTION_STRING: {{ .Values.consumer.azure.ehconnstring | b64enc }}
+  AZURE_STORAGE_CONNECTION_STRING: {{ .Values.consumer.azure.storageconnstring | b64enc }}
+---
+{{ end -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resurface.fullname" . }}-azure-eh-consumer
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-azure-eh-consumer
+          image: resurfaceio/azure-eh-consumer:1.0.0
+          imagePullPolicy: IfNotPresent
+          envFrom:
+          - secretRef:
+              name: resurface-azure-cstrings
+          env:
+            - name: EVENT_HUB_NAME
+              value: {{ .Values.consumer.azure.ehname | required "Azure Event Hubs instance name must be provided." }}
+            - name: STORAGE_CONTAINER_NAME
+              value: {{ .Values.consumer.azure.storagecontainername | required "Azure storage account container name must be provided." }}
+            - name: PARTITION_NUMBER
+              value: {{ .Values.consumer.azure.partition | default 0 | quote }}
+            - name: USAGE_LOGGERS_URL
+              value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker:%v/message" }}
+            - name: USAGE_LOGGERS_RULES
+              value: |
+                {{- .Values.consumer.logger.rules | default "include default" | nindent 16 }}
+            - name: USAGE_LOGGERS_DISABLE
+              value: {{ not .Values.consumer.logger.enabled | default nil }}
+{{- end -}}

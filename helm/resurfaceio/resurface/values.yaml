@@ -58,17 +58,19 @@ sniffer:
       include default
       skip_compression
 
-listener:
+consumer:
   azure:
-    ehconnstring: EHCONNSTRING
-    ehname: EHNAME
-    storageconnstring: STORAGECONNSTRING
-    storagecontainername: STORAGECONTAINERNAME
+    enabled: false
+    ehname: 
+    storagecontainername: 
+    ehconnstring: 
+    storageconnstring: 
   aws:
-    kdsname: STREAMNAME
-    region: us-west-2
-    accesskeyid: SOMEKEY
-    accesskeysecret: SHH
+    enabled: false
+    kdsname: 
+    region: 
+    accesskeyid: 
+    accesskeysecret: 
   logger:
     enabled: true
     rules: |
