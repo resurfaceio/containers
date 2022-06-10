@@ -41,4 +41,12 @@ helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
 
 helm show readme resurfaceio/resurface
 {{ end }}
-{{ end }}
+{{- end }}
+
+{{ if .Values.consumer.azure.enabled -}}
+· Azure API Management logger is ENABLED.
+{{- end }}
+
+{{ if .Values.consumer.aws.enabled -}}
+· AWS API Gateway logger is ENABLED.
+{{- end }}
