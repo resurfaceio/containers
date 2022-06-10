@@ -61,7 +61,7 @@ sniffer:
 consumer:
   azure:
     enabled: false
-    ehname: 
+    ehname: apimlogs
     storagecontainername: 
     ehconnstring: 
     storageconnstring: 
