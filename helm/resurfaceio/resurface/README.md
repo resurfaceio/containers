@@ -12,6 +12,7 @@ leaks, and failures that are impacting your APIs. See [resurface.io](https://res
 - TLS Secret: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
 - ClusterIssuer: (Optional) Issues TLS certificate from Let's Encrypt. Resquires Cert-manager utility. Disabled by default.
 - Daemonset: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
+- Deployments: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
 
 ## Dependencies
 
