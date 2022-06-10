@@ -10,3 +10,6 @@ Open source containers and helm charts.
 * trino - for lightweight Trino containers based on alpine
 * test - for automated testing with python across different environments 
 * compose - for local cluster testing (not for production)
+
+---
+<small>&copy; 2016-2022 <a href="https://resurface.io">Resurface Labs Inc.</a></small>

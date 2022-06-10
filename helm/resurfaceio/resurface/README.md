@@ -21,12 +21,6 @@ leaks, and failures that are impacting your APIs. See [resurface.io](https://res
 
 ## Values
 
-The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It is used as an alias to request persistent volumes specific to each provider. See the **custom.storage** section.
-
-```yaml
-provider: azure
-```
-
 The **ingress** values section is where the configuration for the Ingress resource can be found. The following fields can be found nested in this section:
 
 - **ingress.enabled**: boolean. The Ingress resource can be disabled by setting this value to `false`. In that case, the services can still be exposed, albeit without SSL/TLS termination. See **custom.service** section. Defaults to `true`.
@@ -56,6 +50,63 @@ ingress:
       email: admin@thisisanexample.com
 ```
 
+Authentication can be configured in the **auth** section.
+
+- **auth.enabled**: boolean. If set to `true`, an authentication header will be required for any DB transaction. Defaults to `false`. Auth will work only when TLS is enabled. At least one authentication method must be enabled when auth is enabled.
+- **auth.basic.enabled**: If set to `true`, basic authentication will be enabled. A secret containing an encrypted list of allowed credentials will be mounted in the file system. When basic auth is enabled, a valid username and password combination will be required at the login page of the API Explorer. Otherwise, no password is required. Defaults to `false`.
+- **auth.basic.credentials**: Sequence of credentials allowed. Both a **username** and **password** are required for each item. At least one credential must be passed when **auth.basic.enabled** is set to `true`.
+- **auth.jwt.enabled**: If set to `true`, JWT authentication will be enabled. Defaults to `false`.
+- **auth.jwt.jwksurl**: String. The URL pointing to a JWKS service, a PEM or HMAC file that can be used to validate the JWT signature of each token.
+- **auth.oauth2.enabled**: If set to `true`, OAuth 2.0 will be enabled. All the corresponding endpoints for an external OAuth 2.0 Authorization Code service must be configured, as well as a Client ID and Client Secret provided by this third party. Users will be redirected to the external provider Log In page, and redirected back to the API Explorer once authenticated. Defaults to `false`.
+- **auth.oauth2.issuer**: String. The issuer URL for the external OAuth 2.0 service. All tokens issued by the service must have this in the `iss` field. Required only if **auth.aouth2.enabled** is set to `true`.
+- **auth.oauth2.authurl**: String. The service authorization URL. The browser will be redirected to this URL when accessing the API Explorer for the first time. Required only if **auth.aouth2.enabled** is set to `true`.
+- **auth.oauth2.tokenurl**: String. The URL of the endpoint on the authorization server to exchange the authorization code for an access token. Required only if **auth.aouth2.enabled** is set to `true`.
+- **auth.oauth2.jwksurl**: String. The URL of the JSON Web Key Set (JWKS) endpoint on the authorization server. It must point to the set of keys containing the public key to verify any JSON Web Token (JWT) from the authorization server. Required only if **auth.aouth2.enabled** is set to `true`.
+- **auth.oauth2.userinfourl**: String.  If supplied then this URL is used to validate the OAuth access token and retrieve any associated claims. Required only if the authorization server issues opaque tokens.
+- **auth.oauth2.clientid**: String. Client identifier provided by the external OAuth 2.0 service.
+- **auth.oauth2.clientsecret**: String. Client secret provided by the external OAuth2.0 service.
+
+```yaml
+auth:
+  enabled: true
+  basic:
+    enabled: true
+    credentials:
+      - username: admin
+        password: irtRUqUp7fkfL
+      - username: msmith
+        password: qPBceDWjPJFYKfX7QAXfmy1b33tBE
+  jwt:
+    enabled: true
+    jwksurl: https://cluster.example.net/.well-known/jwks.json
+  oauth2:
+    enabled: true
+    issuer: https://accounts.google.com
+    authurl: https://accounts.google.com/o/oauth2/v2/auth
+    tokenurl: https://oauth2.googleapis.com/token
+    jwksurl: https://www.googleapis.com/oauth2/v3/certs
+    userinfourl: https://openidconnect.googleapis.com/v1/userinfo
+    clientid: sampleid123.apps.googleusercontent.com
+    clientsecret: samplesecret456
+```
+
+The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It is used as an alias to request persistent volumes specific to each provider. See the **custom.storage** section.
+
+```yaml
+provider: azure
+```
+
+The **multinode** section is where the configuration to set multiple database nodes can be found.
+
+- **multinode.enabled**: boolean. If set to `true` worker nodes are enabled. Otherwise, the single-node configuration is used. Defaults to `false`
+- **multinode.workers**: integer. Number of stateful worker nodes to deploy. Resources must be available in the cluster in order to succesfully scale accordingly. The total number of nodes in the database will be **multinode.workers** + 1, since the coordinator node always acts as a worker node.
+
+```yaml
+multinode:
+  enabled: true
+  workers: 3
+```
+
 The **custom** section holds the values for fields that can be overriden in any default configuration. None of its fields are required. The following fields can be found nested in this section:
 
 - The **custom.service** subsection is where the configuration for both the internal service resources can be found.
@@ -82,7 +133,6 @@ The **custom** section holds the values for fields that can be overriden in any 
 
 ```yaml
 custom:
-  arch: arm
   service:
     apiexplorer:
       port: 80
@@ -94,11 +144,6 @@ custom:
   storage:
     classname: managed-csi-premium
 ```
-
-The **multinode** section is where the configuration to set multiple nodes can be found.
-
-- **multinode.enabled**: boolean. If set to `true` worker nodes are enabled. Otherwise, the single-node configuration is used. Defaults to `false`
-- **multinode.workers**: integer. Number of stateful worker nodes to deploy. Resources must be available in the cluster in order to succesfully scale accordingly.
 
 The **sniffer** section is where the configuration values for the optional network packet sniffer can be found.
 

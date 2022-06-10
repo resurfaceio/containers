@@ -9,7 +9,7 @@ metadata:
     haproxy.org/path-rewrite: {{ .Values.ingress.importer.path | default "/fluke" }}/(.*) /\1
     {{- end }}
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
-    cert-manager.io/cluster-issuer: letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
+    cert-manager.io/issuer: {{ include "resurface.fullname" . }}-letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
     {{- end }}
 spec:
   defaultBackend:

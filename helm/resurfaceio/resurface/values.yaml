@@ -10,13 +10,37 @@ ingress:
     path: "/fluke"
   tls:
     enabled: false
-    host:
+    host: 
     autoissue:
       enabled: true
       staging: true
-      email:
+      email: 
     byoc:
       secretname:
+
+auth:
+  enabled: false
+  basic:
+    enabled: false
+    credentials:
+      - username: 
+        password: 
+  jwt:
+    enabled: false
+    jwksurl: 
+  oauth2:
+    enabled: false
+    issuer: 
+    authurl: 
+    tokenurl: 
+    jwksurl: 
+    userinfourl: 
+    clientid: 
+    clientsecret: 
+
+multinode:
+  enabled: false
+  workers: 1
 
 custom:
   service:
@@ -37,10 +61,6 @@ custom:
   storage:
     size:
     classname:
-
-multinode:
-  enabled: false
-  workers: 1
 
 sniffer:
   enabled: false
