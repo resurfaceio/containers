@@ -12,6 +12,7 @@ leaks, and failures that are impacting your APIs. See [resurface.io](https://res
 - TLS Secret: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
 - ClusterIssuer: (Optional) Issues TLS certificate from Let's Encrypt. Resquires Cert-manager utility. Disabled by default.
 - Daemonset: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
+- Deployments: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
 
 ## Dependencies
 
@@ -144,7 +145,7 @@ custom:
     classname: managed-csi-premium
 ```
 
-The **sniffer** value is where the configuration for the optional network packet sniffer can be found.
+The **sniffer** section is where the configuration values for the optional network packet sniffer can be found.
 
 - **sniffer.enabled**: boolean. The sniffer can be deployed by setting this value to `true`. Defaults to `false`.
 
@@ -199,4 +200,41 @@ sniffer:
     rules: |
       include debug
       skip_compression
+```
+
+The **consumer** section contains the configuration for data stream consumer applications that capture API calls from currently supported API Gateways: Azure API Management, and AWS API Gateway. The containerized applications act as subscribers to platform-specific message bus services (Azure Event Hubs and AWS Kinesis Data Streams, respectively) that must be configured beforehand. More info on how to configure each application: [azure-eh](https://github.com/resurfaceio/azure-eh) and [aws-kds](https://github.com/resurfaceio/aws-kds).
+
+- The **consumer.azure** subsection holds the values to configure and enable the `azure-eh` application.
+  - **consumer.azure.enabled**: boolean. Defaults to `false`. Required only if **consumer.azure.enabled** is set to `true`.
+  - **consumer.azure.ehname**: string. Defaults to `apimlogs`. Name of the Event Hubs instance streaming API calls published as log events by an Azure APIM instance.
+  - **consumer.azure.storagecontainername**: string. Name of the Storage container associated with the required Azure Storage account. Required only if **consumer.azure.enabled** is set to `true`.
+  - **consumer.azure.ehconnstring**: string. Connection string for the Event Hubs instance. It is **not** recommended to pass connection strings as helm values, and instead create a kubernetes secret object manually named **resurface-azure-cstrings** with the corresponding key-value pairs. Required only if **consumer.azure.enabled** is set to `true` and the **resurface-aazure-cstrings** secret does not exist.
+  - **consumer.azure.storageconnstring**: string. Connection string for the required Azure Storage account. It is **not** recommended to pass connection strings as helm values, and instead create a kubernetes secret object manually named **resurface-azure-cstrings** with the corresponding key-value pairs. Required only if **consumer.azure.enabled** is set to `true` and the **resurface-aazure-cstrings** secret does not exist.
+
+- The **consumer.aws** subsection holds the values to configure and enable the `aws-kds` application.
+  - **consumer.aws.enabled**: boolean. Defaults to `false`.
+  - **consumer.aws.kdsname**: string. Name of the Kinesis Data Streams instance streaming API calls published as CloudWatch log events by an AWS API gateway. Required only if **consumer.aws.enabled** is set to `true`.
+  - **consumer.aws.region**: string. Region where the Kinesis Data Stream is deployed. Required only if **consumer.aws.enabled** is set to `true`.
+  - **consumer.aws.accesskeyid**: string. AWS Credentials. It is **not** recommended to pass the AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-aws-creds** with the corresponding key-value pairs. Required only if **consumer.aws.enabled** is set to `true` and the **resurface-aws-creds** secret does not exist.
+  - **consumer.aws.accesskeysecret**: string. AWS Credentials. It is **not** recommended to pass AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-aws-creds** with the corresponding key-value pairs. Required only if **consumer.aws.enabled** is set to `true` and the **resurface-aws-creds** secret does not exist.
+
+- The **consumer.logger** nested section contains the configuration specific to the Resurface logger used by the consumer applications to send API calls to the corresponding importer endpoint.
+  - **sniffer.logger.enabled**: boolean. The internal logger can be temporarily disabled by setting this value to `false`.
+  - **sniffer.logger.rules**: string. The internal logger operates under a certain [set of rules](http://resurface.io/logging-rules) that determines which data is logged. These rules can be passed to the logger as a single-line or a multiline string.
+
+
+```yaml
+consumer:
+  azure:
+    enabled: true
+    ehname: apimlogs
+    storagecontainername: containerabcdef
+  aws:
+    enabled: false
+    kdsname: resurfaceio-kds-123456789
+    region: us-west-2
+  logger:
+    enabled: true
+    rules: |
+      include debug
 ```

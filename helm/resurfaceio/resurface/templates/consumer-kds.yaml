@@ -1,0 +1,47 @@
+{{- if .Values.consumer.aws.enabled -}}
+{{- if and .Values.consumer.aws.accesskeyid .Values.consumer.aws.accesskeysecret -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: resurface-aws-creds
+type: Opaque
+data:
+  AWS_ACCESS_KEY_ID: {{ .Values.consumer.aws.accesskeyid | b64enc }}
+  AWS_SECRET_ACCESS_KEY: {{ .Values.consumer.aws.accesskeysecret | b64enc }}
+---
+{{ end -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "resurface.fullname" . }}-aws-kds-consumer
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-aws-kds-consumer
+          image: resurfaceio/aws-kds-consumer:1.0.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+          - secretRef:
+              name: resurface-aws-creds
+          env:
+            - name: KINESIS_STREAM_NAME
+              value: {{ .Values.consumer.aws.kdsname | required "AWS Kinesis stream to consume data from name must be provided." }}
+            - name: AWS_REGION
+              value: {{ .Values.consumer.aws.region | required "AWS region where Kinesis stream is deployed must be provided." | quote }}
+            - name: USAGE_LOGGERS_URL
+              value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+            - name: USAGE_LOGGERS_RULES
+              value: |
+              {{- .Values.consumer.logger.rules | default "include default" | nindent 16 }}
+            - name: USAGE_LOGGERS_DISABLE
+              value: {{ not .Values.consumer.logger.enabled | default nil }}
+{{- end -}}

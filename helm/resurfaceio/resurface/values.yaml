@@ -78,6 +78,26 @@ sniffer:
       include default
       skip_compression
 
+consumer:
+  azure:
+    enabled: false
+    ehname: apimlogs
+    storagecontainername: 
+    ehconnstring: 
+    storageconnstring: 
+  aws:
+    enabled: false
+    kdsname: 
+    region: 
+    accesskeyid: 
+    accesskeysecret: 
+  logger:
+    enabled: true
+    rules: |
+      include default
+      skip_compression
+    
+
 # autoscaling:
 #   enabled: false
 #   minReplicas: 1
