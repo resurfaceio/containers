@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}-azure-eh-consumer
-          image: resurfaceio/azure-eh-consumer:1.0.0
+          image: resurfaceio/azure-eh-consumer:1.0.1
           imagePullPolicy: IfNotPresent
           envFrom:
           - secretRef:
