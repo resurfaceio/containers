@@ -2,11 +2,11 @@ FROM resurfaceio/alpine-jdk11:3.16.0
 
 # Download and configure Trino
 # Do as one big step to reduce container size!
-RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/374/trino-server-374.tar.gz &&\
+RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/389/trino-server-389.tar.gz &&\
 mkdir -p /opt &&\
-tar -xf trino-server-374.tar.gz -C /opt &&\
-mv /opt/trino-server-374 /opt/trino &&\
-rm trino-server-374.tar.gz &&\
+tar -xf trino-server-389.tar.gz -C /opt &&\
+mv /opt/trino-server-389 /opt/trino &&\
+rm trino-server-389.tar.gz &&\
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' /opt/trino/bin/launcher.py &&\
 rm -rf /opt/trino/plugin/accumulo &&\
 rm -rf /opt/trino/plugin/atop &&\
@@ -19,6 +19,7 @@ rm -rf /opt/trino/plugin/druid &&\
 rm -rf /opt/trino/plugin/elasticsearch &&\
 rm -rf /opt/trino/plugin/example-http &&\
 rm -rf /opt/trino/plugin/exchange &&\
+rm -rf /opt/trino/plugin/exchange-filesystem &&\
 rm -rf /opt/trino/plugin/geospatial &&\
 rm -rf /opt/trino/plugin/google-sheets &&\
 rm -rf /opt/trino/plugin/hive &&\
@@ -29,6 +30,7 @@ rm -rf /opt/trino/plugin/kafka &&\
 rm -rf /opt/trino/plugin/kinesis &&\
 rm -rf /opt/trino/plugin/kudu &&\
 rm -rf /opt/trino/plugin/local-file &&\
+rm -rf /opt/trino/plugin/mariadb &&\
 rm -rf /opt/trino/plugin/memory &&\
 rm -rf /opt/trino/plugin/memsql &&\
 rm -rf /opt/trino/plugin/ml &&\
