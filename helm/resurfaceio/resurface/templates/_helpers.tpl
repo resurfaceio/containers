@@ -155,12 +155,17 @@ Sniffer options
 {{- $ignoredevflag := "--input-raw-ignore-interface"}}
 {{- $skipnsflag := "--input-raw-k8s-skip-ns" }}
 {{- $skipsvcflag := "--input-raw-k8s-skip-svc" }}
+{{- $engineflag := "--input-raw-engine"}}
+{{- $vniflag := "--input-raw-vxlan-vni" }}
+{{- $vxlanportflag := "--input-raw-vxlan-port" }}
 {{- $services := .Values.sniffer.services }}
 {{- $pods := .Values.sniffer.pods }}
 {{- $labels := .Values.sniffer.labels }}
 {{- $skipns := .Values.sniffer.discovery.skip.ns -}}
 {{- $skipsvc := .Values.sniffer.discovery.skip.svc -}}
-{{- $ignoredev := .Values.sniffer.ignore | default (list "eth0" "cbr0") }}
+{{- $ignoredev := .Values.sniffer.ignore | default (list "lo" "cbr0") }}
+{{- $mirrorports := join "," .Values.sniffer.vpcmirror.ports }}
+{{- $vxlanport := default 4789 .Values.sniffer.vpcmirror.vxlanport }}
 {{- $builder := list -}}
 
 {{- if and .Values.sniffer.discovery.enabled (empty $services) -}}
@@ -215,7 +220,14 @@ Sniffer options
 {{- end -}}
 
 {{- if empty $builder -}}
+{{- if .Values.sniffer.vpcmirror.enabled -}}
+{{- range $_, $vni := .Values.sniffer.vpcmirror.vnis -}}
+  {{- $builder = append $builder (printf " %s %v" $vniflag $vni) -}}
+{{- end -}}
+{{ printf "'%s :%s %s vxlan %s %v%s'" $inflag $mirrorports $engineflag $vxlanportflag $vxlanport (join "" $builder) }}
+{{- else -}}
 {{ print "" }}
+{{- end -}}
 {{- else -}}
 {{- $devs := list -}}
 {{- range $_, $dev := $ignoredev -}}

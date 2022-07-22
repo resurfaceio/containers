@@ -72,6 +72,10 @@ sniffer:
   services:
   pods:
   labels:
+  vpcmirror:
+    enabled: false
+    vnis: [ 123 ]
+    ports: [ 8000 ]
   logger:
     enabled: true
     rules: |
