@@ -1,12 +1,12 @@
-FROM resurfaceio/alpine-jdk11:3.16.1
+FROM resurfaceio/alpine-jdk17:3.16.1a
 
 # Download and configure Trino
 # Do as one big step to reduce container size!
-RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/389/trino-server-389.tar.gz &&\
+RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/391/trino-server-391.tar.gz &&\
 mkdir -p /opt &&\
-tar -xf trino-server-389.tar.gz -C /opt &&\
-mv /opt/trino-server-389 /opt/trino &&\
-rm trino-server-389.tar.gz &&\
+tar -xf trino-server-391.tar.gz -C /opt &&\
+mv /opt/trino-server-391 /opt/trino &&\
+rm trino-server-391.tar.gz &&\
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' /opt/trino/bin/launcher.py &&\
 rm -rf /opt/trino/plugin/accumulo &&\
 rm -rf /opt/trino/plugin/atop &&\
