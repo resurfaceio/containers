@@ -163,7 +163,7 @@ Sniffer options
 {{- $labels := .Values.sniffer.labels }}
 {{- $skipns := .Values.sniffer.discovery.skip.ns -}}
 {{- $skipsvc := .Values.sniffer.discovery.skip.svc -}}
-{{- $ignoredev := .Values.sniffer.ignore | default (list "lo" "cbr0") }}
+{{- $ignoredev := .Values.sniffer.ignore | default (list "eth0" "lo" "cbr0") }}
 {{- $mirrorports := join "," .Values.sniffer.vpcmirror.ports }}
 {{- $vxlanport := default 4789 .Values.sniffer.vpcmirror.vxlanport }}
 {{- $builder := list -}}
@@ -220,11 +220,11 @@ Sniffer options
 {{- end -}}
 
 {{- if empty $builder -}}
-{{- if .Values.sniffer.vpcmirror.enabled -}}
+{{- if and .Values.sniffer.vpcmirror.enabled (default .Values.provider "" | eq "aws") -}}
 {{- range $_, $vni := .Values.sniffer.vpcmirror.vnis -}}
   {{- $builder = append $builder (printf " %s %v" $vniflag $vni) -}}
 {{- end -}}
-{{ printf "'%s :%s %s vxlan %s %v%s'" $inflag $mirrorports $engineflag $vxlanportflag $vxlanport (join "" $builder) }}
+{{ printf "'%s :%s %s vxlan %s %v%s'" $inflag (required "At least one port must be specified for AWS VPC mirrored traffic capture" $mirrorports) $engineflag $vxlanportflag $vxlanport (join "" $builder) }}
 {{- else -}}
 {{ print "" }}
 {{- end -}}

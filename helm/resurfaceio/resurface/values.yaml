@@ -74,8 +74,8 @@ sniffer:
   labels:
   vpcmirror:
     enabled: false
-    vnis: [ 123 ]
-    ports: [ 8000 ]
+    vnis:
+    ports:
   logger:
     enabled: true
     rules: |
