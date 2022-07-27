@@ -14,6 +14,16 @@ keywords:
   - Troubleshooting
   - Alerts
 home: https://resurface.io
+dependencies:
+  - name: kubernetes-ingress
+    version: "1.22.4"
+    repository: https://haproxytech.github.io/helm-charts
+    condition: ingress.enabled
+maintainers:
+  - name: Ramón Márquez
+    email: ramon@resurface.io
+  - name: Rob Dickinson
+    email: rob@resurface.io
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
