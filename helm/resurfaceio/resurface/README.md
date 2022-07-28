@@ -1,18 +1,18 @@
 # resurfaceio-helm-resurface
 
 Resurface is like an API analyst in a box. Resurface continuously scans your API traffic to discover attacks,
-leaks, and failures that are impacting your APIs. See [resurface.io](https://resurface.io) for more information.
+leaks, and failures that are impacting your APIs. Go to [resurface.io](https://resurface.io) for more information.
 
 ## Components
 
-- StatefulSets: Resurface database coordinator pod and worker replicas with persistent storage. Your very own Resurface instance.
-- Service: Coordinator. Exposes the API Explorer frontend for your Resurface instance.
-- Service: Worker. Exposes the fluke microservice used to import API calls into your Resurface instance.
-- Ingress: Requires HAProxy ingress controller. Enabled by default.
-- TLS Secret: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
-- ClusterIssuer: (Optional) Issues TLS certificate from Let's Encrypt. Resquires Cert-manager utility. Disabled by default.
-- Daemonset: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
-- Deployments: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
+- **StatefulSets**: Resurface database coordinator pod and worker replicas with persistent storage. Your very own Resurface instance.
+- **Service**: Coordinator. Exposes the API Explorer frontend for your Resurface instance.
+- **Service**: Worker. Exposes the fluke microservice used to import API calls into your Resurface instance.
+- **Ingress**: Requires HAProxy ingress controller. Enabled by default.
+- **TLS Secret**: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
+- **ClusterIssuer**: (Optional) Issues TLS certificate from Let's Encrypt. Resquires Cert-manager utility. Disabled by default.
+- **Daemonset**: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
+- **Deployments**: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
 
 ## Dependencies
 
@@ -25,11 +25,11 @@ The **ingress** values section is where the configuration for the Ingress resour
 
 - **ingress.enabled**: boolean. The Ingress resource can be disabled by setting this value to `false`. In that case, the services can still be exposed, albeit without SSL/TLS termination. See **custom.service** section. Defaults to `true`.
 
-- **ingress.importer**: this subsection corresponds to the endpoint used by each Resurface worker node to import API calls into your Resurface database.
+- The **ingress.importer** nested section corresponds to the endpoint used by each Resurface worker node to import API calls into your Resurface database.
   - **ingress.importer.expose**: boolean. The importer endpoint can be disabled by setting this value to `false`. In that case, the endpoint will only be reachable through the worker importer service and not the ingress resource. Defaults to `true`.
-  - **ingress.importer.path**: string. The ingress resource will route all calls made to this path to the worker importer service. Defaults to "/fluke". Required only if **ingress.importer.expose** is set to `true`.
+  - **ingress.importer.path**: string. The ingress resource will route all calls made to this path to the worker importer service. Defaults to `"/fluke"`. Required only if **ingress.importer.expose** is set to `true`.
 
-- **ingress.tls**: this subsection corresponds to the TLS termination configuration for the Ingress resource.
+- The **ingress.tls** nested section corresponds to the TLS termination configuration for the Ingress resource.
   - **ingress.tls.enabled**: boolean. The TLS termination feature can be enabled by setting this value to `true`. Defaults to `false`.
   - **ingress.tls.host**: string. Host included in the TLS certificate. DNS records must be updated accordingly. Required only if **ingress.tls.enabled** is set to `true`.
   - **ingress.tls.autoissue**: this nested subsection corresponds to the configuration needed to autoissue a TLS certificate using the cert-manager utility. The autoissing process is mutually exclusive with respect to the BYOC (bring-your-own-certificate) process.
@@ -52,19 +52,25 @@ ingress:
 
 Authentication can be configured in the **auth** section.
 
-- **auth.enabled**: boolean. If set to `true`, an authentication header will be required for any DB transaction. Defaults to `false`. Auth will work only when TLS is enabled. At least one authentication method must be enabled when auth is enabled.
-- **auth.basic.enabled**: If set to `true`, basic authentication will be enabled. A secret containing an encrypted list of allowed credentials will be mounted in the file system. When basic auth is enabled, a valid username and password combination will be required at the login page of the API Explorer. Otherwise, no password is required. Defaults to `false`.
-- **auth.basic.credentials**: Sequence of credentials allowed. Both a **username** and **password** are required for each item. At least one credential must be passed when **auth.basic.enabled** is set to `true`.
-- **auth.jwt.enabled**: If set to `true`, JWT authentication will be enabled. Defaults to `false`.
-- **auth.jwt.jwksurl**: String. The URL pointing to a JWKS service, a PEM or HMAC file that can be used to validate the JWT signature of each token.
-- **auth.oauth2.enabled**: If set to `true`, OAuth 2.0 will be enabled. All the corresponding endpoints for an external OAuth 2.0 Authorization Code service must be configured, as well as a Client ID and Client Secret provided by this third party. Users will be redirected to the external provider Log In page, and redirected back to the API Explorer once authenticated. Defaults to `false`.
-- **auth.oauth2.issuer**: String. The issuer URL for the external OAuth 2.0 service. All tokens issued by the service must have this in the `iss` field. Required only if **auth.aouth2.enabled** is set to `true`.
-- **auth.oauth2.authurl**: String. The service authorization URL. The browser will be redirected to this URL when accessing the API Explorer for the first time. Required only if **auth.aouth2.enabled** is set to `true`.
-- **auth.oauth2.tokenurl**: String. The URL of the endpoint on the authorization server to exchange the authorization code for an access token. Required only if **auth.aouth2.enabled** is set to `true`.
-- **auth.oauth2.jwksurl**: String. The URL of the JSON Web Key Set (JWKS) endpoint on the authorization server. It must point to the set of keys containing the public key to verify any JSON Web Token (JWT) from the authorization server. Required only if **auth.aouth2.enabled** is set to `true`.
-- **auth.oauth2.userinfourl**: String.  If supplied then this URL is used to validate the OAuth access token and retrieve any associated claims. Required only if the authorization server issues opaque tokens.
-- **auth.oauth2.clientid**: String. Client identifier provided by the external OAuth 2.0 service.
-- **auth.oauth2.clientsecret**: String. Client secret provided by the external OAuth2.0 service.
+- **auth.enabled**: boolean. If set to `true`, an authentication header will be required for any DB transaction. Auth will work only when TLS is enabled. At least one authentication method must be enabled when auth is enabled. Defaults to `false`.
+
+- The **auth.basic** subsection corresponds to basic authentication. When basic auth is enabled, a secret containing an encrypted list of allowed credentials will be mounted in the file system, and a valid username and password combination will be required at the login page of the API Explorer.
+  - **auth.basic.enabled**: If set to `true`, basic authentication will be enabled. Defaults to `false`.
+  - **auth.basic.credentials**: Sequence of credentials allowed. Both a **username** and **password** are required for each item. At least one credential must be passed when **auth.basic.enabled** is set to `true`.
+
+- The **auth.jwt** subsection refers to authentication using JSON Web Tokens. When JWT auth is enabled, only requests with a valid bearer token header will be served.
+  - **auth.jwt.enabled**: If set to `true`, JWT authentication will be enabled. Defaults to `false`.
+  - **auth.jwt.jwksurl**: String. The URL pointing to a JWKS service, a PEM or HMAC file that can be used to validate the JWT signature of each token.
+
+- The **auth.oauth2**: subsection corresponds to authentication provided by an external OAuth 2.0 identity provider. When OAuth2 auth is enabled, users will be redirected to the external provider Log In page, and redirected back to the API Explorer once authenticated. All the corresponding endpoints for an external OAuth 2.0 Authorization Code service must be configured, as well as a Client ID and Client Secret provided by this third party.
+  - **auth.oauth2.enabled**: If set to `true`, OAuth 2.0 will be enabled. Defaults to `false`.
+  - **auth.oauth2.issuer**: String. The issuer URL for the external OAuth 2.0 service. All tokens issued by the service must have this in the `iss` field. Required only if **auth.aouth2.enabled** is set to `true`.
+  - **auth.oauth2.authurl**: String. The service authorization URL. The browser will be redirected to this URL when accessing the API Explorer for the first time. Required only if **auth.aouth2.enabled** is set to `true`.
+  - **auth.oauth2.tokenurl**: String. The URL of the endpoint on the authorization server to exchange the authorization code for an access token. Required only if **auth.aouth2.enabled** is set to `true`.
+  - **auth.oauth2.jwksurl**: String. The URL of the JSON Web Key Set (JWKS) endpoint on the authorization server. It must point to the set of keys containing the public key to verify any JSON Web Token (JWT) from the authorization server. Required only if **auth.aouth2.enabled** is set to `true`.
+  - **auth.oauth2.userinfourl**: String.  If supplied then this URL is used to validate the OAuth access token and retrieve any associated claims. Required only if the authorization server issues opaque tokens.
+  - **auth.oauth2.clientid**: String. Client identifier provided by the external OAuth 2.0 service.
+  - **auth.oauth2.clientsecret**: String. Client secret provided by the external OAuth2.0 service.
 
 ```yaml
 auth:
@@ -99,7 +105,7 @@ provider: azure
 The **multinode** section is where the configuration to set multiple database nodes can be found.
 
 - **multinode.enabled**: boolean. If set to `true` worker nodes are enabled. Otherwise, the single-node configuration is used. Defaults to `false`
-- **multinode.workers**: integer. Number of stateful worker nodes to deploy. Resources must be available in the cluster in order to succesfully scale accordingly. The total number of nodes in the database will be **multinode.workers** + 1, since the coordinator node always acts as a worker node.
+- **multinode.workers**: integer. Number of stateful worker nodes to deploy. Resources must be available in the cluster in order to succesfully scale accordingly. The total number of nodes in the database will be **multinode.workers** + 1, since the coordinator node itself always acts as a worker node.
 
 ```yaml
 multinode:
@@ -149,7 +155,7 @@ The **sniffer** section is where the configuration values for the optional netwo
 
 - **sniffer.enabled**: boolean. The sniffer can be deployed by setting this value to `true`. Defaults to `false`.
 
-- **sniffer.services**: Sequence of services to log from. For each service, both a **namespace** and service **name** can be specified. If only namespace is specified for a given service, it will be ignored uless namespace-only discovery is enabled. In addition, an array of integer **ports** can be passed for each service. These ports refer to the target ports for each container, not service ports. See example below.
+- **sniffer.services**: Sequence of services to log from. For each service, both a **namespace** and service **name** can be specified. If only namespace is specified for a given service, it will be ignored unless namespace-only discovery is enabled. In addition, an array of integer **ports** can be passed for each service. These ports refer to the target ports for each container, not service ports. See example below.
 
 - **sniffer.pods**: Sequence of specific pods to log from. For each pod, both **namespace** and pod **name** are required. In addition, an array of integer container **ports** can also be passed for each pod. See example below.
 
@@ -160,19 +166,26 @@ The **sniffer** section is where the configuration values for the optional netwo
   - **sniffer.discovery.skip**: nested subsection that refers to specific namespaces or services to skip when discovery is performed.
     - **sniffer.discovery.skip.ns**: []string. Array containing the names of the namespaces to be skipped.
     - **sniffer.discovery.skip.svc**: []string. Array containing the names of the services to be skipped.
+
 - The **sniffer.logger** nested section contains the configuration specific to the Resurface logger used by the sniffer to send API calls to the corresponding importer endpoint.
   - **sniffer.logger.enabled**: boolean. The internal logger can be temporarily disabled by setting this value to `false`.
   - **sniffer.logger.rules**: string. The internal logger operates under a certain [set of rules](http://resurface.io/logging-rules) that determines which data is logged. These rules can be passed to the logger as a single-line or a multiline string.
 
-- **sniffer.ignore**: []string. Array containing the names of specific network interfaces to ignore for all nodes. Defaults to `[ "eth0", "cbr0" ]`
-- **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Defaults to `80`. Required only if **sniffer.enabled** is `true`.
+- **sniffer.ignore**: []string. Array containing the names of specific network interfaces to ignore for all nodes. Defaults to `[ "eth0", "lo", "cbr0" ]`
+
+- The **sniffer.vpcmirror** subsection refers to capturing traffic from AWS VPC mirroring sessions. A traffic mirroring session can be set up from one ENI (attached to a given EC2 instance), to another ENI attached to any of the EC2 instances that work as Kubernetes nodes for a given EKS cluster. Traffic passing through the first ENI will be mirrored onto the second one, where the network packet sniffer can capture the data from and send it to your Resurface instance. AWS VPC mirrored traffic capture will work only when  **sniffer.provider** is set to `"aws"`.
+  - **sniffer.vcpmirror.enabled**: boolean. The sniffer will be configured to capture mirrored traffic by setting this option to `true`. Defaults to `false`.
+  - **sniffer.vcpmirror.vnis**: []integer. Array containing the Virtual Network Identifiers from each VPC mirroring session.
+  - **sniffer.vcpmirror.ports**: []integer. Array containing the port numbers exposed by the applications running in the EC2 instances that act as traffic mirror sources. At least one port number is required.
+
+- **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Defaults to `80`. Required only if **sniffer.enabled** is `true` and no other option is enabled.
 - **sniffer.device**: (deprecated) string. Name of the network interface to attach the sniffer to. Defaults to the Kubernetes custom bridge interface `cbr0`.
 
 NOTE: When no services, pods, or labels are specified and discovery is disabled, the sniffer behavior falls back to logging from a specific network device on a specific port. This is not compatible with all Kubernetes environments and should be avoided by specifiying at least one service, pod or label, or enabling service discovery.
 
 ```yaml
 sniffer:
-  deploy: true
+  enabled: true
   discovery:
     enabled: false
     skip:
