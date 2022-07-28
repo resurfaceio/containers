@@ -101,6 +101,14 @@ consumer:
       include default
       skip_compression
     
+kubernetes-ingress:
+  controller:
+    service:
+      type: LoadBalancer
+      enablePorts:
+        stat: false
+  defaultBackend:
+    enabled: false
 
 # autoscaling:
 #   enabled: false
