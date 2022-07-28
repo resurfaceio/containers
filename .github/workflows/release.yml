@@ -27,6 +27,9 @@ jobs:
         with:
           version: v3.4.0
 
+      - name: Helm dependencies
+        run: helm repo add haproxytech https://haproxytech.github.io/helm-charts && helm repo update
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.1
         with:
