@@ -30,13 +30,33 @@ spec:
         - name: USAGE_LOGGERS_DISABLE
           value: {{ not .Values.sniffer.logger.enabled | default nil }}
         {{ $snifferops := include "resurface.sniffer.options" . -}}
-        {{- if empty $snifferops -}}
+        {{ $sniffermirrorops := include "resurface.sniffer.mirror.options" . }}
+        {{ if and (empty $snifferops) (empty $sniffermirrorops) }}
         - name: APP_PORT
           value: {{ .Values.sniffer.port | default 80 | quote }}
         - name: VPC_MIRROR_DEVICE
           value: {{ .Values.sniffer.device | default "cbr0" }}
-        {{- else -}}
+        {{ else -}}
         - name: K8S_INPUT
+          {{ if empty $snifferops -}}
+          value: {{ print $sniffermirrorops }}
+          {{ else -}}
           value: {{ print $snifferops }}
-        {{- end -}}
+      {{ if not (empty $sniffermirrorops) -}}
+      - name: resurface-logger-2
+        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.1{{ end }}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USAGE_LOGGERS_URL
+          value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+        - name: USAGE_LOGGERS_RULES
+          value: |
+          {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}
+        - name: USAGE_LOGGERS_DISABLE
+          value: {{ not .Values.sniffer.logger.enabled | default nil }}
+        - name: K8S_INPUT
+          value: {{ print $sniffermirrorops }}
+      {{- end }}
+          {{- end }}
+        {{- end }}
 {{- end -}}
