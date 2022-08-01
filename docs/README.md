@@ -21,7 +21,7 @@ You can then run `helm search repo resurfaceio` to see the charts.
 
 To install the resurface chart:
 
-    helm install resurface resurfaceio/resurface -n resurface --create-namespace --set entitlementToken=YOURTOKENHERE
+    helm install resurface resurfaceio/resurface -n resurface --create-namespace
 
 To uninstall the chart:
 
