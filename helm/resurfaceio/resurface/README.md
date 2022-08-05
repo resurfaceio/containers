@@ -171,7 +171,7 @@ The **sniffer** section is where the configuration values for the optional netwo
   - **sniffer.logger.enabled**: boolean. The internal logger can be temporarily disabled by setting this value to `false`.
   - **sniffer.logger.rules**: string. The internal logger operates under a certain [set of rules](http://resurface.io/logging-rules) that determines which data is logged. These rules can be passed to the logger as a single-line or a multiline string.
 
-- **sniffer.ignore**: []string. Array containing the names of specific network interfaces to ignore for all nodes. Defaults to `[ "eth0", "lo", "cbr0" ]`
+- **sniffer.ignore**: []string. Array containing the names of specific network interfaces to ignore for all nodes. Defaults to `[ "lo", "cbr0" ]`
 
 - The **sniffer.vpcmirror** subsection refers to capturing traffic from AWS VPC mirroring sessions. A traffic mirroring session can be set up from one ENI (attached to a given EC2 instance), to another ENI attached to any of the EC2 instances that work as Kubernetes nodes for a given EKS cluster. Traffic passing through the first ENI will be mirrored onto the second one, where the network packet sniffer can capture the data from and send it to your Resurface instance. AWS VPC mirrored traffic capture will work only when  **sniffer.provider** is set to `"aws"`.
   - **sniffer.vcpmirror.enabled**: boolean. The sniffer will be configured to capture mirrored traffic by setting this option to `true`. Defaults to `false`.

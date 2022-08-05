@@ -19,7 +19,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: resurface-logger
-        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.1{{ end }}
+        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.2{{ end }}
         imagePullPolicy: IfNotPresent
         env:
         - name: USAGE_LOGGERS_URL
@@ -44,7 +44,7 @@ spec:
           value: {{ print $snifferops }}
       {{ if not (empty $sniffermirrorops) -}}
       - name: resurface-logger-2
-        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.1{{ end }}
+        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.2{{ end }}
         imagePullPolicy: IfNotPresent
         env:
         - name: USAGE_LOGGERS_URL
