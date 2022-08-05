@@ -1,23 +1,14 @@
 apiVersion: v2
 name: resurface
-version: 3.2.0
-description: |+
-  Resurface discovers and alerts on quality and security signatures in your API traffic.
-  3.2.0 — 2022/07/28
-  Added
-    · Change log
-    · Support for data capture using native AWS VPC mirroring.
-    · Support for data capture from both Azure APIM and AWS API Gateway, using event stream consumer apps for both Azure Event Hubs and AWS Kinesis Data Streams.
-    · HAProxy ingress controller subchart as an optional dependency.
-  Changed
-    · Resurface container to version 3.2.2 (Trino 391).
-    · Network sniffer to version 1.2.1 (GoReplay 1.3.3-Resurface).
-  Fixed
-    · README examples.
-  Security
-    · Use secrets to store sensitive values for consumer applications.
-
+version: 3.2.1
 type: application
+description: Resurface discovers and alerts on quality and security signatures in your API traffic.
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Support for a second capture engine to allow multiple forms of sniffer capture simultaneously.
+    - kind: changed
+      description: Upgrade network-sniffer image to 1.2.2
 keywords:
   - API
   - HTTP
