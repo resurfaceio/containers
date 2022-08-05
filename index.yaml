@@ -118,7 +118,7 @@ entries:
           description: Upgrade network-sniffer image to 1.2.2
     apiVersion: v2
     appVersion: 3.2.2
-    created: "2022-08-05T21:26:42.269226891Z"
+    created: "2022-08-05T21:32:02.524406291Z"
     dependencies:
     - condition: ingress.enabled
       name: kubernetes-ingress
@@ -126,7 +126,7 @@ entries:
       version: 1.22.4
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: b5b4554b5f3a89b7d16beb6880bf11aaefa9a30aeaf441f335a7faf4d259d360
+    digest: 159d0927c5367b2cd747347892ecff3db1480ab607ffbb6341b0b7673fe4ee04
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -595,4 +595,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2022-08-05T21:26:42.269397893Z"
+generated: "2022-08-05T21:32:02.524543691Z"
