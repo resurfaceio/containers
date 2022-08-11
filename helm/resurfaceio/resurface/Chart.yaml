@@ -1,14 +1,12 @@
 apiVersion: v2
 name: resurface
-version: 3.2.1
+version: 3.2.2
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/changes: |
-    - kind: added
-      description: Support for a second capture engine to allow multiple forms of sniffer capture simultaneously.
     - kind: changed
-      description: Upgrade network-sniffer image to 1.2.2
+      description: Upgrade network-sniffer image to 1.2.3
 keywords:
   - API
   - HTTP
