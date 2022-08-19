@@ -1,12 +1,12 @@
 apiVersion: v2
 name: resurface
-version: 3.2.2
+version: 3.2.3
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/changes: |
     - kind: changed
-      description: Upgrade network-sniffer image to 1.2.3
+      description: Make Trino's internal comms shared secret available in configmap only when TLS is enabled.
 keywords:
   - API
   - HTTP
