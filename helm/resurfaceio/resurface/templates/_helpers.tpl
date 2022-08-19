@@ -88,8 +88,10 @@ Default options: container resources and persistent volumes
 Common config.properties for both coordinator and workers
 */}}
 {{- define "resurface.config.common" -}}
-internal-communication.shared-secret={{ randAscii 32 | b64enc }}
 http-server.http.port=7700
+{{ if and .Values.ingress.enabled .Values.ingress.tls.enabled -}}
+internal-communication.shared-secret={{ randAscii 32 | b64enc }}
+{{- end }}
 
 query.max-history=20
 query.max-length=1000000
