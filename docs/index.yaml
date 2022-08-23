@@ -113,6 +113,45 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
+          description: Upgrade Resurface image to 3.2.4
+    apiVersion: v2
+    appVersion: 3.2.4
+    created: "2022-08-23T02:38:57.97518082Z"
+    dependencies:
+    - condition: ingress.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.22.4
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 2c3320ae92cd05238949645a6e29ad6f9ce47fde2efada7ced2f8e2345f65ad3
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.2.3/resurface-3.2.3.tgz
+    version: 3.2.3
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
           description: Upgrade network-sniffer image to 1.2.3
     apiVersion: v2
     appVersion: 3.2.2
@@ -634,4 +673,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2022-08-11T21:00:58.492532104Z"
+generated: "2022-08-23T02:38:57.975508109Z"
