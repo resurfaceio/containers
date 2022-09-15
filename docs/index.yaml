@@ -113,47 +113,6 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
-          description: Modified default resource requests for Azure (better fit VM on Kubernetes 1.22)
-        - kind: fixed
-          description: Issue with setting numerical custom config values using yaml files
-    apiVersion: v2
-    appVersion: 3.2.6
-    created: "2022-09-15T01:43:35.161676423Z"
-    dependencies:
-    - condition: ingress.enabled
-      name: kubernetes-ingress
-      repository: https://haproxytech.github.io/helm-charts
-      version: 1.22.4
-    description: Resurface discovers and alerts on quality and security signatures
-      in your API traffic.
-    digest: b670fd318919f66c2c07b69762db3303fd2b19655621772420c31b68859f1dd2
-    home: https://resurface.io
-    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-    keywords:
-    - API
-    - HTTP
-    - Triage
-    - Security
-    - Observability
-    - Logs
-    - Monitoring
-    - Troubleshooting
-    - Alerts
-    maintainers:
-    - email: ramon@resurface.io
-      name: Ramón Márquez
-    - email: rob@resurface.io
-      name: Rob Dickinson
-    name: resurface
-    sources:
-    - https://github.com/resurfaceio
-    type: application
-    urls:
-    - https://github.com/resurfaceio/containers/releases/download/resurface-3.2.5/resurface-3.2.5.tgz
-    version: 3.2.5
-  - annotations:
-      artifacthub.io/changes: |
-        - kind: changed
           description: Upgrade Resurface image to 3.2.6
     apiVersion: v2
     appVersion: 3.2.6
