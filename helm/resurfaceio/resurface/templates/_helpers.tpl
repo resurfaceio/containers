@@ -55,11 +55,12 @@ Default options: container resources and persistent volumes
 */}}
 {{- define "resurface.resources" }}
 {{- $provider := toString .Values.provider -}}
+{{- if eq $provider "azure" -}}
+{{- $cpureq := .Values.custom.resources.cpu | default 5 -}}
+{{- $dbsize := .Values.custom.config.dbsize | default 7 | int -}}
+{{- else -}}
 {{- $cpureq := .Values.custom.resources.cpu | default 6 -}}
 {{- $dbsize := .Values.custom.config.dbsize | default 9 | int -}}
-{{- if eq $provider "azure" -}}
-{{- $cpureq = sub $cpureq 1 -}}
-{{- $dbsize = sub $dbsize 2 -}}
 {{- end -}}
 {{- $dbheap := .Values.custom.config.dbheap | default 3 | int -}}
 {{- $dbslabs := .Values.custom.config.dbslabs | default 3 | int -}}
