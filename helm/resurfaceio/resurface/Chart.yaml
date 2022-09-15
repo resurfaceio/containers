@@ -1,12 +1,14 @@
 apiVersion: v2
 name: resurface
-version: 3.2.4
+version: 3.2.5
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/changes: |
     - kind: changed
-      description: Upgrade Resurface image to 3.2.6
+      description: Modified default resource requests for Azure (better fit VM on Kubernetes 1.22)
+    - kind: fixed
+      description: Issue with setting numerical custom config values using yaml files
 keywords:
   - API
   - HTTP

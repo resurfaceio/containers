@@ -54,17 +54,27 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Default options: container resources and persistent volumes
 */}}
 {{- define "resurface.resources" }}
+{{- $provider := toString .Values.provider -}}
+{{- $cpureq := .Values.custom.resources.cpu | default 6 -}}
+{{- $dbsize := .Values.custom.config.dbsize | default 9 | int -}}
+{{- if eq $provider "azure" -}}
+{{- $cpureq = sub $cpureq 1 -}}
+{{- $dbsize = sub $dbsize 2 -}}
+{{- end -}}
+{{- $dbheap := .Values.custom.config.dbheap | default 3 | int -}}
+{{- $dbslabs := .Values.custom.config.dbslabs | default 3 | int -}}
+{{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) }}
           resources:
             requests:
-              cpu: {{ .Values.custom.resources.cpu | default 6 }}
-              memory: {{ .Values.custom.resources.memory | default 12 | printf "%vGi" }}
+              cpu: {{ $cpureq }}
+              memory: {{ printf "%vGi" $memreq }}
           env:
             - name: DB_SIZE
-              value: {{ .Values.custom.config.dbsize | default 9 | printf "%dg" }}
+              value: {{ printf "%dg" $dbsize }}
             - name: DB_HEAP
-              value: {{ .Values.custom.config.dbheap | default 3 | printf "%dg" }}
+              value: {{ printf "%dg" $dbheap }}
             - name: DB_SLABS
-              value: {{ .Values.custom.config.dbslabs | default 3 | quote }}
+              value: {{ quote $dbslabs }}
             {{- if .Values.custom.config.tz }}
             - name: TZ
               value: {{ .Values.custom.config.tz | quote }}
@@ -74,14 +84,14 @@ Default options: container resources and persistent volumes
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
         {{- $scndict := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" }}
-        {{- $scn := (.Values.custom.storage.classname | default (get $scndict (toString .Values.provider))) }}
+        {{- $scn := (.Values.custom.storage.classname | default (get $scndict $provider)) }}
         {{- if not (empty $scn) }}
         storageClassName: {{ $scn }}
         {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: {{ .Values.custom.storage.size | default 9 | printf "%vGi" }}
+            storage: {{ .Values.custom.storage.size | default $dbsize | printf "%vGi" }}
 {{- end }}
 
 {{/*
