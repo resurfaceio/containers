@@ -1,24 +1,70 @@
 # Contributing to Resurface helm chart
 &copy; 2016-2022 Resurface Labs Inc.
 
-## Testing Local Changes
+## Release Process
 
+### Before installing the chart
+
+```bash
+# check template rendering
+helm template resurface . --debug
+
+# do a dry run with a small cluster
+helm install resurface . --dry-run --debug --create-namespace --namespace resurface --set custom.config.dbsize=3 --set custom.config.dbslabs=1 --set custom.resources.cpu=3 --set custom.resources.memory=7
+
+# do a dry run with cloud provider defaults
+# AKS
+helm install resurface . --create-namespace --namespace resurface --set provider=azure
+
+# EKS
+helm install resurface . --create-namespace --namespace resurface --set provider=aws
 ```
+
+### Test Local Changes
+
+```bash
 # install small cluster
 helm install resurface . --create-namespace --namespace resurface --set custom.config.dbsize=3 --set custom.config.dbslabs=1 --set custom.resources.cpu=3 --set custom.resources.memory=7
 helm upgrade -i resurface . -n resurface --set multinode.enabled=true --set multinode.workers=1 --reuse-values
 
 # enable tls
-helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.7.1 --set installCRDs=true --set prometheus.enabled=false
+helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.9.1 --set installCRDs=true --set prometheus.enabled=false
 helm upgrade resurface . -n resurface --set ingress.tls.enabled=true --set ingress.tls.autoissue.enabled=true --set ingress.tls.autoissue.email=rob@resurface.io --set ingress.tls.host=radware4 --reuse-values
 
 # enable basic auth
 noglob helm upgrade resurface . -n resurface --set auth.enabled=true --set auth.basic.enabled=true --set auth.basic.credentials[0].username=rob --set auth.basic.credentials[0].password=blah1234 --reuse-values
 
 # completely remove everything
-helm uninstall resurface -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
+helm uninstall resurface -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
-## Release Process
+### Test Local Changes with a Cloud Provider
 
-tbd
+```bash
+# AKS
+helm install resurface . --create-namespace --namespace resurface --set provider=azure
+```
+```bash
+# EKS
+helm install resurface . --create-namespace --namespace resurface --set provider=aws
+```
+```bash
+# GKE
+helm install resurface . --create-namespace --namespace resurface --set provider=gcp
+```
+
+### Update Docs
+
+`README.md` and `templates/NOTES.txt` contain information about both the usage of this Helm chart and its status as a Helm release once installed. If it applies, please update each accordingly.
+
+### Update Changelog and Chart version
+
+`Chart.yaml` contains an annotation named `artifacthub.io/changes` where the modifications introduced to the chart can be described briefly. The supported kinds of modification are *added*, *changed*, *deprecated*, *removed*, *fixed* and *security*.
+
+The github action in charge of making new helm releases is automatically triggered when the Chart version is updated. Make sure to test the changes that you have made as indicated above before updating this value. This chart follows semantic versioning (major: usually breaking changes, minor: usually new features/new app version, patch: usually bug fixes).
+
+### Rebase and push
+
+git pull --rebase
+git push
+
