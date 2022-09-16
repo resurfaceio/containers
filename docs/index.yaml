@@ -112,6 +112,47 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
+        - kind: added
+          description: Checksum annotation to auto recreate coordinator and worker pods when internal config is modified
+        - kind: fixed
+          description: Issue with multinode configs due to inconsistent internal shared key assignment
+    apiVersion: v2
+    appVersion: 3.2.6
+    created: "2022-09-16T14:24:51.165090585Z"
+    dependencies:
+    - condition: ingress.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.22.4
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 10be92352f4aa4fce55565eaaae33f0553eea3bd692323d5dc9bbf2108da39b2
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.2.6/resurface-3.2.6.tgz
+    version: 3.2.6
+  - annotations:
+      artifacthub.io/changes: |
         - kind: changed
           description: Modified default resource requests for Azure (better fit VM on Kubernetes 1.22)
         - kind: fixed
@@ -753,4 +794,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2022-09-15T02:01:40.739536089Z"
+generated: "2022-09-16T14:24:51.165308491Z"
