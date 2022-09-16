@@ -4,8 +4,9 @@
 ## Testing Local Changes
 
 ```
-# install local chart
-helm install resurface . --create-namespace --namespace resurface
+# install small cluster
+helm install resurface . --create-namespace --namespace resurface --set custom.config.dbsize=3 --set custom.config.dbslabs=1 --set custom.resources.cpu=3 --set custom.resources.memory=7
+helm upgrade -i resurface . -n resurface --set multinode.enabled=true --set multinode.workers=1 --reuse-values
 
 # enable tls
 helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.7.1 --set installCRDs=true --set prometheus.enabled=false
@@ -15,10 +16,7 @@ helm upgrade resurface . -n resurface --set ingress.tls.enabled=true --set ingre
 noglob helm upgrade resurface . -n resurface --set auth.enabled=true --set auth.basic.enabled=true --set auth.basic.credentials[0].username=rob --set auth.basic.credentials[0].password=blah1234 --reuse-values
 
 # completely remove everything
-helm uninstall resurface -n resurface; kubectl delete namespace resurface
-kubectl delete clusterrole kubernetes-ingress
-kubectl delete clusterrolebinding kubernetes-ingress
-kubectl delete ingressclass haproxy
+helm uninstall resurface -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
 ## Release Process
