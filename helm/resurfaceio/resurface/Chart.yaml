@@ -1,14 +1,14 @@
 apiVersion: v2
 name: resurface
-version: 3.2.5
+version: 3.2.6
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/changes: |
-    - kind: changed
-      description: Modified default resource requests for Azure (better fit VM on Kubernetes 1.22)
+    - kind: added
+      description: Checksum annotation to auto recreate coordinator and worker pods when internal config is modified
     - kind: fixed
-      description: Issue with setting numerical custom config values using yaml files
+      description: Issue with multinode configs due to inconsistent internal shared key assignment
 keywords:
   - API
   - HTTP

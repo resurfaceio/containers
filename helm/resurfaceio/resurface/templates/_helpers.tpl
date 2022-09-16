@@ -90,11 +90,35 @@ Default options: container resources and persistent volumes
             storage: {{ .Values.custom.storage.size | default $dbsize | printf "%vGi" }}
 {{- end }}
 
+
+{{/*
+Coordinator config.properties
+*/}}
+{{- define "resurface.config.coordinator" -}}
+coordinator=true
+discovery.uri=http://localhost:7700
+node-scheduler.include-coordinator=true
+{{ if .Values.ingress.tls.enabled -}}
+http-server.process-forwarded=true
+http-server.authentication.allow-insecure-over-http=true
+{{ include "resurface.config.auth" . -}}
+{{- end }}
+{{ include "resurface.config.common" . -}}
+{{- end -}}
+
+{{/*
+Worker config.properties
+*/}}
+{{- define "resurface.config.worker" -}}
+coordinator=false
+discovery.uri=http://coordinator:7700
+{{ include "resurface.config.common" . -}}
+{{- end -}}
+
 {{/*
 Common config.properties for both coordinator and workers
 */}}
 {{- define "resurface.config.common" -}}
-internal-communication.shared-secret={{ randAscii 32 | b64enc }}
 http-server.http.port=7700
 
 query.max-history=20
@@ -103,12 +127,12 @@ query.max-memory=1000MB
 query.max-memory-per-node=1000MB
 query.max-total-memory=1000MB
 query.min-expire-age=1s
-{{- end }}
+{{- end -}}
 
 {{/*
 Auth-related config.properties for the coordinator
 */}}
-{{- define "resurface.config.auth" }}
+{{- define "resurface.config.auth" -}}
 {{- if .Values.auth.enabled -}}
 {{- $builder := list -}}
 {{- if .Values.auth.oauth2.enabled -}}
@@ -135,7 +159,7 @@ http-server.authentication.oauth2.client-secret={{ required "The client secret i
 http-server.authentication.jwt.key-file={{ required "URL to a JWKS service or the path to a PEM or HMAC file is required for JWT configuration" .Values.auth.jwt.jwksurl }}
 {{- end -}}
 {{- end -}}
-{{- end }}
+{{- end -}}
 
 {{/*
 Auth file

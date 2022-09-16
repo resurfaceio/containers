@@ -13,6 +13,8 @@ spec:
       db.resurface.io/role: coordinator
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include "resurface.config.coordinator" . | sha256sum }}
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
         db.resurface.io/role: coordinator
