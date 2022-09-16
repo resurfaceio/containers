@@ -64,7 +64,7 @@ helm install resurface . --create-namespace --namespace resurface --set provider
 The github action in charge of making new helm releases is automatically triggered when the Chart version is updated. Make sure to test the changes that you have made as indicated above before updating this value. This chart follows semantic versioning (major: usually breaking changes, minor: usually new features/new app version, patch: usually bug fixes).
 
 ### Rebase and push
-
+```bash
 git pull --rebase
 git push
-
+```
