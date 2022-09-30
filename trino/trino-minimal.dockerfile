@@ -2,11 +2,11 @@ FROM resurfaceio/alpine-jdk17:3.16.2b
 
 # Download and configure Trino
 # Do as one big step to reduce container size!
-RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/397/trino-server-397.tar.gz &&\
+RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/398/trino-server-398.tar.gz &&\
 mkdir -p /opt &&\
-tar -xf trino-server-397.tar.gz -C /opt &&\
-mv /opt/trino-server-397 /opt/trino &&\
-rm trino-server-397.tar.gz &&\
+tar -xf trino-server-398.tar.gz -C /opt &&\
+mv /opt/trino-server-398 /opt/trino &&\
+rm trino-server-398.tar.gz &&\
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' /opt/trino/bin/launcher.py &&\
 rm -rf /opt/trino/plugin/accumulo &&\
 rm -rf /opt/trino/plugin/atop &&\
@@ -24,6 +24,7 @@ rm -rf /opt/trino/plugin/geospatial &&\
 rm -rf /opt/trino/plugin/google-sheets &&\
 rm -rf /opt/trino/plugin/hive &&\
 rm -rf /opt/trino/plugin/http-event-listener &&\
+rm -rf /opt/trino/plugin/hudi &&\
 rm -rf /opt/trino/plugin/iceberg &&\
 rm -rf /opt/trino/plugin/jmx &&\
 rm -rf /opt/trino/plugin/kafka &&\
