@@ -4,6 +4,20 @@ Capture detailed API calls from network traffic to your own [data lake](http://r
 
 Dockerfiles and scripts to build and push official `resurfaceio/network-sniffer` images
 
+## Capturing network traffic
+
+Resurface uses [GoReplay](https://github.com/resurfaceio/goreplay) to capture HTTP traffic directly from network devices in userspace. Think tcpdump or Wireshark but without having to go through any of the packet reassembly or parsing process yourself.
+
+Our sniffer runs as an independent containerized application. It captures packets from network interfaces, reassembles them, parses both HTTP request and response, packages the entire API calls, and sends it to your Resurface DB instance automatically.
+
+After modifying the `.env` file with the required environment variables, just run the following docker command in the host machine:
+
+```bash
+docker run -d --name netsniffer --env-file .env --network host resurfaceio/network-sniffer:1.2.3
+```
+
+The `--network host` option must be specified in to capture traffic from other containers (or non-containerized apps) running in the machine.
+
 ## Building multi-architecture images with docker buildx
 
 ### Compiling from source
@@ -46,17 +60,3 @@ the same `Dockerfile`, with both build and runtime stages execution happening na
 The script will ask for an AWS profile in order to run the `aws ec2` commands properly. You must be 
 logged in your docker client and be part of the `resurfaceio` organization in order to push images
 to the `resurfaceio/network-sniffer` repository.
-
-## Capturing network traffic
-
-Resurface uses [GoReplay](https://github.com/resurfaceio/goreplay) to capture HTTP traffic directly from network devices in userspace. Think tcpdump or Wireshark but without having to go through any of the packet reassembly or parsing process yourself.
-
-Our sniffer runs as an independent containerized application. It captures packets from network interfaces, reassembles them, parses both HTTP request and response, packages the entire API calls, and sends it to your Resurface DB instance automatically.
-
-After modifying the `.env` file with the required environment variables, just run the following docker command in the host machine:
-
-```bash
-docker run -d --name netsniffer --env-file .env --network host resurfaceio/network-sniffer:1.2.3
-```
-
-The `--network host` option must be specified in to capture traffic from other containers (or non-containerized apps) running in the machine.
