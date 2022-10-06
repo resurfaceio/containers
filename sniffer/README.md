@@ -14,7 +14,7 @@ another for running the binary file itself.
 Docker buildx selects the base images according to the `--platform` option, and it can usually
 generate binaries for the target architecture using binaries from the client's native
 architecture. However, this not always works, especially if all the necessary libraries for the
-target architecture must be available and pre-compiled at build time. Because of this, **The
+target architecture must be available and pre-compiled at build time. Because of this, **the
 `network-sniffer` image can only be built from the same architecture as the target one**.
 
 
