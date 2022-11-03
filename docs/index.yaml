@@ -112,6 +112,48 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Upgrade Resurface image to 3.3.13
+        - kind: changed
+          description: Upgrade HAProxy dependency to 1.24.0
+      artifacthub.io/containsSecurityUpdates: "true"
+    apiVersion: v2
+    appVersion: 3.3.13
+    created: "2022-11-03T14:40:18.903090466Z"
+    dependencies:
+    - condition: ingress.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.24.0
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 92bb490afec533cc89e7ec39cb0e36947d8f7e9b4fd38b590ced81e0ca6d0f2d
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.3.0/resurface-3.3.0.tgz
+    version: 3.3.0
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Checksum annotation to auto recreate coordinator and worker pods when internal config is modified
         - kind: fixed
@@ -794,4 +836,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2022-09-16T14:24:51.165308491Z"
+generated: "2022-11-03T14:40:18.903281266Z"
