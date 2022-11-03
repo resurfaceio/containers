@@ -21,11 +21,10 @@ helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
 {{ if and .Values.ingress.enabled .Values.ingress.tls.enabled }}
 · You can find the API Explorer for your Resurface instance here: https://{{ .Values.ingress.tls.host}}/ui
 {{- else if .Values.ingress.enabled }}
-· If you haven't already, please install the Ingress Controller to expose the internal services: https://resurface.io/docs#installing-the-ingress-controller
 
 · Once the EXTERNAL IP for the Ingress Controller has been assigned, you can get the URL of the API Explorer for your Resurface instance by running the following command:
 
-echo http://$(kubectl get svc kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")/ui
+echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")/ui
 
 {{- else }}
 · You can get the URL of the API Explorer for your Resurface instance by running the following command:

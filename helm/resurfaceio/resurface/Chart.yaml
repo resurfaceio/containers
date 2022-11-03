@@ -1,14 +1,15 @@
 apiVersion: v2
 name: resurface
-version: 3.2.6
+version: 3.3.0
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
+  artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/changes: |
-    - kind: added
-      description: Checksum annotation to auto recreate coordinator and worker pods when internal config is modified
-    - kind: fixed
-      description: Issue with multinode configs due to inconsistent internal shared key assignment
+    - kind: changed
+      description: Upgrade Resurface image to 3.3.13
+    - kind: changed
+      description: Upgrade HAProxy dependency to 1.24.0
 keywords:
   - API
   - HTTP
@@ -22,7 +23,7 @@ keywords:
 home: https://resurface.io
 dependencies:
   - name: kubernetes-ingress
-    version: "1.22.4"
+    version: "1.24.0"
     repository: https://haproxytech.github.io/helm-charts
     condition: ingress.enabled
 maintainers:
@@ -33,4 +34,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.3.9
+appVersion: 3.3.13
