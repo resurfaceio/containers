@@ -1,4 +1,4 @@
-FROM resurfaceio/alpine-jdk17:3.16.3a
+FROM resurfaceio/alpine-jdk17:3.17.0a
 
 # Download and configure Trino
 # Do as one big step to reduce container size!
