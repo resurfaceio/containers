@@ -112,6 +112,48 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
+        - kind: added
+          description: Support for IBM OpenShift
+        - kind: changed
+          description: Upgrade HAProxy dependency to 1.25.1
+      artifacthub.io/containsSecurityUpdates: "false"
+    apiVersion: v2
+    appVersion: 3.3.13
+    created: "2022-12-13T01:38:39.395238957Z"
+    dependencies:
+    - condition: ingress.controller.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.25.1
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: d301a41932a74758149a2720987fb52f5ac359e3d3a9a694e1c12291be298252
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.4.0/resurface-3.4.0.tgz
+    version: 3.4.0
+  - annotations:
+      artifacthub.io/changes: |
         - kind: changed
           description: Upgrade Resurface image to 3.3.13
         - kind: changed
@@ -836,4 +878,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2022-11-03T14:40:18.903281266Z"
+generated: "2022-12-13T01:38:39.395455166Z"
