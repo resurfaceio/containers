@@ -1,3 +1,4 @@
+{{- $tlsenabled := or .Values.ingress.tls.enabled (eq .Values.provider "ibm-openshift") -}}
 
 Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .Release.IsUpgrade }}upgraded{{end}}.
 
@@ -7,8 +8,8 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
 {{- if .Values.ingress.enabled }}
-· TLS is{{ if not .Values.ingress.tls.enabled }} not{{ end }} enabled.
-· Authentication is{{ if and .Values.ingress.tls.enabled .Values.auth.enabled }} enabled.
+· TLS is{{ if not $tlsenabled }} not{{ end }} enabled.
+· Authentication is{{ if and $tlsenabled .Values.auth.enabled }} enabled.
   · Basic auth is{{ if not .Values.auth.basic.enabled }} not{{end}} enabled.
   · JWT auth is{{ if not .Values.auth.jwt.enabled }} not{{end}} enabled.
   · OAuth 2.0 is{{ if not .Values.auth.oauth2.enabled }} not{{end}} enabled.
@@ -18,16 +19,16 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 · Use the following command to list all the resources deployed with this release:
 
 helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
-{{ if and .Values.ingress.enabled .Values.ingress.tls.enabled }}
-· You can find the API Explorer for your Resurface instance here: https://{{ .Values.ingress.tls.host}}/ui
+{{ if and .Values.ingress.enabled $tlsenabled }}
+· You can find the UI for your Resurface instance here: https://{{ .Values.ingress.tls.host }}/ui
 {{- else if .Values.ingress.enabled }}
 
-· Once the EXTERNAL IP for the Ingress Controller has been assigned, you can get the URL of the API Explorer for your Resurface instance by running the following command:
+· Once the EXTERNAL IP for the Ingress Controller has been assigned, you can get the URL of the UI for your Resurface instance by running the following command:
 
 echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")/ui
 
 {{- else }}
-· You can get the URL of the API Explorer for your Resurface instance by running the following command:
+· You can get the URL of the UI for your Resurface instance by running the following command:
 
 echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} coordinator --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.custom.service.apiexplorer.port) 80 }}:{{ .Values.custom.service.apiexplorer.port | default 7700 }}{{ end }}/
 {{- end }}

@@ -19,6 +19,7 @@ spec:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
         db.resurface.io/role: coordinator
     spec:
+      serviceAccountName: resurface-sa
       volumes:
         - name: config-volume
           configMap:

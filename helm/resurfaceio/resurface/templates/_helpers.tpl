@@ -56,7 +56,7 @@ Default options: container resources and persistent volumes
 {{- define "resurface.resources" }}
 {{- $provider := toString .Values.provider -}}
 {{- $cpureq := .Values.custom.resources.cpu | default (eq $provider "azure" | ternary 5 6) -}}
-{{- $dbsize := .Values.custom.config.dbsize | default (eq $provider "azure" | ternary 7 9) | int -}}
+{{- $dbsize := .Values.custom.config.dbsize | default (or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9) | int -}}
 {{- $dbheap := .Values.custom.config.dbheap | default 3 | int -}}
 {{- $dbslabs := .Values.custom.config.dbslabs | default 3 | int -}}
 {{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) }}
@@ -98,7 +98,7 @@ Coordinator config.properties
 coordinator=true
 discovery.uri=http://localhost:7700
 node-scheduler.include-coordinator=true
-{{ if .Values.ingress.tls.enabled -}}
+{{ if or .Values.ingress.tls.enabled (eq .Values.provider "ibm-openshift") -}}
 http-server.process-forwarded=true
 http-server.authentication.allow-insecure-over-http=true
 {{ include "resurface.config.auth" . -}}

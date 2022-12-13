@@ -1,15 +1,15 @@
 apiVersion: v2
 name: resurface
-version: 3.3.0
+version: 3.4.0
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
-  artifacthub.io/containsSecurityUpdates: "true"
+  artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
+    - kind: added
+      description: Support for IBM OpenShift
     - kind: changed
-      description: Upgrade Resurface image to 3.3.13
-    - kind: changed
-      description: Upgrade HAProxy dependency to 1.24.0
+      description: Upgrade HAProxy dependency to 1.25.1
 keywords:
   - API
   - HTTP
@@ -23,9 +23,9 @@ keywords:
 home: https://resurface.io
 dependencies:
   - name: kubernetes-ingress
-    version: "1.24.0"
+    version: "1.25.1"
     repository: https://haproxytech.github.io/helm-charts
-    condition: ingress.enabled
+    condition: ingress.controller.enabled
 maintainers:
   - name: Ramón Márquez
     email: ramon@resurface.io

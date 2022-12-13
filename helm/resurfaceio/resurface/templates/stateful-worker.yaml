@@ -19,6 +19,7 @@ spec:
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: resurface-sa
       volumes:
         - name: config-volume
           configMap:

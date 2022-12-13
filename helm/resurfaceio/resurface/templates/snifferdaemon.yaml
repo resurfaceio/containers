@@ -21,6 +21,11 @@ spec:
       - name: resurface-logger
         image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.3{{ end }}
         imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+          capabilities:
+            add: [ "NET_ADMIN", "NET_RAW" ]
         env:
         - name: USAGE_LOGGERS_URL
           value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}

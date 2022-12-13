@@ -4,9 +4,14 @@ kind: Ingress
 metadata:
   name: {{ include "resurface.fullname" . }}-ingress
   annotations:
+    {{- if eq .Values.provider "ibm-openshift" }}
+    route.openshift.io/termination: edge
+    haproxy.router.openshift.io/rewrite-target: /
+    {{- else }}
     haproxy.org/load-balance: "roundrobin"
     {{- if .Values.ingress.importer.expose }}
     haproxy.org/path-rewrite: {{ .Values.ingress.importer.path | default "/fluke" }}/(.*) /\1
+    {{- end }}
     {{- end }}
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
     cert-manager.io/issuer: {{ include "resurface.fullname" . }}-letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
@@ -17,7 +22,9 @@ spec:
       name: kubernetes-ingress-default-backend
       port:
         number: 8080
+  {{- if ne .Values.provider "ibm-openshift" }}
   ingressClassName: haproxy
+  {{- end }}
   rules:
     - http:
         paths:
@@ -37,10 +44,12 @@ spec:
                 port:
                   name: fluke-svcport
           {{- end }}
-      {{- if .Values.ingress.tls.enabled }}
-      host: {{ .Values.ingress.tls.host }}
+      {{ if .Values.ingress.tls.enabled -}}
+      host: {{ required "A fully qualified domain name is needed when TLS is enabled" .Values.ingress.tls.host }}
+      {{- else if eq .Values.provider "ibm-openshift" -}}
+      host: {{ include "resurface.fullname" . }}.{{ required "The value ingress.tls.host must be set with the ingress subdomain name when running on OpenShift" .Values.ingress.tls.host }}
       {{- end }}
-  {{- if .Values.ingress.tls.enabled }}
+  {{- if and .Values.ingress.tls.enabled (ne .Values.provider "ibm-openshift") }}
   tls:
     - secretName: {{ .Values.ingress.tls.byoc.secretname | default (printf "%s-tls" (include "resurface.fullname" . )) }}
       hosts:

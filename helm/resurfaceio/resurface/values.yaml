@@ -5,6 +5,8 @@ provider:
 
 ingress:
   enabled: true
+  controller:
+    enabled: true
   importer:
     expose: true
     path: "/fluke"
