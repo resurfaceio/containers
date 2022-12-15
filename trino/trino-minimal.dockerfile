@@ -1,12 +1,16 @@
-FROM resurfaceio/alpine-jdk17:3.17.0a
+FROM resurfaceio/alpine-jdk17:3.17.0b
+
+# Create and switch to non-root user
+RUN addgroup -S runtime && adduser -H -S runtime -G runtime && mkdir -p /opt/trino && chown runtime:runtime /opt/trino
+USER runtime
+WORKDIR /tmp
 
 # Download and configure Trino
 # Do as one big step to reduce container size!
 RUN wget --quiet https://repo1.maven.org/maven2/io/trino/trino-server/400/trino-server-400.tar.gz &&\
-mkdir -p /opt &&\
-tar -xf trino-server-400.tar.gz -C /opt &&\
-mv /opt/trino-server-400 /opt/trino &&\
-rm trino-server-400.tar.gz &&\
+tar -xf trino-server-400.tar.gz &&\
+cp -R ./trino-server-400/* /opt/trino &&\
+rm -rf /tmp/* &&\
 sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python3|' /opt/trino/bin/launcher.py &&\
 rm -rf /opt/trino/plugin/accumulo &&\
 rm -rf /opt/trino/plugin/atop &&\
@@ -57,6 +61,6 @@ rm -rf /opt/trino/plugin/tpch &&\
 wget --quiet https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.13.4.1/jackson-databind-2.13.4.1.jar &&\
 rm -f /opt/trino/lib/jackson-databind-2.13.4.jar && cp jackson-databind-2.13.4.1.jar /opt/trino/lib &&\
 rm -f /opt/trino/plugin/password-authenticators/jackson-databind-2.13.4.jar && cp jackson-databind-2.13.4.1.jar /opt/trino/plugin/password-authenticators &&\
-rm -f jackson-databind-2.13.4.1.jar
+rm -rf /tmp/*
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
