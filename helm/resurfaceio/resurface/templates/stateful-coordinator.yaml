@@ -20,6 +20,11 @@ spec:
         db.resurface.io/role: coordinator
     spec:
       serviceAccountName: resurface-sa
+      securityContext:
+        runAsUser: 100
+        runAsGroup: 101
+        fsGroup: 101
+        fsGroupChangePolicy: "OnRootMismatch"
       volumes:
         - name: config-volume
           configMap:

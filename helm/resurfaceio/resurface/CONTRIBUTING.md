@@ -14,28 +14,28 @@ helm install resurface . --dry-run --debug --create-namespace --namespace resurf
 
 # do a dry run with cloud provider defaults
 # AKS
-helm install resurface . --create-namespace --namespace resurface --set provider=azure
+helm install resurface . --dry-run --debug --create-namespace --namespace resurface --set provider=azure
 
 # EKS
-helm install resurface . --create-namespace --namespace resurface --set provider=aws
+helm install resurface . --dry-run --debug --create-namespace --namespace resurface --set provider=aws
 ```
 
 ### Test Local Changes
 
 ```bash
-# install small cluster
+# install small 2-node cluster
 helm install resurface . --create-namespace --namespace resurface --set custom.config.dbsize=3 --set custom.config.dbslabs=1 --set custom.resources.cpu=3 --set custom.resources.memory=7
 helm upgrade -i resurface . -n resurface --set multinode.enabled=true --set multinode.workers=1 --reuse-values
 
 # enable tls
-helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.9.1 --set installCRDs=true --set prometheus.enabled=false
+helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.10.1 --set installCRDs=true --set prometheus.enabled=false
 helm upgrade resurface . -n resurface --set ingress.tls.enabled=true --set ingress.tls.autoissue.enabled=true --set ingress.tls.autoissue.email=rob@resurface.io --set ingress.tls.host=radware4 --reuse-values
 
 # enable basic auth
 noglob helm upgrade resurface . -n resurface --set auth.enabled=true --set auth.basic.enabled=true --set auth.basic.credentials[0].username=rob --set auth.basic.credentials[0].password=blah1234 --reuse-values
 
 # completely remove everything
-helm uninstall resurface -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
+helm uninstall resurface -n resurface; kubectl delete $(kubectl get pvc -n resurface -o name) -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
 ### Test Local Changes with a Cloud Provider
