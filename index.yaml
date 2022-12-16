@@ -113,13 +113,13 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
-          description: Support for non-root user in StatefulSet security context
+          description: Support for non-root user in security context
         - kind: changed
           description: Upgrade Resurface image to 3.4.21
       artifacthub.io/containsSecurityUpdates: "false"
     apiVersion: v2
     appVersion: 3.4.21
-    created: "2022-12-16T00:15:03.932937573Z"
+    created: "2022-12-16T00:42:03.188403814Z"
     dependencies:
     - condition: ingress.controller.enabled
       name: kubernetes-ingress
@@ -127,7 +127,7 @@ entries:
       version: 1.25.1
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: 82fc119ab02bc6b497e00469baf6b7cec065f36ef46a897b8bee4288e946d76f
+    digest: 29c6b3176da8bd4e1e6ee378d56b6c65161a214181007640b06f9cc2066be4c4
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -920,4 +920,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2022-12-16T00:15:03.933154576Z"
+generated: "2022-12-16T00:42:03.188700428Z"
