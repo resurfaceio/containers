@@ -1,4 +1,4 @@
-FROM resurfaceio/alpine-jdk17:3.17.0b
+FROM resurfaceio/alpine-jdk17:3.17.0c
 
 # Create and switch to non-root user
 RUN addgroup -S runtime && adduser -H -S runtime -G runtime && mkdir -p /opt/trino && chown runtime:runtime /opt/trino
