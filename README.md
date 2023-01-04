@@ -6,10 +6,8 @@ Open source containers and helm charts.
 ## Available modules
 
 * helm - sources for Resurface database and sniffer deployments
-* alpine - patched alpine containers with Java & Python 3 preinstalled
-* trino - for lightweight Trino containers based on alpine
-* test - for automated testing with python across different environments 
 * compose - for local cluster testing (not for production)
+* test - for automated testing with python across different environments
 
 ---
 <small>&copy; 2016-2023 <a href="https://resurface.io">Resurface Labs Inc.</a></small>
