@@ -2,7 +2,18 @@ version: '3.2'
 
 services:
   coordinator:
-    image: resurfaceio/resurface:3.5.0p22
+    image: resurfaceio/resurface-iceberg:3.5.0p22
+    environment:
+      - DB_HEAP=8g
+      - DB_SIZE=9g
+      - DB_SLABS=3
+      - SHARD_SIZE=3g
+      - HIVE_S3_URL=http://192.168.168.12:9000
+      - HIVE_S3_USER=minio
+      - HIVE_S3_SECRET=minio123
+      - HIVE_S3_LOCATION=s3a://iceberg.resurface/
+      - POLLING_CYCLE=fast
+      - POLLING_ICEBERG_MILLIS=20000
     ports:
       - 7700
       - 7701
@@ -10,7 +21,16 @@ services:
       - /db
 
   worker:
-    image: resurfaceio/resurface-worker:3.5.0p22
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p22
+    environment:
+      - DB_HEAP=8g
+      - DB_SIZE=9g
+      - DB_SLABS=3
+      - SHARD_SIZE=3g
+      - HIVE_S3_URL=http://192.168.168.12:9000
+      - HIVE_S3_USER=minio
+      - HIVE_S3_SECRET=minio123
+      - HIVE_S3_LOCATION=s3a://iceberg.resurface/
     ports:
       - 7700
       - 7701
