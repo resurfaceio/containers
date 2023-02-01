@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   coordinator:
-    image: resurfaceio/resurface-iceberg:3.5.0p22
+    image: resurfaceio/resurface-iceberg:3.5.0p24
     environment:
       - DB_HEAP=8g
       - DB_SIZE=9g
@@ -21,7 +21,7 @@ services:
       - /db
 
   worker:
-    image: resurfaceio/resurface-iceberg-worker:3.5.0p22
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p24
     environment:
       - DB_HEAP=8g
       - DB_SIZE=9g
