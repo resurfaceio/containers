@@ -1,41 +1,76 @@
 version: '3.2'
 
 services:
+  minio:
+    image: 'minio/minio:latest'
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio-data:/data
+    command: server --console-address ":9001" /data
+
   coordinator:
-    image: resurfaceio/resurface-iceberg:3.5.0p24
+    image: resurfaceio/resurface-iceberg:3.5.0p26
+    depends_on:
+      - minio
     environment:
       - DB_HEAP=8g
       - DB_SIZE=9g
       - DB_SLABS=3
       - SHARD_SIZE=3g
-      - HIVE_S3_URL=http://192.168.168.12:9000
+      - HIVE_S3_URL=http://minio:9000
       - HIVE_S3_USER=minio
       - HIVE_S3_SECRET=minio123
       - HIVE_S3_LOCATION=s3a://iceberg.resurface/
-      - POLLING_CYCLE=fast
+      - POLLING_CYCLE=off
       - POLLING_ICEBERG_MILLIS=20000
     ports:
       - 7700
       - 7701
-    tmpfs:
-      - /db
+    volumes:
+      - resurface-coordinator:/db
 
-  worker:
-    image: resurfaceio/resurface-iceberg-worker:3.5.0p24
+  worker1:
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p26
+    depends_on:
+      - coordinator
     environment:
       - DB_HEAP=8g
       - DB_SIZE=9g
       - DB_SLABS=3
       - SHARD_SIZE=3g
-      - HIVE_S3_URL=http://192.168.168.12:9000
+      - HIVE_S3_URL=http://minio:9000
       - HIVE_S3_USER=minio
       - HIVE_S3_SECRET=minio123
       - HIVE_S3_LOCATION=s3a://iceberg.resurface/
     ports:
       - 7700
       - 7701
-    tmpfs:
-      - /db
+    volumes:
+      - resurface-worker1:/db
+
+  worker2:
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p26
+    depends_on:
+      - coordinator
+    environment:
+      - DB_HEAP=8g
+      - DB_SIZE=9g
+      - DB_SLABS=3
+      - SHARD_SIZE=3g
+      - HIVE_S3_URL=http://minio:9000
+      - HIVE_S3_USER=minio
+      - HIVE_S3_SECRET=minio123
+      - HIVE_S3_LOCATION=s3a://iceberg.resurface/
+    ports:
+      - 7700
+      - 7701
+    volumes:
+      - resurface-worker2:/db
 
   coordinator_proxy:
     image: eeacms/haproxy
@@ -58,14 +93,25 @@ services:
     platform: linux/amd64
     depends_on:
       - coordinator
-      - worker
+      - worker1
+      - worker2
     ports:
       - '7701:7701'
     environment:
       FRONTEND_PORT: "7701"
-      BACKENDS: "coordinator worker"
+      BACKENDS: "coordinator worker1 worker2"
       BACKENDS_PORT: "7701"
       DNS_ENABLED: "True"
       HTTPCHK: "GET /"
       INTER: "5s"
       LOG_LEVEL: "info"
+
+volumes:
+  minio-data:
+    driver: local
+  resurface-coordinator:
+    driver: local
+  resurface-worker1:
+    driver: local
+  resurface-worker2:
+    driver: local
