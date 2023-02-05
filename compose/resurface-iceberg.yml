@@ -14,7 +14,7 @@ services:
     command: server --console-address ":9001" /data
 
   coordinator:
-    image: resurfaceio/resurface-iceberg:3.5.0p26
+    image: resurfaceio/resurface-iceberg:3.5.0p28
     depends_on:
       - minio
     environment:
@@ -35,7 +35,7 @@ services:
       - resurface-coordinator:/db
 
   worker1:
-    image: resurfaceio/resurface-iceberg-worker:3.5.0p26
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p28
     depends_on:
       - coordinator
     environment:
@@ -54,7 +54,7 @@ services:
       - resurface-worker1:/db
 
   worker2:
-    image: resurfaceio/resurface-iceberg-worker:3.5.0p26
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p28
     depends_on:
       - coordinator
     environment:
