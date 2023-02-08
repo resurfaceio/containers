@@ -14,28 +14,31 @@ services:
     command: server --console-address ":9001" /data
 
   coordinator:
-    image: resurfaceio/resurface-iceberg:3.5.0p28
+    image: resurfaceio/resurface-iceberg:3.5.0p32
     depends_on:
       - minio
     environment:
       - DB_HEAP=8g
       - DB_SIZE=9g
       - DB_SLABS=3
-      - SHARD_SIZE=3g
-      - HIVE_S3_URL=http://minio:9000
-      - HIVE_S3_USER=minio
-      - HIVE_S3_SECRET=minio123
-      - HIVE_S3_LOCATION=s3a://iceberg.resurface/
       - POLLING_CYCLE=off
-      - POLLING_ICEBERG_MILLIS=20000
+      - SHARD_SIZE=3g
+      - TZ=America/Denver
+      - ICEBERG_FILE_FORMAT=ORC
+      - ICEBERG_COMPRESSION_CODEC=ZSTD
+      - ICEBERG_POLLING_MILLIS=20000
+      - ICEBERG_S3_URL=http://minio:9000
+      - ICEBERG_S3_USER=minio
+      - ICEBERG_S3_SECRET=minio123
+      - ICEBERG_S3_LOCATION=s3a://iceberg.resurface/
     ports:
       - 7700
       - 7701
     volumes:
       - resurface-coordinator:/db
 
-  worker1:
-    image: resurfaceio/resurface-iceberg-worker:3.5.0p28
+  workerA:
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p32
     depends_on:
       - coordinator
     environment:
@@ -43,18 +46,22 @@ services:
       - DB_SIZE=9g
       - DB_SLABS=3
       - SHARD_SIZE=3g
-      - HIVE_S3_URL=http://minio:9000
-      - HIVE_S3_USER=minio
-      - HIVE_S3_SECRET=minio123
-      - HIVE_S3_LOCATION=s3a://iceberg.resurface/
+      - TZ=America/Denver
+      - ICEBERG_FILE_FORMAT=ORC
+      - ICEBERG_COMPRESSION_CODEC=ZSTD
+      - ICEBERG_POLLING_MILLIS=20000
+      - ICEBERG_S3_URL=http://minio:9000
+      - ICEBERG_S3_USER=minio
+      - ICEBERG_S3_SECRET=minio123
+      - ICEBERG_S3_LOCATION=s3a://iceberg.resurface/
     ports:
       - 7700
       - 7701
     volumes:
-      - resurface-worker1:/db
+      - resurface-workerA:/db
 
-  worker2:
-    image: resurfaceio/resurface-iceberg-worker:3.5.0p28
+  workerB:
+    image: resurfaceio/resurface-iceberg-worker:3.5.0p32
     depends_on:
       - coordinator
     environment:
@@ -62,15 +69,19 @@ services:
       - DB_SIZE=9g
       - DB_SLABS=3
       - SHARD_SIZE=3g
-      - HIVE_S3_URL=http://minio:9000
-      - HIVE_S3_USER=minio
-      - HIVE_S3_SECRET=minio123
-      - HIVE_S3_LOCATION=s3a://iceberg.resurface/
+      - TZ=America/Denver
+      - ICEBERG_FILE_FORMAT=ORC
+      - ICEBERG_COMPRESSION_CODEC=ZSTD
+      - ICEBERG_POLLING_MILLIS=20000
+      - ICEBERG_S3_URL=http://minio:9000
+      - ICEBERG_S3_USER=minio
+      - ICEBERG_S3_SECRET=minio123
+      - ICEBERG_S3_LOCATION=s3a://iceberg.resurface/
     ports:
       - 7700
       - 7701
     volumes:
-      - resurface-worker2:/db
+      - resurface-workerB:/db
 
   coordinator_proxy:
     image: eeacms/haproxy
@@ -93,13 +104,13 @@ services:
     platform: linux/amd64
     depends_on:
       - coordinator
-      - worker1
-      - worker2
+      - workerA
+      - workerB
     ports:
       - '7701:7701'
     environment:
       FRONTEND_PORT: "7701"
-      BACKENDS: "coordinator worker1 worker2"
+      BACKENDS: "coordinator workerA workerB"
       BACKENDS_PORT: "7701"
       DNS_ENABLED: "True"
       HTTPCHK: "GET /"
@@ -111,7 +122,7 @@ volumes:
     driver: local
   resurface-coordinator:
     driver: local
-  resurface-worker1:
+  resurface-workerA:
     driver: local
-  resurface-worker2:
+  resurface-workerB:
     driver: local
