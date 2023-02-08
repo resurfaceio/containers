@@ -2,6 +2,7 @@ version: '3.2'
 
 services:
   minio:
+    container_name: minio
     image: 'minio/minio:latest'
     environment:
       MINIO_ACCESS_KEY: minio
@@ -14,6 +15,7 @@ services:
     command: server --console-address ":9001" /data
 
   coordinator:
+    container_name: resurface
     image: resurfaceio/resurface-iceberg:3.5.0p32
     depends_on:
       - minio
@@ -38,6 +40,7 @@ services:
       - resurface-coordinator:/db
 
   workerA:
+    container_name: resurface-workerA
     image: resurfaceio/resurface-iceberg-worker:3.5.0p32
     depends_on:
       - coordinator
@@ -61,6 +64,7 @@ services:
       - resurface-workerA:/db
 
   workerB:
+    container_name: resurface-workerB
     image: resurfaceio/resurface-iceberg-worker:3.5.0p32
     depends_on:
       - coordinator

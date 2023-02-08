@@ -9,7 +9,7 @@ This configuration is intended for testing clusters with a variable number of no
 ```
 wget https://raw.githubusercontent.com/resurfaceio/containers/master/compose/resurface.yml
 docker-compose -f resurface.yml up --detach --scale worker=1
-docker-compose -f resurface.yml down --remove-orphans && docker volume prune -f
+docker-compose -f resurface.yml down --remove-orphans --volumes
 ```
 
 🔥 specify `worker=2` or `worker=3` above for a larger cluster
@@ -25,7 +25,7 @@ This configuration includes 3 Resurface nodes (1 coordinator and 2 workers), con
 ```
 wget https://raw.githubusercontent.com/resurfaceio/containers/master/compose/resurface-iceberg.yml
 docker-compose -f resurface-iceberg.yml up --detach
-docker-compose -f resurface-iceberg.yml down --remove-orphans && docker volume prune -f
+docker-compose -f resurface-iceberg.yml down --remove-orphans --volumes
 ```
 
 ⚠️ can't resize without modifying docker compose file
