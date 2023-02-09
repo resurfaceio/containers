@@ -20,6 +20,7 @@ services:
       - /db
 
   coordinator_proxy:
+    container_name: coordinator-proxy
     image: eeacms/haproxy
     platform: linux/amd64
     depends_on:
@@ -36,6 +37,7 @@ services:
       LOG_LEVEL: "info"
 
   fluke_proxy:
+    container_name: fluke-proxy
     image: eeacms/haproxy
     platform: linux/amd64
     depends_on:
