@@ -59,8 +59,8 @@ iceberg:
         type:
         port:
     secrets:
-      accesskey: minio
-      secretkey: minio123
+      accesskey:
+      secretkey:
     jobs:
       enabled: true
   s3:

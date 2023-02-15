@@ -7,6 +7,21 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 {{- if .Values.multinode.enabled }}
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
+· Iceberg mode is
+{{- if .Values.iceberg.enabled }} enabled.
+{{- if .Values.iceberg.minio.enabled }}
+  · MinIO deployment enabled.
+  · Number of MinIO nodes: {{ .Values.iceberg.minio.nodes }}.
+  · Size of MinIO volumes: {{ .Values.iceberg.minio.size }}.
+  · Access to MinIO console enabled: {{ .Values.iceberg.minio.service.console.enabled }}.
+{{- end }}
+{{- if .Values.iceberg.s3.enabled }}
+  · AWS S3 mode enabled.
+  · AWS S3 bucket URL: {{ .Values.iceberg.s3.secrets.bucketurl }}.
+{{- end }}
+{{- else }} disabled.
+{{- end }}
+
 {{- if .Values.ingress.enabled }}
 · TLS is{{ if not $tlsenabled }} not{{ end }} enabled.
 · Authentication is{{ if and $tlsenabled .Values.auth.enabled }} enabled.
@@ -14,7 +29,7 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
   · JWT auth is{{ if not .Values.auth.jwt.enabled }} not{{end}} enabled.
   · OAuth 2.0 is{{ if not .Values.auth.oauth2.enabled }} not{{end}} enabled.
 {{- else }} not enabled. {{ end }}
-{{- end}}
+{{- end }}
 
 · Use the following command to list all the resources deployed with this release:
 

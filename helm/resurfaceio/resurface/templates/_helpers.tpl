@@ -63,7 +63,10 @@ Default options: container resources and persistent volumes
 {{- $dbslabs := .Values.custom.config.dbslabs | default 3 | int -}}
 {{- $shardsize := .Values.custom.config.shardsize | default 3 | int -}}
 {{- $pollingcycle := .Values.custom.config.pollingcycle | default "default" -}}
-{{- list "default" "off" "fast" "nonstop" | mustHas $pollingcycle -}}
+{{- $validpollingcycles := list "default" "off" "fast" "nonstop" -}}
+{{- if not (has $pollingcycle $validpollingcycles) -}}
+  {{- join "," $validpollingcycles | cat "Uknown DB polling cycle. Polling cycle must be one of the following: " | fail -}}
+{{- end -}}
 {{- $tz := .Values.custom.config.tz | default "UTC" -}}
 
 {{- /* Defaults for Persistent Volume size and Storage Class names */ -}}
@@ -74,9 +77,15 @@ Default options: container resources and persistent volumes
 {{- /* Defaults for Iceberg environment variables */ -}}
 {{- $icepollingmillis := .Values.iceberg.config.pollingmillis | default "20000" -}}
 {{- $icecompressioncodec := .Values.iceberg.config.compression | default "ZSTD" -}}
-{{- list "ZSTD" "LZ4" "SNAPPY" "GZIP" | mustHas $icecompressioncodec -}}
+{{- $validcompressioncodecs := list "ZSTD" "LZ4" "SNAPPY" "GZIP" -}}
+{{- if not (has $icecompressioncodec $validcompressioncodecs) -}}
+  {{- join "," $validcompressioncodecs | cat "Unknown iceberg compression codec. Iceberg compression codec must be one of the following: " | fail -}}
+{{- end -}}
 {{- $icefileformat := .Values.iceberg.config.format | default "ORC" -}}
-{{- list "ORC" "PARQUET" | mustHas $icefileformat -}}
+{{- $validfileformats := list "ORC" "PARQUET" -}}
+{{- if not (has $icefileformat $validfileformats) -}}
+  {{- join "," $validfileformats | cat "Unknown iceberg file format. Iceberg file format must be one of the following: " | fail -}}
+{{- end -}}
 
 {{- $ices3user := "" -}}
 {{- $ices3secret := "" -}}
@@ -124,7 +133,7 @@ Default options: container resources and persistent volumes
             - name: SHARD_SIZE
               value: {{ printf "%dg" $shardsize }}
             - name: POLLING_CYCLE
-              value: {{- $pollingcycle | quote -}}
+              value: {{ $pollingcycle | quote }}
             - name: TZ
               value: {{ $tz | quote }}
             {{- if .Values.iceberg.enabled }}

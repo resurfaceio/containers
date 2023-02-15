@@ -38,6 +38,20 @@ noglob helm upgrade resurface . -n resurface --set auth.enabled=true --set auth.
 helm uninstall resurface -n resurface; kubectl delete $(kubectl get pvc -n resurface -o name) -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
+### Test Iceberg Deployments
+
+```bash
+# MinIO
+helm upgrade -i resurface . --create-namespace --namespace resurface --set iceberg.enabled=true --set iceberg.minio.enabled=true --set iceberg.minio.size=100 --set iceberg.minio.secrets.accesskey=minio --set iceberg.minio.secrets.secretkey=minio123
+
+# Enable MinIO console
+helm upgrade -i resurface . --create-namespace --namespace resurface --set iceberg.minio.service.console.enabled=true --reuse-values
+
+# AWS S3 - TODO
+helm upgrade -i resurface . --create-namespace --namespace resurface --set iceberg.enabled=true --set iceberg.s3.enabled=true
+--set iceberg.s3.secrets.bucketuser= --set iceberg.s3.secrets.bucketsecret= --set iceberg.s3.secrets.bucketurl=
+```
+
 ### Test Local Changes with a Cloud Provider
 
 ```bash
