@@ -109,9 +109,7 @@ Default options: container resources and persistent volumes
 
 {{- /* Defaults for container resources */ -}}
 {{- $cpureq := .Values.custom.resources.cpu | default 6 -}}
-{{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) -}}
-
-{{- /* Container resources and SatefulSet PVC */ }}
+{{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) }}
           resources:
             requests:
               cpu: {{ $cpureq }}

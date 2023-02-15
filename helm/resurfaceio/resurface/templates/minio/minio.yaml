@@ -58,7 +58,7 @@ spec:
             {{- $icebergpvsize := max (.Values.iceberg.minio.size | default 50 | int) (mul $nodecount $pvsize) }}
             storage: {{ $icebergpvsize | printf "%vGi" }}
 ---
-{{- if .Values.iceber.minio.jobs.enabled -}}
+{{- if .Values.iceberg.minio.jobs.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
