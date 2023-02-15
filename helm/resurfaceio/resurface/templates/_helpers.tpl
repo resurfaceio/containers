@@ -55,11 +55,63 @@ Default options: container resources and persistent volumes
 */}}
 {{- define "resurface.resources" }}
 {{- $provider := toString .Values.provider -}}
-{{- $cpureq := .Values.custom.resources.cpu | default (eq $provider "azure" | ternary 5 6) -}}
-{{- $dbsize := .Values.custom.config.dbsize | default (or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9) | int -}}
+
+{{- /* Defaults for DB environment variables */ -}}
+{{- $dbsizedefault := or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9 -}}
+{{- $dbsize := .Values.custom.config.dbsize | default $dbsizedefault | int -}}
 {{- $dbheap := .Values.custom.config.dbheap | default 3 | int -}}
 {{- $dbslabs := .Values.custom.config.dbslabs | default 3 | int -}}
-{{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) }}
+{{- $shardsize := .Values.custom.config.shardsize | default 3 | int -}}
+{{- $pollingcycle := .Values.custom.config.pollingcycle | default "default" -}}
+{{- list "default" "off" "fast" "nonstop" | mustHas $pollingcycle -}}
+{{- $tz := .Values.custom.config.tz | default "UTC" -}}
+
+{{- /* Defaults for Persistent Volume size and Storage Class names */ -}}
+{{- $pvsize := .Values.custom.storage.size | default $dbsize | max 9 | int -}}
+{{- $scnames := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" -}}
+{{- $scname := .Values.custom.storage.classname | default (get $scnames $provider) -}}
+
+{{- /* Defaults for Iceberg environment variables */ -}}
+{{- $icepollingmillis := .Values.iceberg.config.pollingmillis | default "20000" -}}
+{{- $icecompressioncodec := .Values.iceberg.config.compression | default "ZSTD" -}}
+{{- list "ZSTD" "LZ4" "SNAPPY" "GZIP" | mustHas $icecompressioncodec -}}
+{{- $icefileformat := .Values.iceberg.config.format | default "ORC" -}}
+{{- list "ORC" "PARQUET" | mustHas $icefileformat -}}
+
+{{- $ices3user := "" -}}
+{{- $ices3secret := "" -}}
+{{- $ices3url := "" -}}
+{{- if .Values.iceberg.enabled -}}
+  {{- /* Min shard number is hard coded in Resurface data ingestion service (fluke server) */ -}}
+  {{- $minshards := 3 -}}
+  {{- $maxshards := div $dbsize $shardsize | int -}}
+  {{- if lt $maxshards $minshards -}}
+    {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %d\n\tSHARD_SIZE = %d\n\tMax shards configured: %d" $minshards $dbsize $shardsize $maxshards | fail -}}
+  {{- end -}}
+
+  {{- if and .Values.iceberg.minio.enabled .Values.iceberg.s3.enabled -}}
+    {{ fail "MinIO and S3 iceberg deployments are mutually exclusive" }}
+  {{- else if .Values.iceberg.minio.enabled -}}
+    {{- /* Defaults for MinIO deployments */ -}}
+    {{- $ices3user = required "MinIO deployments require an Access Key" .Values.iceberg.minio.secrets.accesskey -}}
+    {{- $ices3secret = required "MinIO deployments require a Secret Key" .Values.iceberg.minio.secrets.secretkey -}}
+    {{- $ices3url = .Values.iceberg.minio.service.api.port | default 9000 | printf "http://minio-api.%s:%v/" (.Release.Namespace) -}}
+  {{- else -}}
+    {{- $ices3user := required "AWS S3 deployments require an S3 bucket user" .Values.iceberg.s3.secrets.bucketuser -}}
+    {{- $ices3secret := required "AWS S3 deployments require an S3 bucket secret" .Values.iceberg.s3.secrets.bucketsecret -}}
+    {{- $ices3url := required "AWS S3 deployments require an S3 bucket URL" .Values.iceberg.s3.secrets.bucketurl -}}
+  {{- end -}}
+
+  {{- /* Define a minimum DB_HEAP size for Iceberg deployments. Less memory could result in unfulfilled queries due to lack of resources */ -}}
+  {{- $dbheap = max $dbheap 8 -}}
+
+{{- end -}}
+
+{{- /* Defaults for container resources */ -}}
+{{- $cpureq := .Values.custom.resources.cpu | default 6 -}}
+{{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) -}}
+
+{{- /* Container resources and SatefulSet PVC */ }}
           resources:
             requests:
               cpu: {{ $cpureq }}
@@ -70,24 +122,40 @@ Default options: container resources and persistent volumes
             - name: DB_HEAP
               value: {{ printf "%dg" $dbheap }}
             - name: DB_SLABS
-              value: {{ quote $dbslabs }}
-            {{- if .Values.custom.config.tz }}
+              value: {{ $dbslabs | quote }}
+            - name: SHARD_SIZE
+              value: {{ printf "%dg" $shardsize }}
+            - name: POLLING_CYCLE
+              value: {{- $pollingcycle | quote -}}
             - name: TZ
-              value: {{ .Values.custom.config.tz | quote }}
-            {{- end}}
+              value: {{ $tz | quote }}
+            {{- if .Values.iceberg.enabled }}
+            - name: ICEBERG_S3_URL
+              value: {{ $ices3url | quote }}
+            - name: ICEBERG_S3_USER
+              value: {{ $ices3user | quote }}
+            - name: ICEBERG_S3_SECRET
+              value: {{ $ices3secret | quote }}
+            - name: ICEBERG_S3_LOCATION
+              value: s3a://iceberg.resurface/
+            - name: ICEBERG_POLLING_MILLIS
+              value: {{ $icepollingmillis | quote }}
+            - name: ICEBERG_FILE_FORMAT
+              value: {{ $icefileformat | quote }}
+            - name: ICEBERG_COMPRESSION_CODEC
+              value: {{ $icecompressioncodec | quote }}
+            {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
-        {{- $scndict := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" }}
-        {{- $scn := (.Values.custom.storage.classname | default (get $scndict $provider)) }}
-        {{- if not (empty $scn) }}
-        storageClassName: {{ $scn }}
+        {{- if not (empty $scname) }}
+        storageClassName: {{ $scname }}
         {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: {{ .Values.custom.storage.size | default $dbsize | printf "%vGi" }}
+            storage: {{ $pvsize | printf "%vGi" }}
 {{- end }}
 
 

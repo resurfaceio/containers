@@ -21,9 +21,9 @@ spec:
     spec:
       serviceAccountName: resurface-sa
       securityContext:
-        runAsUser: 100
-        runAsGroup: 101
-        fsGroup: 101
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
       volumes:
         - name: config-volume
@@ -48,7 +48,7 @@ spec:
         {{- end }}
       containers:
         - name: coordinator
-          image: resurfaceio/resurface:{{ .Chart.AppVersion }}
+          image: resurfaceio/resurface{{ if .Values.iceberg.enabled }}-iceberg{{ end }}:{{ .Chart.AppVersion }}
           ports:
             - name: db
               containerPort: 7700

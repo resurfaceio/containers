@@ -44,6 +44,36 @@ multinode:
   enabled: false
   workers: 1
 
+iceberg:
+  enabled: false
+  minio:
+    enabled: true
+    size:
+    nodes: 1
+    service:
+      console:
+        enabled: false
+        type: LoadBalancer
+        port: 80
+      api:
+        type:
+        port:
+    secrets:
+      accesskey: minio
+      secretkey: minio123
+    jobs:
+      enabled: true
+  s3:
+    enabled: false
+    secrets:
+      bucketuser:
+      bucketsecret:
+      bucketurl:
+  config:
+    pollingmillis:
+    compression:
+    format:
+
 custom:
   service:
     apiexplorer:
@@ -59,6 +89,8 @@ custom:
     dbsize:
     dbheap:
     dbslabs:
+    shardsize:
+    pollingcycle:
     tz:
   storage:
     size:
@@ -118,3 +150,4 @@ kubernetes-ingress:
 #   maxReplicas: 100
 #   targetCPUUtilizationPercentage: 80
 #   targetMemoryUtilizationPercentage: 80
+#544100452964.dkr.ecr.us-west-2.amazonaws.com

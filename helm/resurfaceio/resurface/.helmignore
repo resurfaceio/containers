@@ -24,6 +24,9 @@
 # In development
 ns.yaml
 tls-secret.yaml
+dev/
+jobs/
+collector.yaml
 # Deprecated
 deployment.yaml
 entitlement.yaml

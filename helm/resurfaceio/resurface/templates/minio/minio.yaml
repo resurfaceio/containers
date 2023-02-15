@@ -1,0 +1,94 @@
+{{- if and .Values.iceberg.enabled .Values.iceberg.minio.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "resurface.fullname" . }}-minio
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  serviceName: minio
+  replicas: {{ .Values.iceberg.minio.nodes | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "resurface.selectorLabels" . | nindent 6 }}
+      db.resurface.io/role: minio
+  template:
+    metadata:
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+        db.resurface.io/role: minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          imagePullPolicy: Always
+          ports:
+            - name: minio-web
+              containerPort: 9001
+            - name: minio-api
+              containerPort: 9000
+          volumeMounts:
+            - name: {{ include "resurface.fullname" . }}-minio-pvc
+              mountPath: /data
+          env:
+            - name: MINIO_ACCESS_KEY
+              value: {{ .Values.iceberg.minio.secrets.accesskey }}
+            - name: MINIO_SECRET_KEY
+              value: {{ .Values.iceberg.minio.secrets.secretkey }}
+          args:
+            - "server"
+            - "--console-address"
+            - ":9001" 
+            - "/data"
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "resurface.fullname" . }}-minio-pvc
+      spec:
+        {{- $scndict := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" }}
+        {{- $scn := (.Values.custom.storage.classname | default (get $scndict (toString .Values.provider))) }}
+        {{- if not (empty $scn) }}
+        storageClassName: {{ $scn }}
+        {{- end }}
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            {{- $nodecount := ternary 1 (int .Values.multinode.workers | add1) .Values.multinode.enabled -}}
+            {{- $dbsize := .Values.custom.config.dbsize | default 9 | int -}}
+            {{- $pvsize := .Values.custom.storage.size | default (max $dbsize 9) | int -}}
+            {{- $icebergpvsize := max (.Values.iceberg.minio.size | default 50 | int) (mul $nodecount $pvsize) }}
+            storage: {{ $icebergpvsize | printf "%vGi" }}
+---
+{{- if .Values.iceber.minio.jobs.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "resurface.fullname" . }}-bucket-creator
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: create-iceberg-bucket
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: resurface-sa
+      securityContext:
+        runAsUser: 1000
+      restartPolicy: Never
+      containers:
+        - name: minio-client
+          image: resurfaceio/bucketcreator:latest
+          env:
+            - name: S3_URL
+              value: {{ .Values.iceberg.minio.service.api.port | default 9000 | printf "minio-api.%s:%v" (.Release.Namespace) }}
+            - name: S3_ACCESS_KEY
+              value: {{ .Values.iceberg.minio.secrets.accesskey }}
+            - name: S3_SECRET_KEY
+              value: {{ .Values.iceberg.minio.secrets.secretkey }}
+            - name: DELAY_MIN
+              value: "0"
+            - name: DELAY_S
+              value: "30"
+{{- end -}}
+{{- end }}
