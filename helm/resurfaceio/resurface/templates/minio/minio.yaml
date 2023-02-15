@@ -52,11 +52,7 @@ spec:
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            {{- $nodecount := ternary 1 (int .Values.multinode.workers | add1) .Values.multinode.enabled -}}
-            {{- $dbsize := .Values.custom.config.dbsize | default 9 | int -}}
-            {{- $pvsize := .Values.custom.storage.size | default (max $dbsize 9) | int -}}
-            {{- $icebergpvsize := max (.Values.iceberg.minio.size | default 50 | int) (mul $nodecount $pvsize) }}
-            storage: {{ $icebergpvsize | printf "%vGi" }}
+            storage: {{ include "resurface.minio.pvc.size" . }}
 ---
 {{- if .Values.iceberg.minio.jobs.enabled -}}
 apiVersion: batch/v1

@@ -165,6 +165,16 @@ Default options: container resources and persistent volumes
             storage: {{ $pvsize | printf "%vGi" }}
 {{- end }}
 
+{{/*
+MinIO PVC size
+*/}}
+{{- define "resurface.minio.pvc.size" -}}
+{{- $nodecount := ternary 1 (int .Values.multinode.workers | add1) .Values.multinode.enabled -}}
+{{- $dbsize := .Values.custom.config.dbsize | default 9 | int -}}
+{{- $pvsize := .Values.custom.storage.size | default (max $dbsize 9) | int -}}
+{{- $icebergpvsize := max (.Values.iceberg.minio.size | default 50 | int) (mul $nodecount $pvsize) -}}
+{{ printf "%vGi" $icebergpvsize }}
+{{- end -}}
 
 {{/*
 Coordinator config.properties

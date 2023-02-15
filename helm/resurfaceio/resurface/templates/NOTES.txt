@@ -9,14 +9,15 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 {{- end }}
 · Iceberg mode is
 {{- if .Values.iceberg.enabled }} enabled.
-{{- if .Values.iceberg.minio.enabled }}
-  · MinIO deployment enabled.
+{{- if .Values.iceberg.minio.enabled -}} Using MinIO cluster.
   · Number of MinIO nodes: {{ .Values.iceberg.minio.nodes }}.
-  · Size of MinIO volumes: {{ .Values.iceberg.minio.size }}.
-  · Access to MinIO console enabled: {{ .Values.iceberg.minio.service.console.enabled }}.
+  · Size of MinIO volumes: {{ include "resurface.minio.pvc.size" . }}.
+  {{- if .Values.iceberg.minio.service.console.enabled }}
+  · You can get the URL ro access your MinIO console by running the following command:
+  echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} minio-console --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.iceberg.minio.service.console.port) 80 }}:{{ .Values.iceberg.minio.service.console.port | default 9001 }}{{ end }}/
+  {{- end }}
 {{- end }}
-{{- if .Values.iceberg.s3.enabled }}
-  · AWS S3 mode enabled.
+{{- if .Values.iceberg.s3.enabled -}} Using external AWS S3 bucket.
   · AWS S3 bucket URL: {{ .Values.iceberg.s3.secrets.bucketurl }}.
 {{- end }}
 {{- else }} disabled.
