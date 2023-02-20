@@ -1,4 +1,4 @@
-{{- if and .Values.iceberg.enabled .Values.iceberg.minio.enabled }}
+{{- if and .Values.iceberg.enabled (eq .Values.iceberg.provider "minio") }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -6,17 +6,18 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  serviceName: minio
+  serviceName: minio-api
   replicas: {{ .Values.iceberg.minio.nodes | default 1 }}
+  podManagementPolicy: "Parallel"
   selector:
     matchLabels:
       {{- include "resurface.selectorLabels" . | nindent 6 }}
-      db.resurface.io/role: minio
+      iceberg.resurface.io/role: minio
   template:
     metadata:
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
-        db.resurface.io/role: minio
+        iceberg.resurface.io/role: minio
     spec:
       containers:
         - name: minio
@@ -32,14 +33,14 @@ spec:
               mountPath: /data
           env:
             - name: MINIO_ACCESS_KEY
-              value: {{ .Values.iceberg.minio.secrets.accesskey }}
+              value: {{ .Values.iceberg.secrets.accesskey }}
             - name: MINIO_SECRET_KEY
-              value: {{ .Values.iceberg.minio.secrets.secretkey }}
+              value: {{ .Values.iceberg.secrets.secretkey }}
           args:
             - "server"
             - "--console-address"
             - ":9001" 
-            - "/data"
+            - "{{ if gt (default .Values.iceberg.minio.nodes 1) 1 }}{{ .Values.iceberg.minio.service.api.port | default 9000 | printf "http://%s-minio-{0...%d}.minio-api.%s:%v" (include "resurface.fullname" .) .Values.iceberg.minio.nodes (.Release.Namespace) }}{{ end }}/data"
   volumeClaimTemplates:
     - metadata:
         name: {{ include "resurface.fullname" . }}-minio-pvc
@@ -54,7 +55,7 @@ spec:
           requests:
             storage: {{ include "resurface.minio.pvc.size" . }}
 ---
-{{- if .Values.iceberg.minio.jobs.enabled -}}
+{{- if .Values.iceberg.minio.bucketcreator.enabled -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -74,14 +75,14 @@ spec:
       restartPolicy: Never
       containers:
         - name: minio-client
-          image: resurfaceio/bucketcreator:latest
+          image: ramonmarquez/bucketcreator:latest
           env:
             - name: S3_URL
-              value: {{ .Values.iceberg.minio.service.api.port | default 9000 | printf "minio-api.%s:%v" (.Release.Namespace) }}
+              value: {{ .Values.iceberg.minio.service.api.port | default 9000 | printf "%s-minio-0.minio-api.%s:%v" (include "resurface.fullname" .) (.Release.Namespace) }}
             - name: S3_ACCESS_KEY
-              value: {{ .Values.iceberg.minio.secrets.accesskey }}
+              value: {{ .Values.iceberg.secrets.accesskey }}
             - name: S3_SECRET_KEY
-              value: {{ .Values.iceberg.minio.secrets.secretkey }}
+              value: {{ .Values.iceberg.secrets.secretkey }}
             - name: DELAY_MIN
               value: "0"
             - name: DELAY_S

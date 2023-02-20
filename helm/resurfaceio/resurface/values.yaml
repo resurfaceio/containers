@@ -61,18 +61,18 @@ iceberg:
     secrets:
       accesskey:
       secretkey:
-    jobs:
+    bucketcreator:
       enabled: true
   s3:
     enabled: false
-    secrets:
-      bucketuser:
-      bucketsecret:
-      bucketurl:
+    awsregion:
+    bucketname: iceberg.resurface
+    accesskey:
+    secretkey:
   config:
     pollingmillis:
     compression:
-    format:
+    fileformat:
 
 custom:
   service:

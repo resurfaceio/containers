@@ -8,22 +8,24 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
 · Iceberg mode is
-{{- if .Values.iceberg.enabled }} enabled.
-{{- if .Values.iceberg.minio.enabled -}} Using MinIO cluster.
-  · Number of MinIO nodes: {{ .Values.iceberg.minio.nodes }}.
-  · Size of MinIO volumes: {{ include "resurface.minio.pvc.size" . }}.
+{{- if .Values.iceberg.enabled }} enabled
+{{- if eq .Values.iceberg.provider "minio" }} using MinIO as object storage provider.
+  · Number of MinIO nodes: {{ .Values.iceberg.minio.nodes }}
+  · Size of MinIO volumes: {{ include "resurface.minio.pvc.size" . }}
   {{- if .Values.iceberg.minio.service.console.enabled }}
   · You can get the URL to access your MinIO console by running the following command:
-    echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} minio-console --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.iceberg.minio.service.console.port) 80 }}:{{ .Values.iceberg.minio.service.console.port | default 9001 }}{{ end }}/
+
+echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} minio-console --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.iceberg.minio.service.console.port) 80 }}:{{ .Values.iceberg.minio.service.console.port | default 9001 }}{{ end }}/
+
   {{- end }}
 {{- end }}
-{{- if .Values.iceberg.s3.enabled -}} Using external AWS S3 bucket.
-  · AWS S3 bucket URL: {{ .Values.iceberg.s3.secrets.bucketurl }}.
+{{- if eq .Values.iceberg.provider "s3" -}} using external AWS S3 bucket as object storage provider.
+  · AWS S3 bucket name: {{ .Values.iceberg.s3.bucketname }}
+  · AWS S3 region: {{ .Values.iceberg.s3.awsregion }}
 {{- end }}
 {{- else }} disabled.
-{{ end }}
-
-{{- if .Values.ingress.enabled }}
+{{- end }}
+{{ if .Values.ingress.enabled }}
 · TLS is{{ if not $tlsenabled }} not{{ end }} enabled.
 · Authentication is{{ if and $tlsenabled .Values.auth.enabled }} enabled.
   · Basic auth is{{ if not .Values.auth.basic.enabled }} not{{end}} enabled.

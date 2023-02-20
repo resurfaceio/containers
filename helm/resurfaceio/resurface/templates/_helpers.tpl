@@ -81,7 +81,7 @@ Default options: container resources and persistent volumes
 {{- if not (has $icecompressioncodec $validcompressioncodecs) -}}
   {{- join "," $validcompressioncodecs | cat "Unknown iceberg compression codec. Iceberg compression codec must be one of the following: " | fail -}}
 {{- end -}}
-{{- $icefileformat := .Values.iceberg.config.format | default "ORC" -}}
+{{- $icefileformat := .Values.iceberg.config.fileformat | default "ORC" -}}
 {{- $validfileformats := list "ORC" "PARQUET" -}}
 {{- if not (has $icefileformat $validfileformats) -}}
   {{- join "," $validfileformats | cat "Unknown iceberg file format. Iceberg file format must be one of the following: " | fail -}}
@@ -90,6 +90,7 @@ Default options: container resources and persistent volumes
 {{- $ices3user := "" -}}
 {{- $ices3secret := "" -}}
 {{- $ices3url := "" -}}
+{{- $ices3bucketname := "" -}}
 {{- if .Values.iceberg.enabled -}}
   {{- /* Min shard number is hard coded in Resurface data ingestion service (fluke server) */ -}}
   {{- $minshards := 3 -}}
@@ -98,17 +99,18 @@ Default options: container resources and persistent volumes
     {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %d\n\tSHARD_SIZE = %d\n\tMax shards configured: %d" $minshards $dbsize $shardsize $maxshards | fail -}}
   {{- end -}}
 
-  {{- if and .Values.iceberg.minio.enabled .Values.iceberg.s3.enabled -}}
-    {{ fail "MinIO and S3 iceberg deployments are mutually exclusive" }}
-  {{- else if .Values.iceberg.minio.enabled -}}
-    {{- /* Defaults for MinIO deployments */ -}}
-    {{- $ices3user = required "MinIO deployments require an Access Key" .Values.iceberg.minio.secrets.accesskey -}}
-    {{- $ices3secret = required "MinIO deployments require a Secret Key" .Values.iceberg.minio.secrets.secretkey -}}
+  {{- if eq .Values.iceberg.provider "minio" -}}
+    {{- $ices3user = required "Required value: MinIO Access Key" .Values.iceberg.secrets.accesskey -}}
+    {{- $ices3secret = required "Required value: MinIO Secret Key" .Values.iceberg.secrets.secretkey -}}
+    {{- $ices3bucketname = "iceberg.resurface" -}}
     {{- $ices3url = .Values.iceberg.minio.service.api.port | default 9000 | printf "http://minio-api.%s:%v/" (.Release.Namespace) -}}
+  {{- else if eq .Values.iceberg.provider "s3" -}}
+    {{- $ices3user = required "Required value: AWS Access Key" .Values.iceberg.secrets.accesskey -}}
+    {{- $ices3secret = required "Required value: AWS Secret Key" .Values.iceberg.secrets.secretkey -}}
+    {{- $ices3bucketname = required "Required value: AWS S3 bucket unique name" .Values.iceberg.s3.bucketname -}}
+    {{- $ices3url = required "Required value: AWS region where the S3 bucket is deployed" .Values.iceberg.s3.awsregion | printf "https://s3.%s.amazonaws.com" -}}
   {{- else -}}
-    {{- $ices3user := required "AWS S3 deployments require an S3 bucket user" .Values.iceberg.s3.secrets.bucketuser -}}
-    {{- $ices3secret := required "AWS S3 deployments require an S3 bucket secret" .Values.iceberg.s3.secrets.bucketsecret -}}
-    {{- $ices3url := required "AWS S3 deployments require an S3 bucket URL" .Values.iceberg.s3.secrets.bucketurl -}}
+    {{- fail "An object storage provider must be specified for Iceberg. Supported values are: minio, s3" -}}
   {{- end -}}
 
   {{- /* Define a minimum DB_HEAP size for Iceberg deployments. Less memory could result in unfulfilled queries due to lack of resources */ -}}
@@ -144,7 +146,7 @@ Default options: container resources and persistent volumes
             - name: ICEBERG_S3_SECRET
               value: {{ $ices3secret | quote }}
             - name: ICEBERG_S3_LOCATION
-              value: s3a://iceberg.resurface/
+              value: {{ printf "s3a://%s/" $ices3bucketname }}
             - name: ICEBERG_POLLING_MILLIS
               value: {{ $icepollingmillis | quote }}
             - name: ICEBERG_FILE_FORMAT

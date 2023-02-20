@@ -1,4 +1,4 @@
-{{- if and .Values.iceberg.enabled .Values.iceberg.minio.enabled }}
+{{- if and .Values.iceberg.enabled (eq .Values.iceberg.provider "minio") }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -6,14 +6,16 @@ metadata:
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.iceberg.minio.service.api.type | default "ClusterIP" }}
+  clusterIP: None
+  #type: {{ .Values.iceberg.minio.service.api.type | default "ClusterIP" }}
+  # publishNotReadyAddresses: true
   ports:
     - name: minio-apiport
       port: {{ .Values.iceberg.minio.service.api.port | default 9000 }}
       targetPort: minio-api
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}
-    db.resurface.io/role: minio
+    iceberg.resurface.io/role: minio
 {{- if .Values.iceberg.minio.service.console.enabled }}
 ---
 apiVersion: v1
@@ -30,6 +32,6 @@ spec:
       targetPort: minio-web
   selector:
     {{- include "resurface.selectorLabels" . | nindent 4 }}
-    db.resurface.io/role: minio
+    iceberg.resurface.io/role: minio
 {{- end }}
 {{- end }}
