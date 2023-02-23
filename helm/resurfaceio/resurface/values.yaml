@@ -46,33 +46,17 @@ multinode:
 
 iceberg:
   enabled: false
-  minio:
-    enabled: true
-    size:
-    nodes: 1
-    service:
-      console:
-        enabled: false
-        type: LoadBalancer
-        port: 80
-      api:
-        type:
-        port:
-    secrets:
-      accesskey:
-      secretkey:
-    bucketcreator:
-      enabled: true
   s3:
     enabled: false
-    awsregion:
     bucketname: iceberg.resurface
-    accesskey:
-    secretkey:
+    aws:
+      region:
+      accesskey:
+      secretkey:
   config:
-    pollingmillis:
-    compression:
-    fileformat:
+    format:
+    codec:
+    millis:
 
 custom:
   service:
@@ -134,7 +118,8 @@ consumer:
     rules: |
       include default
       skip_compression
-    
+
+# Dependency chart: HAProxy Ingress Controller
 kubernetes-ingress:
   controller:
     service:
@@ -143,6 +128,28 @@ kubernetes-ingress:
         stat: false
   defaultBackend:
     enabled: false
+
+# Dependency chart: MinIO Object Storage
+minio:
+  enabled: false
+  existingSecret: resurface-s3-creds
+  rootUser: minio
+  rootPassword: minio123
+  mode: distributed
+  replicas: 4
+  persistence:
+    size: 500Gi
+  resources:
+    requests:
+      memory: 16Gi
+  buckets:
+    - name: iceberg.resurface
+  securityContext:
+    enabled: true
+    runAsUser: 1000660000
+    runAsGroup: 1000660000
+    fsGroup: 1000660000
+  configPathmc: "/tmp/minio/mc/"
 
 # autoscaling:
 #   enabled: false

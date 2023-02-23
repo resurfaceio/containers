@@ -27,6 +27,7 @@ tls-secret.yaml
 dev/
 jobs/
 collector.yaml
+minio/
 # Deprecated
 deployment.yaml
 entitlement.yaml

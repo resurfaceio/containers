@@ -8,18 +8,19 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
 · Iceberg mode is
-{{- if .Values.iceberg.enabled }} enabled
-{{- if eq .Values.iceberg.provider "minio" }} using MinIO as object storage provider.
-  · Number of MinIO nodes: {{ .Values.iceberg.minio.nodes }}
-  · Size of MinIO volumes: {{ include "resurface.minio.pvc.size" . }}
-  {{- if .Values.iceberg.minio.service.console.enabled }}
+{{- if .Values.iceberg.enabled }} enabled using
+{{- if .Values.minio.enabled }} MinIO as object storage provider.
+  · MinIO configuration: {{ .Values.minio.mode }}
+  · Number of MinIO nodes: {{ .Values.minio.replicas }}
+  · Size of MinIO volume per node: {{ .Values.minio.persistence.size }}
+  {{- if eq .Values.minio.consoleService.type "LoadBalancer" }}
   · You can get the URL to access your MinIO console by running the following command:
 
-echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} minio-console --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.iceberg.minio.service.console.port) 80 }}:{{ .Values.iceberg.minio.service.console.port | default 9001 }}{{ end }}/
+echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "minio.fullname" .Subcharts.minio }}-console --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.minio.consoleService.port) 80 }}:{{ .Values.minio.consoleService.port | default 9001 }}{{ end }}/
 
   {{- end }}
 {{- end }}
-{{- if eq .Values.iceberg.provider "s3" -}} using external AWS S3 bucket as object storage provider.
+{{- if .Values.iceberg.s3.enabled -}} using external AWS S3 bucket as object storage provider.
   · AWS S3 bucket name: {{ .Values.iceberg.s3.bucketname }}
   · AWS S3 region: {{ .Values.iceberg.s3.awsregion }}
 {{- end }}

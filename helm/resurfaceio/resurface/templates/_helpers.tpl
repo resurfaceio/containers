@@ -75,13 +75,13 @@ Default options: container resources and persistent volumes
 {{- $scname := .Values.custom.storage.classname | default (get $scnames $provider) -}}
 
 {{- /* Defaults for Iceberg environment variables */ -}}
-{{- $icepollingmillis := .Values.iceberg.config.pollingmillis | default "20000" -}}
-{{- $icecompressioncodec := .Values.iceberg.config.compression | default "ZSTD" -}}
+{{- $icepollingmillis := .Values.iceberg.config.millis | default 20000 | quote -}}
+{{- $icecompressioncodec := .Values.iceberg.config.codec | default "ZSTD" -}}
 {{- $validcompressioncodecs := list "ZSTD" "LZ4" "SNAPPY" "GZIP" -}}
 {{- if not (has $icecompressioncodec $validcompressioncodecs) -}}
   {{- join "," $validcompressioncodecs | cat "Unknown iceberg compression codec. Iceberg compression codec must be one of the following: " | fail -}}
 {{- end -}}
-{{- $icefileformat := .Values.iceberg.config.fileformat | default "ORC" -}}
+{{- $icefileformat := .Values.iceberg.config.format | default "ORC" -}}
 {{- $validfileformats := list "ORC" "PARQUET" -}}
 {{- if not (has $icefileformat $validfileformats) -}}
   {{- join "," $validfileformats | cat "Unknown iceberg file format. Iceberg file format must be one of the following: " | fail -}}
@@ -99,18 +99,20 @@ Default options: container resources and persistent volumes
     {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %d\n\tSHARD_SIZE = %d\n\tMax shards configured: %d" $minshards $dbsize $shardsize $maxshards | fail -}}
   {{- end -}}
 
-  {{- if eq .Values.iceberg.provider "minio" -}}
-    {{- $ices3user = required "Required value: MinIO Access Key" .Values.iceberg.secrets.accesskey -}}
-    {{- $ices3secret = required "Required value: MinIO Secret Key" .Values.iceberg.secrets.secretkey -}}
-    {{- $ices3bucketname = "iceberg.resurface" -}}
-    {{- $ices3url = .Values.iceberg.minio.service.api.port | default 9000 | printf "http://minio-api.%s:%v/" (.Release.Namespace) -}}
-  {{- else if eq .Values.iceberg.provider "s3" -}}
-    {{- $ices3user = required "Required value: AWS Access Key" .Values.iceberg.secrets.accesskey -}}
-    {{- $ices3secret = required "Required value: AWS Secret Key" .Values.iceberg.secrets.secretkey -}}
+  {{- if and .Values.minio.enabled .Values.iceberg.s3.enabled -}}
+    {{ fail "MinIO and AWS S3 iceberg deployments are mutually exclusive. Please enable only one." }}
+  {{- else if .Values.minio.enabled -}}
+    {{- $ices3user = required "Required value: MinIO Access Key" .Values.minio.rootUser -}}
+    {{- $ices3secret = required "Required value: MinIO Secret Key" .Values.minio.rootPassword -}}
+    {{- $ices3bucketname = required "Required value: MinIO bucket name" (index .Values.minio.buckets 0).name -}}
+    {{- $ices3url = .Values.minio.service.port | default 9000 | printf "http://%s.%s:%v/" (include "minio.fullname" .Subcharts.minio ) .Release.Namespace -}}
+  {{- else if .Values.iceberg.s3.enabled -}}
+    {{- $ices3user = required "Required value: AWS Access Key" .Values.iceberg.s3.aws.accesskey -}}
+    {{- $ices3secret = required "Required value: AWS Secret Key" .Values.iceberg.s3.aws.secretkey -}}
     {{- $ices3bucketname = required "Required value: AWS S3 bucket unique name" .Values.iceberg.s3.bucketname -}}
-    {{- $ices3url = required "Required value: AWS region where the S3 bucket is deployed" .Values.iceberg.s3.awsregion | printf "https://s3.%s.amazonaws.com" -}}
+    {{- $ices3url = required "Required value: AWS region where the S3 bucket is deployed" .Values.iceberg.s3.aws.region | printf "https://s3.%s.amazonaws.com" -}}
   {{- else -}}
-    {{- fail "An object storage provider must be specified for Iceberg. Supported values are: minio, s3" -}}
+    {{- fail "An object storage provider must be enabled for Iceberg. Supported values are: minio, s3" -}}
   {{- end -}}
 
   {{- /* Define a minimum DB_HEAP size for Iceberg deployments. Less memory could result in unfulfilled queries due to lack of resources */ -}}
@@ -166,17 +168,6 @@ Default options: container resources and persistent volumes
           requests:
             storage: {{ $pvsize | printf "%vGi" }}
 {{- end }}
-
-{{/*
-MinIO PVC size
-*/}}
-{{- define "resurface.minio.pvc.size" -}}
-{{- $nodecount := ternary 1 (int .Values.multinode.workers | add1) .Values.multinode.enabled -}}
-{{- $dbsize := .Values.custom.config.dbsize | default 9 | int -}}
-{{- $pvsize := .Values.custom.storage.size | default (max $dbsize 9) | int -}}
-{{- $icebergpvsize := max (.Values.iceberg.minio.size | default 50 | int) (mul $nodecount $pvsize) -}}
-{{ printf "%vGi" $icebergpvsize }}
-{{- end -}}
 
 {{/*
 Coordinator config.properties
