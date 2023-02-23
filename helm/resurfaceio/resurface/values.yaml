@@ -132,7 +132,6 @@ kubernetes-ingress:
 # Dependency chart: MinIO Object Storage
 minio:
   enabled: false
-  existingSecret: resurface-s3-creds
   rootUser: minio
   rootPassword: minio123
   mode: distributed

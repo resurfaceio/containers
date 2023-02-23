@@ -75,7 +75,7 @@ Default options: container resources and persistent volumes
 {{- $scname := .Values.custom.storage.classname | default (get $scnames $provider) -}}
 
 {{- /* Defaults for Iceberg environment variables */ -}}
-{{- $icepollingmillis := .Values.iceberg.config.millis | default 20000 | quote -}}
+{{- $icepollingmillis := .Values.iceberg.config.millis | default 20000 -}}
 {{- $icecompressioncodec := .Values.iceberg.config.codec | default "ZSTD" -}}
 {{- $validcompressioncodecs := list "ZSTD" "LZ4" "SNAPPY" "GZIP" -}}
 {{- if not (has $icecompressioncodec $validcompressioncodecs) -}}
@@ -87,7 +87,6 @@ Default options: container resources and persistent volumes
   {{- join "," $validfileformats | cat "Unknown iceberg file format. Iceberg file format must be one of the following: " | fail -}}
 {{- end -}}
 
-{{- $ices3user := "" -}}
 {{- $ices3secret := "" -}}
 {{- $ices3url := "" -}}
 {{- $ices3bucketname := "" -}}
@@ -102,13 +101,14 @@ Default options: container resources and persistent volumes
   {{- if and .Values.minio.enabled .Values.iceberg.s3.enabled -}}
     {{ fail "MinIO and AWS S3 iceberg deployments are mutually exclusive. Please enable only one." }}
   {{- else if .Values.minio.enabled -}}
-    {{- $ices3user = required "Required value: MinIO Access Key" .Values.minio.rootUser -}}
-    {{- $ices3secret = required "Required value: MinIO Secret Key" .Values.minio.rootPassword -}}
+    {{- $ices3secret = include "minio.secretName" .Subcharts.minio | required "Required value: MinIO credentials" -}}
     {{- $ices3bucketname = required "Required value: MinIO bucket name" (index .Values.minio.buckets 0).name -}}
     {{- $ices3url = .Values.minio.service.port | default 9000 | printf "http://%s.%s:%v/" (include "minio.fullname" .Subcharts.minio ) .Release.Namespace -}}
   {{- else if .Values.iceberg.s3.enabled -}}
-    {{- $ices3user = required "Required value: AWS Access Key" .Values.iceberg.s3.aws.accesskey -}}
-    {{- $ices3secret = required "Required value: AWS Secret Key" .Values.iceberg.s3.aws.secretkey -}}
+    {{- if or (empty .Values.iceberg.s3.aws.accesskey) (empty .Values.iceberg.s3.aws.secretkey) -}}
+      {{- fail "Required value: AWS S3 credentials" -}}
+    {{- end -}}
+    {{- $ices3secret = "resurface-s3-creds" -}}
     {{- $ices3bucketname = required "Required value: AWS S3 bucket unique name" .Values.iceberg.s3.bucketname -}}
     {{- $ices3url = required "Required value: AWS region where the S3 bucket is deployed" .Values.iceberg.s3.aws.region | printf "https://s3.%s.amazonaws.com" -}}
   {{- else -}}
@@ -144,9 +144,15 @@ Default options: container resources and persistent volumes
             - name: ICEBERG_S3_URL
               value: {{ $ices3url | quote }}
             - name: ICEBERG_S3_USER
-              value: {{ $ices3user | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $ices3secret }}
+                  key: rootUser
             - name: ICEBERG_S3_SECRET
-              value: {{ $ices3secret | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $ices3secret }}
+                  key: rootPassword
             - name: ICEBERG_S3_LOCATION
               value: {{ printf "s3a://%s/" $ices3bucketname }}
             - name: ICEBERG_POLLING_MILLIS

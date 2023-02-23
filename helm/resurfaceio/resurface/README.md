@@ -132,8 +132,8 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
 
 The **minio** section corresponds to values passed to the `minio-official/minio` subchart. For more detailed information on all the values that can be set for this chart, please visit: https://artifacthub.io/packages/helm/minio-official/minio
   - **minio.enabled**: If set to `true`, MinIO subchart will be deployed. It is important to note that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
-  - **minio.rootUser**: string. It is **not** recommended to pass credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **minio.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
-  - **minio.rootPassword**: string. It is **not** recommended to pass credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **minio.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
+  - **minio.rootUser**: string. Required if **minio.enabled** is set to `true`.
+  - **minio.rootPassword**: string. Required if **minio.enabled** is set to `true`.
   - **minio.mode**: string. MinIO [deployment topology](https://min.io/docs/minio/linux/operations/installation.html#install-and-deploy-minio). It can be either `'standalone'` or `'distributed'`. Defaults to `'distributed'`.
   - **minio.replicas**: integer. Number of MinIO instances. Defaults to `4`.
   - **minio.persistence.size**: string. Persistent volume size for each MinIO instance. Defaults to `'500Gi`.
