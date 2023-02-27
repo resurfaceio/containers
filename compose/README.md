@@ -18,7 +18,7 @@ docker-compose -f resurface.yml down --remove-orphans --volumes
 
 ☠️ not intended for use in production environments
 
-## Fixed-size cluster with Iceberg
+## Fixed-size clusters with Iceberg
 
 This minimal configuration includes Minio and 1 Resurface node, and is used for development and testing.
 ```
