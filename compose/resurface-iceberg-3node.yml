@@ -23,7 +23,7 @@ services:
       - DB_HEAP=8g
       - DB_SIZE=9g
       - DB_SLABS=3
-      - POLLING_CYCLE=off
+      - POLLING_CYCLE=fast
       - SHARD_SIZE=3g
       - TZ=America/Denver
       - ICEBERG_FILE_FORMAT=ORC
