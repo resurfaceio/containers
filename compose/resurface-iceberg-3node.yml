@@ -16,7 +16,7 @@ services:
 
   coordinator:
     container_name: resurface
-    image: resurfaceio/resurface-iceberg:3.5.1
+    image: resurfaceio/resurface-iceberg:3.5.2
     depends_on:
       - minio
     environment:
@@ -28,6 +28,8 @@ services:
       - TZ=America/Denver
       - ICEBERG_FILE_FORMAT=ORC
       - ICEBERG_COMPRESSION_CODEC=ZSTD
+      - ICEBERG_SIZE_MAX=1000g
+      - ICEBERG_SIZE_RESERVED=50g
       - ICEBERG_POLLING_MILLIS=20000
       - ICEBERG_S3_URL=http://minio:9000
       - ICEBERG_S3_USER=minio
@@ -41,7 +43,7 @@ services:
 
   workerA:
     container_name: resurface-workerA
-    image: resurfaceio/resurface-iceberg-worker:3.5.1
+    image: resurfaceio/resurface-iceberg-worker:3.5.2
     depends_on:
       - coordinator
     environment:
@@ -65,7 +67,7 @@ services:
 
   workerB:
     container_name: resurface-workerB
-    image: resurfaceio/resurface-iceberg-worker:3.5.1
+    image: resurfaceio/resurface-iceberg-worker:3.5.2
     depends_on:
       - coordinator
     environment:
