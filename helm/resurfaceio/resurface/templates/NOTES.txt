@@ -13,6 +13,11 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
   · MinIO configuration: {{ .Values.minio.mode }}
   · Number of MinIO nodes: {{ .Values.minio.replicas }}
   · Size of MinIO volume per node: {{ .Values.minio.persistence.size }}
+  {{- $dbSize := .Values.custom.config.dbsize | default 3 | int -}}
+  {{- $minioSize := .Values.minio.persistence.size | trimSuffix "Gi" | int -}}
+  {{- if lt (mul $minioSize .Values.minio.replicas) (mul $dbSize (ternary .Values.multinode.workers 1 .Values.multinode.enabled)) }}
+    WARNING: Iceberg overall storage size is less than Resurface DB size. Depending on the payload size and capture rate, this could result in a OOS exception. It is recommended to increase storage size or number of nodes for MinIO.
+  {{ end -}}
   {{- if eq .Values.minio.consoleService.type "LoadBalancer" }}
   · You can get the URL to access your MinIO console by running the following command:
 

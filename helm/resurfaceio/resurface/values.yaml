@@ -48,15 +48,18 @@ iceberg:
   enabled: false
   s3:
     enabled: false
-    bucketname: iceberg.resurface
+    bucketname:
     aws:
       region:
       accesskey:
       secretkey:
   config:
-    format:
-    codec:
-    millis:
+    format: ORC
+    codec: ZSTD
+    millis: 20000
+    size:
+      max: 100
+      reserved: 20
 
 custom:
   service:
@@ -126,6 +129,7 @@ kubernetes-ingress:
       type: LoadBalancer
       enablePorts:
         stat: false
+      externalTrafficPolicy: Local
   defaultBackend:
     enabled: false
 
@@ -134,8 +138,8 @@ minio:
   enabled: false
   rootUser: minio
   rootPassword: minio123
-  mode: distributed
-  replicas: 4
+  mode: standalone
+  replicas: 1
   persistence:
     size: 500Gi
   resources:
@@ -150,6 +154,10 @@ minio:
     fsGroup: 1000660000
   configPathmc: "/tmp/minio/mc/"
 
+qa:
+  enabled: false
+  simulator:
+  importer:
 # autoscaling:
 #   enabled: false
 #   minReplicas: 1

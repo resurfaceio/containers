@@ -1,0 +1,34 @@
+{{- if and .Values.iceberg.enabled .Values.qa.enabled .Values.qa.simulator -}}
+{{- $version := "3.5.7" -}}
+{{- $initialSleepSeconds := 180 -}}
+{{- $workload := "Coinbroker" -}}
+{{- $host := "worker.resurface" -}}
+{{- $port := "7701" -}}
+{{- $limitMessages := 0 -}}
+{{- $limitMillis := 0 -}}
+{{- $sleepPerBatch := 0 -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "resurface.fullname" . }}-simulator
+  labels:
+    {{- include "resurface.labels" . | nindent 4 }}
+spec:
+  template:
+    metadata:
+      name: simulator-job
+      labels:
+        {{- include "resurface.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: resurface-sa
+      securityContext:
+        runAsUser: 0
+      restartPolicy: Never
+      containers:
+        - name: simulator
+          image: eclipse-temurin:17-jre
+          command:
+            - "/bin/sh"
+            - "-c"
+            - "wget https://dl.cloudsmith.io/public/resurfacelabs/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
+{{- end -}}

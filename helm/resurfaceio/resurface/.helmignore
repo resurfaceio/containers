@@ -25,7 +25,8 @@
 ns.yaml
 tls-secret.yaml
 dev/
-jobs/
+# jobs/
+importer.yaml
 collector.yaml
 minio/
 # Deprecated

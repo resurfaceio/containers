@@ -1,15 +1,19 @@
 apiVersion: v2
 name: resurface
-version: 3.5.0-1
+version: 3.5.0-2
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
-  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/changes: |
     - kind: added
       description: Support for Iceberg
+    - kind: added
+      description: Support for QA jobs
+    - kind: fix
+      description: Change default externalTrafficPolicy for HAProxy ingress controller in order to avoid Azure LB HTTP healthchecks issue
     - kind: changed
-      description: Upgrade Resurface image to 3.5.0p54
+      description: Upgrade Resurface image to 3.5.3
 keywords:
   - API
   - HTTP
@@ -38,4 +42,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.5.0p54
+appVersion: 3.5.3

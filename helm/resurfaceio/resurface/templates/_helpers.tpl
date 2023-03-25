@@ -51,128 +51,209 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Default options: container resources and persistent volumes
+Container resources and persistent volumes
 */}}
 {{- define "resurface.resources" }}
 {{- $provider := toString .Values.provider -}}
+{{- $icebergIsEnabled := .Values.iceberg.enabled | default false -}}
 
-{{- /* Defaults for DB environment variables */ -}}
-{{- $dbsizedefault := or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9 -}}
-{{- $dbsize := .Values.custom.config.dbsize | default $dbsizedefault | int -}}
-{{- $dbheap := .Values.custom.config.dbheap | default 3 | int -}}
-{{- $dbslabs := .Values.custom.config.dbslabs | default 3 | int -}}
-{{- $shardsize := .Values.custom.config.shardsize | default 3 | int -}}
-{{- $pollingcycle := .Values.custom.config.pollingcycle | default "default" -}}
-{{- $validpollingcycles := list "default" "off" "fast" "nonstop" -}}
-{{- if not (has $pollingcycle $validpollingcycles) -}}
-  {{- join "," $validpollingcycles | cat "Uknown DB polling cycle. Polling cycle must be one of the following: " | fail -}}
+{{/* Used for value validation */}}
+{{- $validPollingCycles := list "default" "off" "fast" "nonstop" -}}
+{{- $validIcebergCompressionCodecs := list "ZSTD" "LZ4" "SNAPPY" "GZIP" -}}
+{{- $validIcebergFileFormats := list "ORC" "PARQUET" -}}
+
+{{/* Defaults for DB environment variables */}}
+{{- $defaultDBSize := or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9 -}}
+{{- $defaultDBHeap := 3 -}}
+{{- $defaultDBSlabs := 3 -}}
+{{- $defaultShardSize := "500m" -}}
+{{- $defaultPollingCycle := "default" -}}
+{{- $defaultTimezone := "UTC" -}}
+{{- if $icebergIsEnabled -}}
+  {{- $defaultDBHeap = $defaultDBSize -}}
+  {{- $defaultDBSize = 3 -}}
+  {{- $defaultDBSlabs = 1 -}}
+  {{/*- $defaultShardSize = "3g" -*/}}
 {{- end -}}
-{{- $tz := .Values.custom.config.tz | default "UTC" -}}
+{{/* Min shard number is hard coded in Resurface data ingestion service (fluke server) */}}
+{{- $minShards := 3 -}}
+{{/*
+  All values without data unit prefix are assumed to be GiB/GB.
+  Modifying the default order of magnitude only alters the units conversion factor.
+  Modifying the units conversion factor affects all numeric values set env vars
+*/}}
+{{- $defaultOrderOfMagnitude := "G" -}}
 
-{{- /* Defaults for Persistent Volume size and Storage Class names */ -}}
-{{- $pvsize := .Values.custom.storage.size | default $dbsize | max 9 | int -}}
-{{- $scnames := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" -}}
-{{- $scname := .Values.custom.storage.classname | default (get $scnames $provider) -}}
-
-{{- /* Defaults for Iceberg environment variables */ -}}
-{{- $icepollingmillis := .Values.iceberg.config.millis | default 20000 -}}
-{{- $icecompressioncodec := .Values.iceberg.config.codec | default "ZSTD" -}}
-{{- $validcompressioncodecs := list "ZSTD" "LZ4" "SNAPPY" "GZIP" -}}
-{{- if not (has $icecompressioncodec $validcompressioncodecs) -}}
-  {{- join "," $validcompressioncodecs | cat "Unknown iceberg compression codec. Iceberg compression codec must be one of the following: " | fail -}}
-{{- end -}}
-{{- $icefileformat := .Values.iceberg.config.format | default "ORC" -}}
-{{- $validfileformats := list "ORC" "PARQUET" -}}
-{{- if not (has $icefileformat $validfileformats) -}}
-  {{- join "," $validfileformats | cat "Unknown iceberg file format. Iceberg file format must be one of the following: " | fail -}}
-{{- end -}}
-
-{{- $ices3secret := "" -}}
-{{- $ices3url := "" -}}
-{{- $ices3bucketname := "" -}}
-{{- if .Values.iceberg.enabled -}}
-  {{- /* Min shard number is hard coded in Resurface data ingestion service (fluke server) */ -}}
-  {{- $minshards := 3 -}}
-  {{- $maxshards := div $dbsize $shardsize | int -}}
-  {{- if lt $maxshards $minshards -}}
-    {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %d\n\tSHARD_SIZE = %d\n\tMax shards configured: %d" $minshards $dbsize $shardsize $maxshards | fail -}}
+{{/* Conversion factor to go from power-of-ten units (metric, GB) to power-of-two units (binary, GiB) */}}
+{{- $unitsCF := 1 -}}
+{{- if not (empty .Values.custom.units) -}}
+  {{- if eq .Values.custom.units "metric" -}}
+    {{- $prefixes := dict "k" 1 "M" 2 "G" 3 "T" 4 "P" 5 "E" 6 "Z" 7 "Y" 8 "R" 9 "Q" 10 -}}
+    {{- $num := 1000 -}}
+    {{- $den := 1024 -}}
+    {{- range $i := until (get $prefixes $defaultOrderOfMagnitude) -}}
+      {{- $num := mul $num $num -}}
+      {{- $den := mul $den $den -}}
+    {{- end -}}
+    {{- $unitsCF = div $num $den -}}
+  {{- else if ne .Values.custom.units "binary" -}}
+    {{- fail "Unknown data unit prefix. Supported values are: 'binary', 'metric'" -}}
   {{- end -}}
+{{- end -}}
 
+{{- $dbSize := .Values.custom.config.dbsize | default $defaultDBSize | int -}}
+{{- $dbHeap := .Values.custom.config.dbheap | default $defaultDBHeap | int -}}
+{{- $dbSlabs := .Values.custom.config.dbslabs | default $defaultDBSlabs | int -}}
+{{- $shardSize := .Values.custom.config.shardsize | default $defaultShardSize -}}
+{{- $pollingCycle := .Values.custom.config.pollingcycle | default $defaultPollingCycle -}}
+{{- $timezone := .Values.custom.config.tz | default $defaultTimezone -}}
+
+{{/*
+  Shard size can be passed with a data unit prefix (k, m, or g)
+  g is assumed when an integer is passed.
+  Prefix is normalized as k for any valid value.
+*/}}
+{{- if kindIs "int64" $shardSize -}}
+  {{- $shardSize = printf "%dg" $shardSize -}}
+{{- end -}}
+{{- $shardSizeLen := len $shardSize -}}
+{{- if (trimSuffix "k" $shardSize | len | ne $shardSizeLen) -}}
+  {{- $shardSize = trimSuffix "k" $shardSize | int -}}
+{{- else if (trimSuffix "m" $shardSize | len | ne $shardSizeLen) -}}
+  {{- $shardSize = trimSuffix "m" $shardSize | int | mul 1024 -}}
+{{- else if (trimSuffix "g" $shardSize | len | ne $shardSizeLen) -}}
+  {{- $shardSize = trimSuffix "g" $shardSize | int | mul (mul 1024 1024) -}}
+{{- else -}}
+  {{- fail "Invalid shard size value. Supported data unit prefixes are: k, m, g" -}}
+{{- end -}}
+
+{{/* Shard size and polling cycle validation */}}
+{{- $maxShards := div (mul $dbSize (mul 1024 1024)) $shardSize | int -}}
+{{- if lt $maxShards $minShards -}}
+  {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %dg\n\tSHARD_SIZE = %dk\n\tMax shards configured: %d" $minShards $dbSize $shardSize $maxShards | fail -}}
+{{- end -}}
+
+{{- if not (has $pollingCycle $validPollingCycles) -}}
+  {{- join "," $validPollingCycles | cat "Unknown DB polling cycle. Polling cycle must be one of the following: " | fail -}}
+{{- end -}}
+
+{{/* Defaults for Persistent Volume size and Storage Class names */}}
+{{- $defaultPVSize := default $dbSize | max 9 -}}
+{{- $defaultSCNames := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" -}}
+
+{{- $pvSize := .Values.custom.storage.size | default $defaultPVSize | int -}}
+{{- $storageClassName := .Values.custom.storage.classname | default (get $defaultSCNames $provider) -}}
+
+{{/* Defaults for Iceberg environment variables */}}
+{{- $defaultIcebergMaxSize := 100 -}}
+{{- $defaultIcebergMinSize := 20 -}}
+{{- $defaultIcebergPollingMillis := 20000 -}}
+{{- $defaultIcebergCompressionCodec := "ZSTD" -}}
+{{- $defaultIcebergFileFormat := "ORC" -}}
+
+{{- $icebergMaxSize := .Values.iceberg.config.size.max | default $defaultIcebergMaxSize | int -}}
+{{- $icebergMinSize := .Values.iceberg.config.size.reserved | default $defaultIcebergMinSize | int -}}
+{{- $icebergPollingMillis := .Values.iceberg.config.millis | default $defaultIcebergPollingMillis -}}
+{{- $icebergCompressionCodec := .Values.iceberg.config.codec | default $defaultIcebergCompressionCodec -}}
+{{- $icebergFileFormat := .Values.iceberg.config.format | default $defaultIcebergFileFormat -}}
+
+{{- $icebergS3Secret := "" -}}
+{{- $icebergS3URL := "" -}}
+{{- $icebergS3BucketName := "" -}}
+
+{{- if $icebergIsEnabled -}}
   {{- if and .Values.minio.enabled .Values.iceberg.s3.enabled -}}
     {{ fail "MinIO and AWS S3 iceberg deployments are mutually exclusive. Please enable only one." }}
   {{- else if .Values.minio.enabled -}}
-    {{- $ices3secret = include "minio.secretName" .Subcharts.minio | required "Required value: MinIO credentials" -}}
-    {{- $ices3bucketname = required "Required value: MinIO bucket name" (index .Values.minio.buckets 0).name -}}
-    {{- $ices3url = .Values.minio.service.port | default 9000 | printf "http://%s.%s:%v/" (include "minio.fullname" .Subcharts.minio ) .Release.Namespace -}}
+    {{- $minioSize := .Values.minio.persistence.size | trimSuffix "Gi" | int -}}
+    {{- $icebergMaxSize = mul $minioSize .Values.minio.replicas -}}
+    {{- $icebergS3Secret = include "minio.secretName" .Subcharts.minio | required "Required value: MinIO credentials" -}}
+    {{- $icebergS3BucketName = required "Required value: MinIO bucket name" (index .Values.minio.buckets 0).name -}}
+    {{- $icebergS3URL = .Values.minio.service.port | default 9000 | printf "http://%s.%s:%v/" (include "minio.fullname" .Subcharts.minio ) .Release.Namespace -}}
   {{- else if .Values.iceberg.s3.enabled -}}
     {{- if or (empty .Values.iceberg.s3.aws.accesskey) (empty .Values.iceberg.s3.aws.secretkey) -}}
       {{- fail "Required value: AWS S3 credentials" -}}
     {{- end -}}
-    {{- $ices3secret = "resurface-s3-creds" -}}
-    {{- $ices3bucketname = required "Required value: AWS S3 bucket unique name" .Values.iceberg.s3.bucketname -}}
-    {{- $ices3url = required "Required value: AWS region where the S3 bucket is deployed" .Values.iceberg.s3.aws.region | printf "https://s3.%s.amazonaws.com" -}}
+    {{- $icebergS3Secret = "resurface-s3-creds" -}}
+    {{- $icebergS3BucketName = required "Required value: AWS S3 bucket unique name" .Values.iceberg.s3.bucketname -}}
+    {{- $icebergS3URL = required "Required value: AWS region where the S3 bucket is deployed" .Values.iceberg.s3.aws.region | printf "https://s3.%s.amazonaws.com" -}}
   {{- else -}}
     {{- fail "An object storage provider must be enabled for Iceberg. Supported values are: minio, s3" -}}
   {{- end -}}
 
   {{- /* Define a minimum DB_HEAP size for Iceberg deployments. Less memory could result in unfulfilled queries due to lack of resources */ -}}
-  {{- $dbheap = max $dbheap 8 -}}
+  {{- $dbHeap = max $dbHeap 8 -}}
+
+  {{/* Iceberg validation */}}
+  {{- if lt $icebergMaxSize $icebergMinSize -}}
+    {{- printf "Iceberg storage size must be greater than the reserved storage size (Current size: %s, Reserved storage size: %s)" $icebergMaxSize $icebergMinSize | fail -}}
+  {{- end -}}
+  {{- if not (has $icebergCompressionCodec $validIcebergCompressionCodecs) -}}
+    {{- join "," $validIcebergCompressionCodecs | cat "Unknown iceberg compression codec. Iceberg compression codec must be one of the following: " | fail -}}
+  {{- end -}}
+  {{- if not (has $icebergFileFormat $validIcebergFileFormats) -}}
+    {{- join "," $validIcebergFileFormats | cat "Unknown iceberg file format. Iceberg file format must be one of the following: " | fail -}}
+  {{- end -}}
 
 {{- end -}}
 
 {{- /* Defaults for container resources */ -}}
-{{- $cpureq := .Values.custom.resources.cpu | default 6 -}}
-{{- $memreq := .Values.custom.resources.memory | default (add $dbsize $dbheap) }}
+{{- $cpuRequest := .Values.custom.resources.cpu | default 6 -}}
+{{- $memoryRequest := .Values.custom.resources.memory | default (add $dbSize $dbHeap) }}
           resources:
             requests:
-              cpu: {{ $cpureq }}
-              memory: {{ printf "%vGi" $memreq }}
+              cpu: {{ $cpuRequest }}
+              memory: {{ mul $unitsCF $memoryRequest | printf "%vGi" }}
           env:
             - name: DB_SIZE
-              value: {{ printf "%dg" $dbsize }}
+              value: {{ mul $unitsCF $dbSize | printf "%dg" }}
             - name: DB_HEAP
-              value: {{ printf "%dg" $dbheap }}
+              value: {{ mul $unitsCF $dbHeap | printf "%dg" }}
             - name: DB_SLABS
-              value: {{ $dbslabs | quote }}
+              value: {{ $dbSlabs | quote }}
             - name: SHARD_SIZE
-              value: {{ printf "%dg" $shardsize }}
+              value: {{ mul $unitsCF $shardSize | printf "%dk" }}
             - name: POLLING_CYCLE
-              value: {{ $pollingcycle | quote }}
+              value: {{ $pollingCycle | quote }}
             - name: TZ
-              value: {{ $tz | quote }}
-            {{- if .Values.iceberg.enabled }}
+              value: {{ $timezone | quote }}
+            {{- if $icebergIsEnabled }}
+            - name: ICEBERG_SIZE_MAX
+              value: {{ mul $unitsCF $icebergMaxSize | printf "%dg" }}
+            - name: ICEBERG_SIZE_RESERVED
+              value: {{ mul $unitsCF $icebergMinSize | printf "%dg" }}
             - name: ICEBERG_S3_URL
-              value: {{ $ices3url | quote }}
+              value: {{ $icebergS3URL | quote }}
             - name: ICEBERG_S3_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ $ices3secret }}
+                  name: {{ $icebergS3Secret }}
                   key: rootUser
             - name: ICEBERG_S3_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ $ices3secret }}
+                  name: {{ $icebergS3Secret }}
                   key: rootPassword
             - name: ICEBERG_S3_LOCATION
-              value: {{ printf "s3a://%s/" $ices3bucketname }}
+              value: {{ printf "s3a://%s/" $icebergS3BucketName }}
             - name: ICEBERG_POLLING_MILLIS
-              value: {{ $icepollingmillis | quote }}
+              value: {{ $icebergPollingMillis | quote }}
             - name: ICEBERG_FILE_FORMAT
-              value: {{ $icefileformat | quote }}
+              value: {{ $icebergFileFormat | quote }}
             - name: ICEBERG_COMPRESSION_CODEC
-              value: {{ $icecompressioncodec | quote }}
+              value: {{ $icebergCompressionCodec | quote }}
             {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
-        {{- if not (empty $scname) }}
-        storageClassName: {{ $scname }}
+        {{- if not (empty $storageClassName) }}
+        storageClassName: {{ $storageClassName }}
         {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: {{ $pvsize | printf "%vGi" }}
+            storage: {{ mul $unitsCF $pvSize | printf "%vGi" }}
 {{- end }}
 
 {{/*
