@@ -16,7 +16,7 @@ services:
 
   coordinator:
     container_name: resurface
-    image: resurfaceio/resurface-iceberg:3.5.3
+    image: resurfaceio/resurface-iceberg:3.5.4
     depends_on:
       - minio
     environment:
