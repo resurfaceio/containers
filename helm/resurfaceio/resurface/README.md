@@ -18,6 +18,7 @@ leaks, and failures that are impacting your APIs. Go to [resurface.io](https://r
 
 - [HAProxy Ingress Controller](https://www.haproxy.com/documentation/kubernetes/latest/installation/community/)
 - [Cert-manager utility](https://cert-manager.io/docs/installation/helm/) (when TLS auto-issuing enabled)
+- [MinIO Object Storage](https://min.io/docs/minio/kubernetes/upstream/) (when Iceberg storage is enabled)
 
 ## Values
 
@@ -102,6 +103,8 @@ The **provider** value is a string equal to either `azure`, `aws`, or `gcp`. It 
 provider: azure
 ```
 
+The **units** values is a string equal to either `binary` or `metric`. It is used to set the convention used for data units when configuring a release of this chart. When set to `binary`, powers to two (kiB, MiB, GiB, TiB) are used. When set to `metric`, powers of ten (kB, MB, GB, TB) are used. Defaults to `binary`.
+
 The **multinode** section is where the configuration to set multiple database nodes can be found.
 
 - **multinode.enabled**: boolean. If set to `true` worker nodes are enabled. Otherwise, the single-node configuration is used. Defaults to `false`
@@ -118,9 +121,9 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
 - **iceberg.enabled**: boolean. If set to `true`, all StatefulSet instances will be upgraded to use `resurface-iceberg` images. These contain all the requirements and configuration necessary to automatically push data to and query data from the configured object storage. Defaults to `false`.
 
 - The **iceberg.s3** subsection corresponds to the configuration for the AWS S3 object storage service.
-  - **iceberg.s3.enabled**: If set to `true`, AWS S3 object storage will be used to store Iceberg data and metadata files. It is important to ntoe that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
+  - **iceberg.s3.enabled**: If set to `true`, AWS S3 object storage will be used to store Iceberg data and metadata files. It is important to note that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
   - **iceberg.s3.bucketname**: string. Unique name for the S3 bucket where data will be written to.
-  - **iceberg.s3.aws**: nested subsection where the configuration for the AWS account that owns the S3 bucket can be found. ]
+  - **iceberg.s3.aws**: nested subsection where the configuration for the AWS account that owns the S3 bucket can be found.
   - **iceberg.s3.aws.region**: string. AWS region where S3 bucket was created in. Required only if **iceberg.s3.enabled** is set to `true`.
   - **iceberg.s3.aws.accesskey**: string. AWS Credentials. It is **not** recommended to pass the AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
   - **iceberg.s3.aws.secretkey**: string. AWS Credentials. It is **not** recommended to pass AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
@@ -129,21 +132,23 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
   - **iceberg.config.format**: string. File format used for Iceberg data file storage. It can be either `'PARQUET'`, `'ORC'` or `'AVRO'` format. Defaults to `'ORC'`.
   - **iceberg.config.codec**: string. Codec used for compression of Iceberg data files. It can be either `'ZSTD'`, `'LZ4'`, `'SNAPPY'`, or `'GZIP'`. Defaults to `'ZSTD'`.
   - **iceberg.config.millis**: integer. Sleep between Iceberg polling cycles, in milliseconds. Defaults to `20000`.
+  - **iceberg.size.max**: integer. Maximum configurable size in GiB/GB (see **units**) for Iceberg storage (data & index). Should be equal to **minio.persistence.size** when **minio.enabled** is set to `true`. Defaults to `100`.
+  - **iceberg.size.reserved**: integer. Reserved space size in GiB/GB (see **units**) for Iceberg storage (metadata & logs). Must be less than **iceberg.size.max**. Defaults to `20`.
 
 The **minio** section corresponds to values passed to the `minio-official/minio` subchart. For more detailed information on all the values that can be set for this chart, please visit: https://artifacthub.io/packages/helm/minio-official/minio
   - **minio.enabled**: If set to `true`, MinIO subchart will be deployed. It is important to note that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
   - **minio.rootUser**: string. Required if **minio.enabled** is set to `true`.
   - **minio.rootPassword**: string. Required if **minio.enabled** is set to `true`.
-  - **minio.mode**: string. MinIO [deployment topology](https://min.io/docs/minio/linux/operations/installation.html#install-and-deploy-minio). It can be either `'standalone'` or `'distributed'`. Defaults to `'distributed'`.
+  - **minio.mode**: string. MinIO [deployment topology](https://min.io/docs/minio/linux/operations/installation.html#install-and-deploy-minio). It can be either `standalone` or `distributed`. Defaults to `standalone`.
   - **minio.replicas**: integer. Number of MinIO instances. Defaults to `4`.
-  - **minio.persistence.size**: string. Persistent volume size for each MinIO instance. Defaults to `'500Gi`.
-  - **minio.resources.requests.memory**: string. Volatile memory request for each MinIO instance. Defaults to `'16Gi`.
-  - **minio.buckets**: Sequence of buckets to create after server has been initialized. For each bucket, a **name** must be specified. This string defaults to `'iceberg.resurface'`.
+  - **minio.persistence.size**: string. Persistent volume size for each MinIO instance. Defaults to `100Gi`.
+  - **minio.resources.requests.memory**: string. Volatile memory request for each MinIO instance. Defaults to `16Gi`.
+  - **minio.buckets**: Sequence of buckets to create after server has been initialized. For each bucket, a **name** must be specified. Defaults to a single item with `name` equal to `iceberg.resurface`.
   - **minio.service**: Kubernetes service that exposes MinIO API.
-    - **minio.service.type**: string. Defaults to `'ClusterIP'`.
+    - **minio.service.type**: string. Defaults to `ClusterIP`.
     - **minio.service.port**: integer. Defaults to `9000`.
   - **minio.consoleService**: Kubernetes service that exposes MinIO web console.
-    - **minio.consoleService.type**: string. Defaults to `'ClusterIP'`.
+    - **minio.consoleService.type**: string. Defaults to `ClusterIP`.
     - **minio.consoleService.port**: integer. Defaults to `9001`.
 
 

@@ -7,7 +7,7 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
 {{- if .Values.multinode.enabled }}
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
-· Iceberg mode is
+· Iceberg storage is
 {{- if .Values.iceberg.enabled }} enabled using
 {{- if .Values.minio.enabled }} MinIO as object storage provider.
   · MinIO configuration: {{ .Values.minio.mode }}

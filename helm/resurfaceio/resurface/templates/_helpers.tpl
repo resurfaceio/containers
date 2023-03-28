@@ -86,8 +86,8 @@ Container resources and persistent volumes
 
 {{/* Conversion factor to go from power-of-ten units (metric, GB) to power-of-two units (binary, GiB) */}}
 {{- $unitsCF := 1 -}}
-{{- if not (empty .Values.custom.units) -}}
-  {{- if eq .Values.custom.units "metric" -}}
+{{- if not (empty .Values.units) -}}
+  {{- if eq .Values.units "metric" -}}
     {{- $prefixes := dict "k" 1 "M" 2 "G" 3 "T" 4 "P" 5 "E" 6 "Z" 7 "Y" 8 "R" 9 "Q" 10 -}}
     {{- $num := 1000 -}}
     {{- $den := 1024 -}}
@@ -96,7 +96,7 @@ Container resources and persistent volumes
       {{- $den := mul $den $den -}}
     {{- end -}}
     {{- $unitsCF = div $num $den -}}
-  {{- else if ne .Values.custom.units "binary" -}}
+  {{- else if ne .Values.units "binary" -}}
     {{- fail "Unknown data unit prefix. Supported values are: 'binary', 'metric'" -}}
   {{- end -}}
 {{- end -}}

@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 
 provider:
+units: binary
 
 ingress:
   enabled: true
@@ -131,17 +132,17 @@ kubernetes-ingress:
         stat: false
       externalTrafficPolicy: Local
   defaultBackend:
-    enabled: false
+    enabled: true
 
 # Dependency chart: MinIO Object Storage
 minio:
   enabled: false
-  rootUser: minio
-  rootPassword: minio123
+  rootUser:
+  rootPassword:
   mode: standalone
   replicas: 1
   persistence:
-    size: 500Gi
+    size: 100Gi
   resources:
     requests:
       memory: 16Gi
@@ -157,6 +158,17 @@ minio:
 qa:
   enabled: false
   simulator:
+    enabled: false
+    version:
+    workload:
+    host:
+    port:
+    limit:
+      messages:
+      millis:
+    sleep:
+      init:
+      batch:
   importer:
 # autoscaling:
 #   enabled: false

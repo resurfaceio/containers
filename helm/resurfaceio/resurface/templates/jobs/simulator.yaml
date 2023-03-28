@@ -1,14 +1,14 @@
-{{- if and .Values.iceberg.enabled .Values.qa.enabled .Values.qa.simulator -}}
-{{- $version := "3.5.7" -}}
-{{- $initialSleepSeconds := 180 -}}
-{{- $workload := "Coinbroker" -}}
-{{- $host := "worker.resurface" -}}
-{{- $port := "7701" -}}
-{{- $limitMessages := 0 -}}
-{{- $limitMillis := 0 -}}
-{{- $sleepPerBatch := 0 -}}
-apiVersion: batch/v1
-kind: Job
+{{- if and .Values.iceberg.enabled .Values.qa.enabled .Values.qa.simulator.enabled -}}
+{{- $version := default "3.5.7" .Values.qa.simulator.version -}}
+{{- $initialSleepSeconds := default 180 .Values.qa.simulator.sleep.init -}}
+{{- $workload := default "RestSmall2" .Values.qa.simulator.workload -}}
+{{- $host := default "worker.resurface" .Values.qa.simulator.host -}}
+{{- $port := default "7701" .Values.qa.simulator.port -}}
+{{- $limitMessages := default 0 .Values.qa.simulator.limit.messages -}}
+{{- $limitMillis := default 0 .Values.qa.simulator.limit.millis -}}
+{{- $sleepPerBatch := default 0 .Values.qa.simulator.sleep.batch -}}
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: {{ include "resurface.fullname" . }}-simulator
   labels:
