@@ -164,16 +164,18 @@ The **custom** section holds the values for fields that can be overriden in any 
 
 - The **custom.resources** subsection is where the container configuration requirements can be found.
   - **custom.resources.cpu**: integer. Minimum required vCPU to run a Resurface container. It isn't recommended to set this value lower than `3`.
-  - **custom.resources.memory**: integer. Minimum required memory in GiB to run a Resurface container. It should be greater than the sum of both **custom.config.dbsize** and **custom.config.dbheap** values.
+  - **custom.resources.memory**: integer. Minimum required memory in GiB/GB (see **units**) to run a Resurface container. It should be greater than the sum of both **custom.config.dbsize** and **custom.config.dbheap** values.
 
 - The **custom.config** subsection contains configuration specific to Resurface.
-  - **custom.config.dbsize**: integer. Available memory in GiB to be used by the Resurface database.
-  - **custom.config.dbheap**: integer. Available memory in GiB to be used by the JVM running the application. It isn't recommended to set this value below `3`.
+  - **custom.config.dbsize**: integer. Available memory in GiB/GB (see **units**) to be used by the Resurface database.
+  - **custom.config.dbheap**: integer. Available memory in GiB/GB (see **units**) to be used by the JVM running the application. It isn't recommended to set this value below `3`.
   - **custom.config.dbslabs**: integer. Used by the Resurface database to define a level of parallelism for queries.
+  - **custom.config.shardsize**: integer|string. As an integer, this value represents the size in GiB/GB (see **units**) of each batch of API calls written to disk. It can also receive a string comprised of a value and the corresponding data unit prefix for different orders of magnitude (e.g. `'500m'`, `'2000k'`, `'3g'`). Defaults to `'500m'`
+  - **custom.config.pollingcycle**: string. Sleep cycle for alert polling thread. Allowed values are `'default'` (use configured cycle delay), `'off'` (no polling), `'fast'` (60 second delay), `'nonstop'` (zero cycle delay). Defaults to `'default'`
   - **custom.config.tz**: string. Used to specify a local timezone instead of the UTC timezone containers run with by default.
 
 - The **custom.storage** subsection refers to the persistent storage configuration. Persistent volume implementation is specific to each cloud provider.
-  - **custom.storage.size**: integer. Size in GiB of the persistent volume that should be provisioned for each Resurface node. It should match the **custom.config.dbsize** value.
+  - **custom.storage.size**: integer. Size in GiB/GB (see **units**) of the persistent volume that should be provisioned for each Resurface node. It should match the **custom.config.dbsize** value.
   - **custom.storage.classname**: string. Name of the storage class to be used when requesting a new persistent volume claim. Each cloud provider can offer more than one `StorageClassName`. By setting `provider`, the storage class name is set to the one offered as default for each provider. This value overrides that default class name. The chosen **custom.storage.classname** should be offered by the cloud provider, otherwise persistence is not guaranteed.
 
 ```yaml
