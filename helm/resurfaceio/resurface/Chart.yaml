@@ -1,19 +1,19 @@
 apiVersion: v2
 name: resurface
-version: 3.5.0-3
+version: 3.5.0-4
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/changes: |
     - kind: added
-      description: Support for Iceberg
+      description: Support for Iceberg as secondary storage
     - kind: added
       description: Support for QA jobs/deployments
-    - kind: fix
-      description: Set default externalTrafficPolicy for HAProxy ingress controller (fixes Azure LB HTTP healthchecks issue)
     - kind: changed
       description: Upgrade Resurface image to 3.5.4
+    - kind: fix
+      description: Set default externalTrafficPolicy for HAProxy ingress controller (fixes Azure LB HTTP healthchecks issue)
 keywords:
   - API
   - HTTP
@@ -27,7 +27,7 @@ keywords:
 home: https://resurface.io
 dependencies:
   - name: kubernetes-ingress
-    version: "1.28.1"
+    version: "1.29.2"
     repository: https://haproxytech.github.io/helm-charts
     condition: ingress.controller.enabled
   - name: minio
