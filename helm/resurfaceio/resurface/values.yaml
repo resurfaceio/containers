@@ -117,6 +117,8 @@ consumer:
     region: 
     accesskeyid: 
     accesskeysecret: 
+    accesskey:
+      enabled:
   logger:
     enabled: true
     rules: |

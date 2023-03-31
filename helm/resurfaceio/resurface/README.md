@@ -273,8 +273,8 @@ The **consumer** section contains the configuration for data stream consumer app
   - **consumer.aws.accesskeysecret**: string. AWS Credentials. It is **not** recommended to pass AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-aws-creds** with the corresponding key-value pairs. Required only if **consumer.aws.enabled** is set to `true` and the **resurface-aws-creds** secret does not exist.
 
 - The **consumer.logger** nested section contains the configuration specific to the Resurface logger used by the consumer applications to send API calls to the corresponding importer endpoint.
-  - **sniffer.logger.enabled**: boolean. The internal logger can be temporarily disabled by setting this value to `false`.
-  - **sniffer.logger.rules**: string. The internal logger operates under a certain [set of rules](http://resurface.io/logging-rules) that determines which data is logged. These rules can be passed to the logger as a single-line or a multiline string.
+  - **consumer.logger.enabled**: boolean. The internal logger can be temporarily disabled by setting this value to `false`.
+  - **consumer.logger.rules**: string. The internal logger operates under a certain [set of rules](http://resurface.io/logging-rules) that determines which data is logged. These rules can be passed to the logger as a single-line or a multiline string.
 
 
 ```yaml
