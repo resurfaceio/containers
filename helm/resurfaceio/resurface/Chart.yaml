@@ -12,7 +12,7 @@ annotations:
       description: Support for QA jobs/deployments
     - kind: changed
       description: Upgrade Resurface image to 3.5.4
-    - kind: fix
+    - kind: fixed
       description: Set default externalTrafficPolicy for HAProxy ingress controller (fixes Azure LB HTTP healthchecks issue)
 keywords:
   - API
