@@ -1,7 +1,15 @@
 # resurfaceio-containers
-Open source containers and helm charts.
+Open source containers and helm charts
 
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/resurfaceio)](https://artifacthub.io/packages/search?repo=resurfaceio)
+[![License](https://img.shields.io/github/license/resurfaceio/containers)](https://github.com/resurfaceio/containers/blob/master/LICENSE)
+[![Contributing](https://img.shields.io/badge/contributions-welcome-green.svg)](https://github.com/resurfaceio/containers/blob/master/CONTRIBUTING.md)
+
+## Usage
+
+These helm charts are used to manage Resurface installations on Kubernetes, with and without Iceberg storage.
+
+Full documentation is here:  <a href="https://resurface.io/docs">https://resurface.io/docs</a>
 
 ## Available modules
 
