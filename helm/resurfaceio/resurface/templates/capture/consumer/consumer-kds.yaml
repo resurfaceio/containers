@@ -1,5 +1,5 @@
 {{- if .Values.consumer.aws.enabled -}}
-{{- $akisenabled := .Values.consumer.aws.accesskey.enabled | default (ne "aws" .Values.provider) -}}
+{{- $akisenabled := .Values.consumer.aws.accesskey.enabled | default (ne "aws" (default "" .Values.provider)) -}}
 {{- $akid := coalesce .Values.consumer.aws.accesskeyid .Values.consumer.aws.accesskey.id -}}
 {{- $aksecret := coalesce .Values.consumer.aws.accesskeysecret .Values.consumer.aws.accesskey.secret -}}
 {{- if and $akisenabled $akid $aksecret -}}

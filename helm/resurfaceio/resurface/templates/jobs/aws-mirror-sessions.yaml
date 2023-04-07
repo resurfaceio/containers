@@ -1,0 +1,52 @@
+{{- if default "" .Values.provider | eq "aws" | and .Values.sniffer.enabled .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.jobs.updater.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vnis-config
+data:
+  vnis: ""
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mirror-maker
+spec:
+  schedule: {{ .Values.sniffer.vpcmirror.jobs.updater.schedule | default "0 * * * *" | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: {{ include "resurface.fullname" . }}-sniffer-sa
+          containers:
+          - name: resurface-mirror-maker
+            image: resurfaceio/aws-mirror-maker:0.1.2
+            imagePullPolicy: Always
+            env:
+            - name: MIRROR_TARGET_EKS_CLUSTER_NAME
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.target.cluster | quote }}
+            - name: MIRROR_TARGET_EKS_NODEGROUP_NAME
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.target.nodegroup | quote }}
+            - name: MIRROR_TARGET_ID
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.target.id | quote }}
+            - name: MIRROR_TARGET_IDS
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.target.ids | join "," }}
+            - name: MIRROR_TARGET_SG
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.target.sg | quote }}
+            - name: MIRROR_FILTER_ID
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.filter.id | quote }}
+            - name: MIRROR_SOURCE_ECS_CLUSTER_NAME
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.source.ecs.cluster | quote }}
+            - name: MIRROR_SOURCE_ECS_TASKS
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.source.ecs.tasks | quote }}
+            - name: MIRROR_SOURCE_AUTOSCALING_GROUPS
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.source.autoscaling.groups | join "," }}
+            - name: MIRROR_SOURCE_EC2_INSTANCES
+              value: {{ .Values.sniffer.vpcmirror.jobs.updater.source.ec2.instances | join "," }}
+            - name: MIRROR_CUSTOM_VXLAN_PORT
+              value: {{ default 4789 .Values.sniffer.vpcmirror.vxlanport | quote }}
+            - name: MIRROR_DEBUG_OUT
+              value: {{ .Values.qa.enabled | quote | replace "false" "" }}
+            - name: K8S_NAMESPACE
+              value: {{ .Release.Namespace }}
+          restartPolicy: OnFailure
+{{- end -}}

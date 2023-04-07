@@ -98,6 +98,25 @@ sniffer:
     enabled: false
     vnis:
     ports:
+    jobs:
+      updater:
+        enabled: false
+        schedule: "0 * * * *"
+        target:
+          cluster:
+          nodegroup:
+          id:
+          sg:
+        filter:
+          id:
+        source:
+          ecs:
+            cluster:
+            tasks:
+          autoscaling:
+            groups:
+          ec2:
+            instances:
   logger:
     enabled: true
     rules: |

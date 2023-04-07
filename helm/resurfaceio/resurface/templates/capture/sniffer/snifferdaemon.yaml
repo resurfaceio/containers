@@ -19,7 +19,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: resurface-logger
-        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.3{{ end }}
+        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.3.0{{ end }}
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsUser: 0
@@ -45,12 +45,32 @@ spec:
         - name: K8S_INPUT
           {{ if empty $snifferops -}}
           value: {{ print $sniffermirrorops }}
+        - name: SNIFFER_ENGINE
+          value: "mirror"
+        - name: APP_PORTS
+          value: {{ join "," .Values.sniffer.vpcmirror.ports | default 80 | quote }}
+        - name: SNIFFER_MIRROR_VXLANPORT
+          value: {{ default 4789 .Values.sniffer.vpcmirror.vxlanport | quote }}
+        - name: SNIFFER_MIRROR_VNIS
+          {{ if default "" .Values.provider | eq "aws" | and .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.jobs.updater.enabled -}}
+          valueFrom:
+            configMapKeyRef:
+              name: vnis-config
+              key: vnis 
+          {{ else -}}
+          value: {{ join "," .Values.sniffer.vpcmirror.vnis }}
+          {{ end -}}
           {{ else -}}
           value: {{ print $snifferops }}
       {{ if not (empty $sniffermirrorops) -}}
       - name: resurface-logger-2
-        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.2.3{{ end }}
+        image: resurfaceio/network-sniffer{{ if .Values.sniffer.debug }}-debug:1.0.0{{ else }}:1.3.0{{ end }}
         imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+          capabilities:
+            add: [ "NET_ADMIN", "NET_RAW" ]
         env:
         - name: USAGE_LOGGERS_URL
           value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
@@ -61,6 +81,21 @@ spec:
           value: {{ not .Values.sniffer.logger.enabled | default nil }}
         - name: K8S_INPUT
           value: {{ print $sniffermirrorops }}
+        - name: SNIFFER_ENGINE
+          value: "mirror"
+        - name: APP_PORTS
+          value: {{ join "," .Values.sniffer.vpcmirror.ports | default 80 | quote }}
+        - name: SNIFFER_MIRROR_VXLANPORT
+          value: {{ default 4789 .Values.sniffer.vpcmirror.vxlanport | quote }}
+        - name: SNIFFER_MIRROR_VNIS
+          {{ if default "" .Values.provider | eq "aws" | and .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.jobs.updater.enabled -}}
+          valueFrom:
+            configMapKeyRef:
+              name: vnis-config
+              key: vnis 
+          {{ else -}}
+          value: {{ join "," .Values.sniffer.vpcmirror.vnis }}
+          {{ end -}}
       {{- end }}
           {{- end }}
         {{- end }}

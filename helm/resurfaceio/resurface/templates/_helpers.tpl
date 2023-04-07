@@ -263,7 +263,7 @@ Coordinator config.properties
 coordinator=true
 discovery.uri=http://localhost:7700
 node-scheduler.include-coordinator=true
-{{ if or .Values.ingress.tls.enabled (eq .Values.provider "ibm-openshift") -}}
+{{ if or .Values.ingress.tls.enabled (eq (default "" .Values.provider) "ibm-openshift") -}}
 http-server.process-forwarded=true
 http-server.authentication.allow-insecure-over-http=true
 {{ include "resurface.config.auth" . -}}

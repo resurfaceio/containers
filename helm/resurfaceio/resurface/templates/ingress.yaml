@@ -1,10 +1,11 @@
 {{- if .Values.ingress.enabled -}}
+{{- $provider := default "" .Values.provider -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "resurface.fullname" . }}-ingress
   annotations:
-    {{- if eq .Values.provider "ibm-openshift" }}
+    {{- if eq $provider "ibm-openshift" }}
     route.openshift.io/termination: edge
     haproxy.router.openshift.io/rewrite-target: /
     {{- else }}
@@ -22,7 +23,7 @@ spec:
       name: kubernetes-ingress-default-backend
       port:
         number: 8080
-  {{- if ne .Values.provider "ibm-openshift" }}
+  {{- if ne $provider "ibm-openshift" }}
   ingressClassName: haproxy
   {{- end }}
   rules:
@@ -46,10 +47,10 @@ spec:
           {{- end }}
       {{ if .Values.ingress.tls.enabled -}}
       host: {{ required "A fully qualified domain name is needed when TLS is enabled" .Values.ingress.tls.host }}
-      {{- else if eq .Values.provider "ibm-openshift" -}}
+      {{- else if eq $provider "ibm-openshift" -}}
       host: {{ include "resurface.fullname" . }}.{{ required "The value ingress.tls.host must be set with the ingress subdomain name when running on OpenShift" .Values.ingress.tls.host }}
       {{- end }}
-  {{- if and .Values.ingress.tls.enabled (ne .Values.provider "ibm-openshift") }}
+  {{- if and .Values.ingress.tls.enabled (ne $provider "ibm-openshift") }}
   tls:
     - secretName: {{ .Values.ingress.tls.byoc.secretname | default (printf "%s-tls" (include "resurface.fullname" . )) }}
       hosts:
