@@ -4,17 +4,14 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
-          description: Support for Iceberg as secondary storage
-        - kind: added
-          description: Support for QA jobs/deployments
+          description: Cronjob to update AWS VPC Traffic Mirror sessions
         - kind: changed
-          description: Upgrade Resurface image to 3.5.4
-        - kind: fixed
-          description: Set default externalTrafficPolicy for HAProxy ingress controller (fixes Azure LB HTTP healthchecks issue)
-      artifacthub.io/containsSecurityUpdates: "true"
+          description: Upgrade network-sniffer image to 1.3.0
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "true"
     apiVersion: v2
     appVersion: 3.5.4
-    created: "2023-04-07T20:59:04.789920141Z"
+    created: "2023-04-07T21:16:07.641015152Z"
     dependencies:
     - condition: ingress.controller.enabled
       name: kubernetes-ingress
@@ -26,7 +23,7 @@ entries:
       version: 5.0.7
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: 54608d466331736d7803a722ff991ab4892efea66a0f281026b9e43284e1c9c2
+    digest: 2ac626bd98b1544cd2d4908439dad615a96279e182f7f7c77b2a8ca9e262efae
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -49,6 +46,6 @@ entries:
     - https://github.com/resurfaceio
     type: application
     urls:
-    - https://github.com/resurfaceio/containers/releases/download/resurface-3.5.1/resurface-3.5.1.tgz
-    version: 3.5.1
-generated: "2023-04-07T20:59:04.789928441Z"
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.0-0.1.0/resurface-3.6.0-0.1.0.tgz
+    version: 3.6.0-0.1.0
+generated: "2023-04-07T21:16:07.641024352Z"
