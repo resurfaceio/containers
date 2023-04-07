@@ -1,0 +1,51 @@
+apiVersion: v1
+entries:
+  resurface:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Cronjob to update AWS VPC Traffic Mirror sessions
+        - kind: changed
+          description: Upgrade network-sniffer image to 1.3.0
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
+    appVersion: 3.5.4
+    created: "2023-04-07T21:16:07.641015152Z"
+    dependencies:
+    - condition: ingress.controller.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.29.2
+    - condition: minio.enabled
+      name: minio
+      repository: https://charts.min.io/
+      version: 5.0.7
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 2ac626bd98b1544cd2d4908439dad615a96279e182f7f7c77b2a8ca9e262efae
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.0-0.1.0/resurface-3.6.0-0.1.0.tgz
+    version: 3.6.0-0.1.0
+generated: "2023-04-07T21:16:07.641024352Z"
