@@ -1,4 +1,0 @@
-FROM alpine
-ADD bin/gor_RESURFACE_LOGGER_x64.tar.gz  /bin/
-RUN apk add --update --no-cache apk-tools busybox less ssl_client bind-tools iptables iputils iproute2 drill curl nmap tcpdump jq nano vim
-CMD gor --input-raw $VPC_MIRROR_DEVICE:$APP_PORT --input-raw-track-response --input-raw-bpf-filter "(dst port $APP_PORT) or (src port $APP_PORT)" --output-resurface $USAGE_LOGGERS_URL --output-resurface-rules "$(echo -e $USAGE_LOGGERS_RULES)" --output-resurface-debug --output-stdout --http-pprof :8181
