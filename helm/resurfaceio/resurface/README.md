@@ -10,9 +10,10 @@ leaks, and failures that are impacting your APIs. Go to [resurface.io](https://r
 - **Service**: Worker. Exposes the fluke microservice used to import API calls into your Resurface instance.
 - **Ingress**: Requires HAProxy ingress controller. Enabled by default.
 - **TLS Secret**: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
-- **ClusterIssuer**: (Optional) Issues TLS certificate from Let's Encrypt. Resquires Cert-manager utility. Disabled by default.
+- **ClusterIssuer**: (Optional) Issues TLS certificate from Let's Encrypt. Requires Cert-manager utility. Disabled by default.
 - **Daemonset**: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
 - **Deployments**: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
+- **CronJob**: (Optional) AWS VPC Traffic Mirror session maker. Creates traffic mirror sessions given different traffic sources (ECS tasks, EC2 instances, and/or Auto-Scaling Groups). When enabled, it updates the list of VNIs used by the sniffer to detect and capture incoming mirrored traffic for all active mirror sessions. It also restarts the DaemonSet accordingly.
 
 ## Dependencies
 
@@ -214,10 +215,25 @@ The **sniffer** section is where the configuration values for the optional netwo
 
 - **sniffer.ignore**: []string. Array containing the names of specific network interfaces to ignore for all nodes. Defaults to `[ "lo", "cbr0" ]`
 
-- The **sniffer.vpcmirror** subsection refers to capturing traffic from AWS VPC mirroring sessions. A traffic mirroring session can be set up from one ENI (attached to a given EC2 instance), to another ENI attached to any of the EC2 instances that work as Kubernetes nodes for a given EKS cluster. Traffic passing through the first ENI will be mirrored onto the second one, where the network packet sniffer can capture the data from and send it to your Resurface instance. AWS VPC mirrored traffic capture will work only when  **sniffer.provider** is set to `"aws"`.
+- The **sniffer.vpcmirror** subsection refers to capturing traffic from AWS VPC mirroring sessions. A traffic mirroring session can be set up from one ENI (attached to a given EC2 instance), to another ENI attached to any of the EC2 instances that work as Kubernetes nodes for a given EKS cluster. Traffic passing through the first ENI will be mirrored onto the second one, where the network packet sniffer can capture the data from and send it to your Resurface instance.
   - **sniffer.vcpmirror.enabled**: boolean. The sniffer will be configured to capture mirrored traffic by setting this option to `true`. Defaults to `false`.
   - **sniffer.vcpmirror.vnis**: []integer. Array containing the Virtual Network Identifiers from each VPC mirroring session.
   - **sniffer.vcpmirror.ports**: []integer. Array containing the port numbers exposed by the applications running in the EC2 instances that act as traffic mirror sources. At least one port number is required.
+  - The **sniffer.vpcmirror.autosetup** nested subsection contains the configuration for an automatic job to make AWS VPC Traffic Mirror sessions. Given one or more traffic sources (ECS tasks, EC2 instances, and/or Auto-Scaling Groups), it creates traffic mirror sessions for each (if supported), updates the list of VNIs used by the sniffer for all active mirror sessions, and it restarts the DaemonSet accordingly.  The AWS VPC traffic mirror session creator/updater job will work only when  **provider** is set to `"aws"` and **sniffer.vpcmirror.enabled** is set to `true`.
+    - **sniffer.vpcmirror.autosetup.enabled**: boolean. The traffic mirror session creator script will run periodically as a job when set to `true`. Defaults to `false`.
+    - **sniffer.vpcmirror.autosetup.schedule**: string. Cron schedule expression to define the frequency at which to run the traffic mirror session creator job. Defaults to `"0 * * * *"`, which can be read as "every hour at minute 0".
+    - The traffic **sniffer.vpcmirror.autosetup.source** can be any one or more of the following:
+      - **sniffer.vpcmirror.autosetup.source.ecs.cluster**: string. Name of an ECS cluster with EC2 and/or FARGATE-based containerized workloads to capture traffic from. Must be in the same region as mirror target EKS cluster. NOTE: AWS uses EC2 instances with available resources to deploy FARGATE workloads. Sometimes the underlying EC2 instances will not support VPC traffic mirroring. For more info, please visit: https://docs.aws.amazon.com/vpc/latest/mirroring/traffic-mirroring-limits.html
+      - **sniffer.vpcmirror.autosetup.source.ecs.tasks**: []string. Comma-separatted sequence of IDs of ECS tasks to capture traffic from. Filters out all other ECS tasks not intended for traffic mirroring. Optional.
+      - **sniffer.vpcmirror.autosetup.source.ec2.instances**: []string. Comma-separatted sequence of IDs of EC2 instances to capture traffic from. Optional. 
+      - **sniffer.vpcmirror.autosetup.source.ec2.autoscaling**: []string. Comma-separatted sequence of IDs of Auto-Scaling groups to capture traffic from. Optional.
+    - The traffic **sniffer.vpcmirror.autosetup.target** nested values refer to the configuration for the AWS VPC traffic mirror target:
+      - **sniffer.vpcmirror.autosetup.target.eks.cluster**: string. Name of the EKS cluster where Resurface is running. Required if **sniffer.vpcmirror.autosetup.enabled** is set to `true` and **sniffer.vpcmirror.autosetup.target.eks.id** is not set. 
+      - **sniffer.vpcmirror.autosetup.target.eks.nodegroup**: string. Name of the nodegroup where Resurface is running. Filters out all nodes from other EKS nodegroups not intended for traffic mirroring. Optional.
+      - **sniffer.vpcmirror.autosetup.target.id**: string. Traffic Mirror Target ID. Traffic mirror target creation is skipped when set to an already existing traffic mirror target. Required only if **sniffer.vpcmirror.autosetup.target.eks.cluster** is not set.
+      - **sniffer.vpcmirror.autosetup.target.sg**: string. Security group attached to the ENI of a target EKS node. Used to create security group rules to allow mirrored traffic across source and target. Required only if **sniffer.vpcmirror.autosetup.target.eks.cluster** is not set.
+      - **sniffer.vpcmirror.autosetup.filter.id**: string. Traffic Mirror Filter ID. Traffic mirror filter creation is skipped when set to an already existing traffic mirror target. Optional.
+
 
 - **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Defaults to `80`. Required only if **sniffer.enabled** is `true` and no other option is enabled.
 - **sniffer.device**: (deprecated) string. Name of the network interface to attach the sniffer to. Defaults to the Kubernetes custom bridge interface `cbr0`.

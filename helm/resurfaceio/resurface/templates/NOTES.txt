@@ -64,7 +64,7 @@ helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
 {{ if .Values.sniffer.enabled -}}
 · Network packet sniffing logger is ENABLED.
 {{ if not (empty (include "resurface.sniffer.mirror.options" .)) }}
-  · AWS VPC Mirroring is ENABLED (VNIs: {{ join ", " .Values.sniffer.vpcmirror.vnis }})
+  · AWS VPC Mirroring is ENABLED (VNIs{{ if .Values.provider | default "" | eq "aws" | and .Values.sniffer.enabled .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.autosetup.enabled }} are being calculated{{ else }}: {{ join ", " .Values.sniffer.vpcmirror.vnis }}{{ end }})
 {{ end }}
 {{ if and (empty (include "resurface.sniffer.mirror.options" .)) (empty (include "resurface.sniffer.options" .)) }}
   NOTE: NO services, pods, or labels were specified and discovery is DISABLED.

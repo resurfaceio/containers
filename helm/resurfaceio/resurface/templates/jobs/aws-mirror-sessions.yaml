@@ -1,4 +1,4 @@
-{{- if default "" .Values.provider | eq "aws" | and .Values.sniffer.enabled .Values.sniffer.vpcmirror.enabled .Values.jobs.aws.mirror.enabled -}}
+{{- if default "" .Values.provider | eq "aws" | and .Values.sniffer.enabled .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.autosetup.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -11,7 +11,7 @@ kind: CronJob
 metadata:
   name: {{ include "resurface.fullname" . }}-mirror-maker
 spec:
-  schedule: {{ .Values.jobs.aws.mirror.schedule | default "0 * * * *" | quote }}
+  schedule: {{ .Values.sniffer.vpcmirror.autosetup.schedule | default "0 * * * *" | quote }}
   jobTemplate:
     spec:
     {{- include "resurface.jobspec.aws.mirrormaker" . | nindent 6 }}

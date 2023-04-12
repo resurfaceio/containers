@@ -455,25 +455,25 @@ template:
       imagePullPolicy: IfNotPresent
       env:
       - name: MIRROR_TARGET_EKS_CLUSTER_NAME
-        value: {{ .Values.jobs.aws.mirror.target.eks.cluster | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.target.eks.cluster | quote }}
       - name: MIRROR_TARGET_EKS_NODEGROUP_NAME
-        value: {{ .Values.jobs.aws.mirror.target.eks.nodegroup | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.target.eks.nodegroup | quote }}
       - name: MIRROR_TARGET_ID
-        value: {{ .Values.jobs.aws.mirror.target.id | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.target.id | quote }}
       - name: MIRROR_TARGET_IDS
-        value: {{ .Values.jobs.aws.mirror.target.ids | join "," }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.target.ids | join "," }}
       - name: MIRROR_TARGET_SG
-        value: {{ .Values.jobs.aws.mirror.target.secgroup | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.target.sg | quote }}
       - name: MIRROR_FILTER_ID
-        value: {{ .Values.jobs.aws.mirror.filter.id | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.filter.id | quote }}
       - name: MIRROR_SOURCE_ECS_CLUSTER_NAME
-        value: {{ .Values.jobs.aws.mirror.source.ecs.cluster | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.source.ecs.cluster | quote }}
       - name: MIRROR_SOURCE_ECS_TASKS
-        value: {{ .Values.jobs.aws.mirror.source.ecs.tasks | quote }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.source.ecs.tasks | join "," }}
       - name: MIRROR_SOURCE_AUTOSCALING_GROUPS
-        value: {{ .Values.jobs.aws.mirror.source.ec2.asgs | join "," }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.source.ec2.autoscaling | join "," }}
       - name: MIRROR_SOURCE_EC2_INSTANCES
-        value: {{ .Values.jobs.aws.mirror.source.ec2.instances | join "," }}
+        value: {{ .Values.sniffer.vpcmirror.autosetup.source.ec2.instances | join "," }}
       - name: MIRROR_CUSTOM_VXLAN_PORT
         value: {{ default 4789 .Values.sniffer.vpcmirror.vxlanport | quote }}
       - name: MIRROR_DEBUG_OUT

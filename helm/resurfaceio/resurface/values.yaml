@@ -98,15 +98,7 @@ sniffer:
     enabled: false
     ports:
     vnis:
-  logger:
-    enabled: true
-    rules: |
-      include default
-      skip_compression
-
-jobs:
-  aws:
-    mirror:
+    autosetup:
       enabled: false
       schedule: "0 * * * *"
       source:
@@ -115,15 +107,20 @@ jobs:
           tasks:
         ec2:
           instances:
-          asgs:
+          autoscaling:
       target:
         eks:
           cluster:
           nodegroup:
-        secgroup:
+        sg:
         id:
       filter:
         id:
+  logger:
+    enabled: true
+    rules: |
+      include default
+      skip_compression
 
 consumer:
   azure:
