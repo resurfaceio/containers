@@ -96,32 +96,34 @@ sniffer:
   labels:
   vpcmirror:
     enabled: false
-    vnis:
     ports:
-    jobs:
-      updater:
-        enabled: false
-        schedule: "0 * * * *"
-        target:
-          cluster:
-          nodegroup:
-          id:
-          sg:
-        filter:
-          id:
-        source:
-          ecs:
-            cluster:
-            tasks:
-          autoscaling:
-            groups:
-          ec2:
-            instances:
+    vnis:
   logger:
     enabled: true
     rules: |
       include default
       skip_compression
+
+jobs:
+  aws:
+    mirror:
+      enabled: false
+      schedule: "0 * * * *"
+      source:
+        ecs:
+          cluster:
+          tasks:
+        ec2:
+          instances:
+          asgs:
+      target:
+        eks:
+          cluster:
+          nodegroup:
+        secgroup:
+        id:
+      filter:
+        id:
 
 consumer:
   azure:

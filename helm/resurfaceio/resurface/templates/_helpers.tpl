@@ -441,3 +441,43 @@ Sniffer.mirror options
 {{ printf "'%s :%s %s vxlan %s %v%s'" $inflag (required "At least one port must be specified for AWS VPC mirrored traffic capture" $mirrorports) $engineflag $vxlanportflag $vxlanport (join "" $builder) }}
 {{- end -}}
 {{- end }}
+
+{{/*
+AWS VPC Traffic mirror session updater job spec
+*/}}
+{{- define "resurface.jobspec.aws.mirrormaker" -}}
+template:
+  spec:
+    serviceAccountName: {{ include "resurface.fullname" . }}-sniffer-sa
+    containers:
+    - name: resurface-mirror-maker
+      image: resurfaceio/aws-mirror-maker:0.1.3
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: MIRROR_TARGET_EKS_CLUSTER_NAME
+        value: {{ .Values.jobs.aws.mirror.target.eks.cluster | quote }}
+      - name: MIRROR_TARGET_EKS_NODEGROUP_NAME
+        value: {{ .Values.jobs.aws.mirror.target.eks.nodegroup | quote }}
+      - name: MIRROR_TARGET_ID
+        value: {{ .Values.jobs.aws.mirror.target.id | quote }}
+      - name: MIRROR_TARGET_IDS
+        value: {{ .Values.jobs.aws.mirror.target.ids | join "," }}
+      - name: MIRROR_TARGET_SG
+        value: {{ .Values.jobs.aws.mirror.target.secgroup | quote }}
+      - name: MIRROR_FILTER_ID
+        value: {{ .Values.jobs.aws.mirror.filter.id | quote }}
+      - name: MIRROR_SOURCE_ECS_CLUSTER_NAME
+        value: {{ .Values.jobs.aws.mirror.source.ecs.cluster | quote }}
+      - name: MIRROR_SOURCE_ECS_TASKS
+        value: {{ .Values.jobs.aws.mirror.source.ecs.tasks | quote }}
+      - name: MIRROR_SOURCE_AUTOSCALING_GROUPS
+        value: {{ .Values.jobs.aws.mirror.source.ec2.asgs | join "," }}
+      - name: MIRROR_SOURCE_EC2_INSTANCES
+        value: {{ .Values.jobs.aws.mirror.source.ec2.instances | join "," }}
+      - name: MIRROR_CUSTOM_VXLAN_PORT
+        value: {{ default 4789 .Values.sniffer.vpcmirror.vxlanport | quote }}
+      - name: MIRROR_DEBUG_OUT
+        value: {{ .Values.qa.enabled | quote | replace "false" "" }}
+      - name: K8S_NAMESPACE
+        value: {{ .Release.Namespace }}
+{{- end }}

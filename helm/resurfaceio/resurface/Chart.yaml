@@ -1,16 +1,12 @@
 apiVersion: v2
 name: resurface
-version: 3.6.0-0.1.0
+version: 3.6.0-0.2.0
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"
-  artifacthub.io/changes: |
-    - kind: added
-      description: Cronjob to update AWS VPC Traffic Mirror sessions
-    - kind: changed
-      description: Upgrade network-sniffer image to 1.3.0
+  artifacthub.io/changes: ""
 keywords:
   - API
   - HTTP

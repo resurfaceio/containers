@@ -7,7 +7,7 @@ rules:
 - apiGroups: [""]
   resources: ["pods", "deployments", "services"]
   verbs: ["get", "watch", "list"]
-{{ if default "" .Values.provider | eq "aws" | and .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.jobs.updater.enabled -}}
+{{ if default "" .Values.provider | eq "aws" | and .Values.sniffer.vpcmirror.enabled .Values.jobs.aws.mirror.enabled -}}
 - apiGroups: [""]
   resources: ["configmaps"]
   resourceNames: ["vnis-config"]
