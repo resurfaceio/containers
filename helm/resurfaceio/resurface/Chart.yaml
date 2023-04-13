@@ -1,18 +1,14 @@
 apiVersion: v2
 name: resurface
-version: 3.6.0-0.2.1
+version: 3.6.0-0.2.2
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    - kind: added
-      description: Documentation for AWS VPC Traffic Mirror session updater
-    - kind: added
-      description: Helm hook to initialize VNIs
     - kind: fixed
-      description: Bug where SNIFFER_ENGINE wasn't set properly for non-mirror container
+      description: Non-existent value in snifferdaemon.yaml
 keywords:
   - API
   - HTTP

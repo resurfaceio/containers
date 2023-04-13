@@ -90,7 +90,7 @@ spec:
         - name: SNIFFER_MIRROR_VXLANPORT
           value: {{ default 4789 .Values.sniffer.vpcmirror.vxlanport | quote }}
         - name: SNIFFER_MIRROR_VNIS
-          {{ if default "" .Values.provider | eq "aws" | and .Values.sniffer.vpcmirror.enabled .Values.jobs.sniffer.mirror.enabled -}}
+          {{ if default "" .Values.provider | eq "aws" | and .Values.sniffer.vpcmirror.enabled .Values.sniffer.vpcmirror.autosetup.enabled -}}
           valueFrom:
             configMapKeyRef:
               name: vnis-config

@@ -15,5 +15,8 @@ rules:
 - apiGroups: ["apps"]
   resources: ["daemonsets"]
   verbs: ["get", "list", "patch"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
 {{- end }}
 {{- end }}
