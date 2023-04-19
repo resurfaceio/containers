@@ -103,8 +103,7 @@ sniffer:
       schedule: "0 * * * *"
       source:
         ecs:
-          cluster:
-          tasks:
+          clusters:
         ec2:
           instances:
           autoscaling:

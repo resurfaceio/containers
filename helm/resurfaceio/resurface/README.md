@@ -10,10 +10,18 @@ leaks, and failures that are impacting your APIs. Go to [resurface.io](https://r
 - **Service**: Worker. Exposes the fluke microservice used to import API calls into your Resurface instance.
 - **Ingress**: Requires HAProxy ingress controller. Enabled by default.
 - **TLS Secret**: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
-- **ClusterIssuer**: (Optional) Issues TLS certificate from Let's Encrypt. Requires Cert-manager utility. Disabled by default.
+- **Issuer**: (Optional) Issues TLS certificate from Let's Encrypt. Requires Cert-manager utility. Disabled by default.
 - **Daemonset**: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
 - **Deployments**: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
 - **CronJob**: (Optional) AWS VPC Traffic Mirror session maker. Creates traffic mirror sessions given different traffic sources (ECS tasks, EC2 instances, and/or Auto-Scaling Groups). When enabled, it updates the list of VNIs used by the sniffer to detect and capture incoming mirrored traffic for all active mirror sessions. It also restarts the DaemonSet accordingly.
+
+Other components:
+
+- **ServiceAccounts**: All DB workloads use the `resurface-sa` service account by default. All Sniffer-related workloads use the `resurface-sniffer-sa` service account.
+- **ClusterRole**: Adds reading capabilities for the Sniffer pods to list pods and services internally. Adds writing capabilities to edit the VNIs ConfigMap when VPC mirroring is enabled.
+- **ClusterRoleBinding**: Binds the ClusterRole to the `resurface-sniffer-sa` ServiceAccount.
+- **Secrets**: Used to manage low-level Trino configuration values.
+- **ConfigMaps**: Used to manage low-level Trino settings.
 
 ## Dependencies
 
@@ -223,8 +231,9 @@ The **sniffer** section is where the configuration values for the optional netwo
     - **sniffer.vpcmirror.autosetup.enabled**: boolean. The traffic mirror session creator script will run periodically as a job when set to `true`. Defaults to `false`.
     - **sniffer.vpcmirror.autosetup.schedule**: string. Cron schedule expression to define the frequency at which to run the traffic mirror session creator job. Defaults to `"0 * * * *"`, which can be read as "every hour at minute 0".
     - The traffic **sniffer.vpcmirror.autosetup.source** can be any one or more of the following:
-      - **sniffer.vpcmirror.autosetup.source.ecs.cluster**: string. Name of an ECS cluster with EC2 and/or FARGATE-based containerized workloads to capture traffic from. Must be in the same region as mirror target EKS cluster. NOTE: AWS uses EC2 instances with available resources to deploy FARGATE workloads. Sometimes the underlying EC2 instances will not support VPC traffic mirroring. For more info, please visit: https://docs.aws.amazon.com/vpc/latest/mirroring/traffic-mirroring-limits.html
-      - **sniffer.vpcmirror.autosetup.source.ecs.tasks**: []string. Comma-separatted sequence of IDs of ECS tasks to capture traffic from. Filters out all other ECS tasks not intended for traffic mirroring. Optional.
+      - **sniffer.vpcmirror.autosetup.source.ecs.clusters**: Comma-separated sequence of names of ECS clusters with EC2 and/or FARGATE-based containerized workloads to capture traffic from. Must be in the same region as mirror target EKS cluster.
+      - **sniffer.vpcmirror.autosetup.source.ecs.launchtype**: string. Filters ECS tasks by launch type. It can be "EC2", "FARGATE", "EXTERNAL", or "all". Optional. Defaults to "EC2".
+      NOTE: AWS uses EC2 instances with available resources to deploy FARGATE workloads. Sometimes the underlying EC2 instances will not support VPC traffic mirroring. For more info, please visit: https://docs.aws.amazon.com/vpc/latest/mirroring/traffic-mirroring-limits.html
       - **sniffer.vpcmirror.autosetup.source.ec2.instances**: []string. Comma-separatted sequence of IDs of EC2 instances to capture traffic from. Optional. 
       - **sniffer.vpcmirror.autosetup.source.ec2.autoscaling**: []string. Comma-separatted sequence of IDs of Auto-Scaling groups to capture traffic from. Optional.
     - The traffic **sniffer.vpcmirror.autosetup.target** nested values refer to the configuration for the AWS VPC traffic mirror target:
@@ -233,6 +242,8 @@ The **sniffer** section is where the configuration values for the optional netwo
       - **sniffer.vpcmirror.autosetup.target.id**: string. Traffic Mirror Target ID. Traffic mirror target creation is skipped when set to an already existing traffic mirror target. Required only if **sniffer.vpcmirror.autosetup.target.eks.cluster** is not set.
       - **sniffer.vpcmirror.autosetup.target.sg**: string. Security group attached to the ENI of a target EKS node. Used to create security group rules to allow mirrored traffic across source and target. Required only if **sniffer.vpcmirror.autosetup.target.eks.cluster** is not set.
       - **sniffer.vpcmirror.autosetup.filter.id**: string. Traffic Mirror Filter ID. Traffic mirror filter creation is skipped when set to an already existing traffic mirror target. Optional.
+
+<!--      - **sniffer.vpcmirror.autosetup.source.ecs.tasks**: []string. Comma-separatted sequence of IDs of ECS tasks to capture traffic from. Filters out all other ECS tasks not intended for traffic mirroring. Optional.-->
 
 
 - **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Defaults to `80`. Required only if **sniffer.enabled** is `true` and no other option is enabled.

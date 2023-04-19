@@ -284,14 +284,16 @@ discovery.uri=http://coordinator:7700
 Common config.properties for both coordinator and workers
 */}}
 {{- define "resurface.config.common" -}}
+{{- $trinoMaxMemory := ternary "4000MB" "1000MB" .Values.iceberg.enabled -}}
+{{- $trinoMinExpireTime := ternary "60s" "1s" .Values.iceberg.enabled -}}
 http-server.http.port=7700
 
 query.max-history=20
 query.max-length=1000000
-query.max-memory=1000MB
-query.max-memory-per-node=1000MB
-query.max-total-memory=1000MB
-query.min-expire-age=1s
+query.max-memory={{ $trinoMaxMemory }}
+query.max-memory-per-node={{ $trinoMaxMemory }}
+query.max-total-memory={{ $trinoMaxMemory }}
+query.min-expire-age={{ $trinoMinExpireTime }}
 {{- end -}}
 
 {{/*
@@ -466,8 +468,12 @@ template:
         value: {{ .Values.sniffer.vpcmirror.autosetup.target.sg | quote }}
       - name: MIRROR_FILTER_ID
         value: {{ .Values.sniffer.vpcmirror.autosetup.filter.id | quote }}
+      - name: MIRROR_SOURCE_ECS_CLUSTERS
+        value: {{ .Values.sniffer.vpcmirror.autosetup.source.ecs.clusters | join "," }}
       - name: MIRROR_SOURCE_ECS_CLUSTER_NAME
         value: {{ .Values.sniffer.vpcmirror.autosetup.source.ecs.cluster | quote }}
+      - name: MIRROR_SOURCE_ECS_LAUNCH_TYPE
+        value: {{ .Values.sniffer.vpcmirror.autosetup.source.ecs.launchtype | quote }}
       - name: MIRROR_SOURCE_ECS_TASKS
         value: {{ .Values.sniffer.vpcmirror.autosetup.source.ecs.tasks | join "," }}
       - name: MIRROR_SOURCE_AUTOSCALING_GROUPS
