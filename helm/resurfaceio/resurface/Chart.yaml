@@ -7,8 +7,10 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    - kind: fixed
-      description: Non-existent value in snifferdaemon.yaml
+    - kind: added
+      description: Support for multiple ECS clusters in AWS VPC Traffic Mirror session updater Cronjob, as well as ECS task filtering by launch type
+    - kind: changed
+      description: Make Trino internal resource management values dependent on iceberg enabled/disabled status
 keywords:
   - API
   - HTTP
