@@ -112,13 +112,15 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
-        - kind: fixed
-          description: Non-existent value in snifferdaemon.yaml
+        - kind: added
+          description: Support for multiple ECS clusters in AWS VPC Traffic Mirror session updater Cronjob, as well as ECS task filtering by launch type
+        - kind: changed
+          description: Make Trino internal resource management values dependent on iceberg enabled/disabled status
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/prerelease: "true"
     apiVersion: v2
     appVersion: 3.5.4
-    created: "2023-04-19T15:20:20.290476807Z"
+    created: "2023-04-25T14:45:38.174076397Z"
     dependencies:
     - condition: ingress.controller.enabled
       name: kubernetes-ingress
@@ -130,7 +132,7 @@ entries:
       version: 5.0.7
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: 47e3114e51073a48b3c8d72aaf757ae1417e8913c1447917e977efb09fc66c72
+    digest: e83dc315206969dafa6d1fd2895dee74fa5444747ebc67e9b42ad473473b7fea
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -1156,5 +1158,5 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2023-04-19T15:20:20.290485707Z"
+generated: "2023-04-25T14:45:38.174086197Z"
 
