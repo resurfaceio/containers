@@ -1,16 +1,14 @@
 apiVersion: v2
 name: resurface
-version: 3.6.0-0.3.0
+version: 3.6.0-0.3.1
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    - kind: added
-      description: Support for multiple ECS clusters in AWS VPC Traffic Mirror session updater Cronjob, as well as ECS task filtering by launch type
     - kind: changed
-      description: Make Trino internal resource management values dependent on iceberg enabled/disabled status
+      description: Upgrade network-sniffer image to 1.3.2
 keywords:
   - API
   - HTTP
