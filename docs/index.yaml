@@ -124,7 +124,7 @@ entries:
       artifacthub.io/prerelease: "true"
     apiVersion: v2
     appVersion: 3.5.12
-    created: "2023-05-26T22:16:28.59631799Z"
+    created: "2023-05-26T22:25:15.371588371Z"
     dependencies:
     - condition: ingress.controller.enabled
       name: kubernetes-ingress
@@ -136,7 +136,7 @@ entries:
       version: 5.0.7
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: fe2e06a3b089e4627670d89311b9fca63cdcde071b0ae64a0ce9c84c0c33e207
+    digest: e40b4e9169295203b5089be61a1f7ede513238e3a219b38fb30d66229b95e6f5
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -159,8 +159,8 @@ entries:
     - https://github.com/resurfaceio
     type: application
     urls:
-    - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.0/resurface-3.6.0.tgz
-    version: 3.6.0
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.1/resurface-3.6.1.tgz
+    version: 3.6.1
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -1254,4 +1254,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2023-05-26T22:16:28.59633709Z"
+generated: "2023-05-26T22:25:15.371597471Z"
