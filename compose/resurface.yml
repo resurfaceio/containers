@@ -3,7 +3,7 @@ version: '3.2'
 services:
   coordinator:
     container_name: resurface
-    image: resurfaceio/resurface:3.5.12
+    image: resurfaceio/resurface:3.5.14
     ports:
       - 7700
       - 7701
@@ -12,7 +12,7 @@ services:
 
   worker:
     container_name: resurface-worker
-    image: resurfaceio/resurface-worker:3.5.12
+    image: resurfaceio/resurface-worker:3.5.14
     ports:
       - 7700
       - 7701
