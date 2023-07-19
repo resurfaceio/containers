@@ -1,5 +1,5 @@
 # Contributing to Resurface helm chart
-&copy; 2016-2023 Resurface Labs Inc.
+&copy; 2016-2023 Graylog, Inc.
 
 ## Release Process
 

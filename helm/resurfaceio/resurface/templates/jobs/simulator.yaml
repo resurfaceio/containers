@@ -32,5 +32,5 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "wget https://dl.cloudsmith.io/public/resurfacelabs/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
+            - "wget https://dl.cloudsmith.io/public/resurfaceio/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
 {{- end -}}
