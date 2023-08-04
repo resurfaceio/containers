@@ -1,7 +1,6 @@
 # resurfaceio-helm-resurface
 
-Resurface is like an API analyst in a box. Resurface continuously scans your API traffic to discover attacks,
-leaks, and failures that are impacting your APIs. Go to [resurface.io](https://resurface.io) for more information.
+Resurface makes it easy to capture and analyze API calls with your own <a href="https://resurface.io">security data lake</a>.
 
 ## Components
 
