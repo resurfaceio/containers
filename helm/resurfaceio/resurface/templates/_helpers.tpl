@@ -71,9 +71,9 @@ Container resources and persistent volumes
 {{- $defaultTimezone := "UTC" -}}
 {{- if $icebergIsEnabled -}}
   {{- $defaultDBHeap = $defaultDBSize -}}
-  {{- $defaultDBSize = 3 -}}
-  {{- $defaultDBSlabs = 1 -}}
-  {{/*- $defaultShardSize = "3g" -*/}}
+  {{- $defaultDBSize = 9 -}}
+  {{/*- $defaultDBSlabs = 1 -*/}}
+  {{- $defaultShardSize = "3g" -}}
 {{- end -}}
 {{/* Min shard number is hard coded in Resurface data ingestion service (fluke server) */}}
 {{- $minShards := 3 -}}
@@ -127,7 +127,7 @@ Container resources and persistent volumes
   {{- fail "Invalid shard size value. Supported data unit prefixes are: k, m, g" -}}
 {{- end -}}
 
-{{/* Shard size and polling cycle validation */}}
+{{/* Shard size and polling cycle validation: DB_SIZE / SHARD_SIZE >= 3 */}}
 {{- $maxShards := div (mul $dbSize (mul 1024 1024)) $shardSize | int -}}
 {{- if lt $maxShards $minShards -}}
   {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %dg\n\tSHARD_SIZE = %dk\n\tMax shards configured: %d" $minShards $dbSize $shardSize $maxShards | fail -}}
@@ -149,7 +149,7 @@ Container resources and persistent volumes
 {{- $defaultIcebergMinSize := 20 -}}
 {{- $defaultIcebergPollingMillis := 20000 -}}
 {{- $defaultIcebergCompressionCodec := "ZSTD" -}}
-{{- $defaultIcebergFileFormat := "ORC" -}}
+{{- $defaultIcebergFileFormat := "PARQUET" -}}
 
 {{- $icebergMaxSize := .Values.iceberg.config.size.max | default $defaultIcebergMaxSize | int -}}
 {{- $icebergMinSize := .Values.iceberg.config.size.reserved | default $defaultIcebergMinSize | int -}}
@@ -198,8 +198,11 @@ Container resources and persistent volumes
 {{- end -}}
 
 {{- /* Defaults for container resources */ -}}
-{{- $cpuRequest := .Values.custom.resources.cpu | default 6 -}}
-{{- $memoryRequest := .Values.custom.resources.memory | default (add $dbSize $dbHeap) }}
+{{- $cpuReqDefault := 6 -}}
+{{- $memReqDefault := ternary 3 $dbSize $icebergIsEnabled | add $dbHeap -}}
+
+{{- $cpuRequest := .Values.custom.resources.cpu | default $cpuReqDefault -}}
+{{- $memoryRequest := .Values.custom.resources.memory | default $memReqDefault }}
           resources:
             requests:
               cpu: {{ $cpuRequest }}

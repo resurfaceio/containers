@@ -55,7 +55,7 @@ iceberg:
       accesskey:
       secretkey:
   config:
-    format: ORC
+    format: PARQUET
     codec: ZSTD
     millis: 20000
     size:
@@ -189,6 +189,7 @@ qa:
       init:
       batch:
   importer:
+
 # autoscaling:
 #   enabled: false
 #   minReplicas: 1

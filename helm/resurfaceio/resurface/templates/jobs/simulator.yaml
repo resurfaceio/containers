@@ -1,28 +1,26 @@
-{{- if and .Values.iceberg.enabled .Values.qa.enabled .Values.qa.simulator.enabled -}}
+{{- if and .Values.qa.enabled .Values.qa.simulator.enabled -}}
 {{- $version := default "3.5.7" .Values.qa.simulator.version -}}
-{{- $initialSleepSeconds := default 180 .Values.qa.simulator.sleep.init -}}
+{{- $initialSleepSeconds := default 180 .Values.qa.simulator.sleep.init | int -}}
 {{- $workload := default "RestSmall2" .Values.qa.simulator.workload -}}
 {{- $host := default "worker.resurface" .Values.qa.simulator.host -}}
 {{- $port := default "7701" .Values.qa.simulator.port -}}
-{{- $limitMessages := default 0 .Values.qa.simulator.limit.messages -}}
-{{- $limitMillis := default 0 .Values.qa.simulator.limit.millis -}}
-{{- $sleepPerBatch := default 0 .Values.qa.simulator.sleep.batch -}}
-apiVersion: apps/v1
-kind: Deployment
+{{- $limitMessages := default 0 .Values.qa.simulator.limit.messages | int -}}
+{{- $limitMillis := default 0 .Values.qa.simulator.limit.millis | int -}}
+{{- $sleepPerBatch := default 0 .Values.qa.simulator.sleep.batch | int -}}
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: {{ include "resurface.fullname" . }}-simulator
   labels:
     {{- include "resurface.labels" . | nindent 4 }}
 spec:
-  selector:
-    matchLabels:
-      {{- include "resurface.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       name: simulator
       labels:
         {{- include "resurface.selectorLabels" . | nindent 8 }}
     spec:
+      restartPolicy: Never
       serviceAccountName: resurface-sa
       securityContext:
         runAsUser: 0
