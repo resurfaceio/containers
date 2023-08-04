@@ -138,7 +138,7 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
   - **iceberg.s3.aws.secretkey**: string. AWS Credentials. It is **not** recommended to pass AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
 
 - The **iceberg.config** subsection contains configuration specific to Iceberg.
-  - **iceberg.config.format**: string. File format used for Iceberg data file storage. It can be either `'PARQUET'`, `'ORC'` or `'AVRO'` format. Defaults to `'ORC'`.
+  - **iceberg.config.format**: string. File format used for Iceberg data file storage. It can be either `'PARQUET'` or `'ORC'` format. Defaults to `'PARQUET'`.
   - **iceberg.config.codec**: string. Codec used for compression of Iceberg data files. It can be either `'ZSTD'`, `'LZ4'`, `'SNAPPY'`, or `'GZIP'`. Defaults to `'ZSTD'`.
   - **iceberg.config.millis**: integer. Sleep between Iceberg polling cycles, in milliseconds. Defaults to `20000`.
   - **iceberg.size.max**: integer. Maximum configurable size in GiB/GB (see **units**) for Iceberg storage (data & index). Should be equal to **minio.persistence.size** when **minio.enabled** is set to `true`. Defaults to `100`.
