@@ -73,7 +73,7 @@ Container resources and persistent volumes
   {{- $defaultDBHeap = $defaultDBSize -}}
   {{- $defaultDBSize = 9 -}}
   {{/*- $defaultDBSlabs = 1 -*/}}
-  {{- $defaultShardSize = "3g" -}}
+  {{- $defaultShardSize = "1500m" -}}
 {{- end -}}
 {{/* Min shard number is hard coded in Resurface data ingestion service (fluke server) */}}
 {{- $minShards := 3 -}}
