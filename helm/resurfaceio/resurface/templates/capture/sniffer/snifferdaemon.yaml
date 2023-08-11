@@ -1,4 +1,8 @@
 {{- if .Values.sniffer.enabled -}}
+{{- $url := .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" .Release.Namespace -}}
+{{- if and .Values.ingress.enabled .Values.ingress.controller.enabled -}}
+  {{- $url = printf "http://%s.%s/fluke/message" (include "kubernetes-ingress.fullname" (index .Subcharts "kubernetes-ingress")) .Release.Namespace -}}
+{{- end -}}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -28,7 +32,7 @@ spec:
             add: [ "NET_ADMIN", "NET_RAW" ]
         env:
         - name: USAGE_LOGGERS_URL
-          value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+          value: {{ $url }}
         - name: USAGE_LOGGERS_RULES
           value: |
           {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}
@@ -75,7 +79,7 @@ spec:
             add: [ "NET_ADMIN", "NET_RAW" ]
         env:
         - name: USAGE_LOGGERS_URL
-          value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+          value: {{ $url }}
         - name: USAGE_LOGGERS_RULES
           value: |
           {{- .Values.sniffer.logger.rules | default "include default" | nindent 12 }}

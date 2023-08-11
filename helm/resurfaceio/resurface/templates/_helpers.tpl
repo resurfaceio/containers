@@ -66,17 +66,19 @@ Container resources and persistent volumes
 {{- $defaultDBSize := or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9 -}}
 {{- $defaultDBHeap := 3 -}}
 {{- $defaultDBSlabs := 3 -}}
-{{- $defaultShardSize := "500m" -}}
+{{- $defaultShardSize := "1500m" -}}
 {{- $defaultPollingCycle := "default" -}}
 {{- $defaultTimezone := "UTC" -}}
 {{- if $icebergIsEnabled -}}
   {{- $defaultDBHeap = $defaultDBSize -}}
   {{- $defaultDBSize = 9 -}}
   {{/*- $defaultDBSlabs = 1 -*/}}
-  {{- $defaultShardSize = "1500m" -}}
+  {{/*- $defaultShardSize = "1500m" -*/}}
 {{- end -}}
 {{/* Min shard number is hard coded in Resurface data ingestion service (fluke server) */}}
 {{- $minShards := 3 -}}
+{{/* Padding added to persistent volume, in GiB (pv size = DB_SIZE + padding) */}}
+{{- $pvPadding := 3 -}}
 {{/*
   All values without data unit prefix are assumed to be GiB/GB.
   Modifying the default order of magnitude only alters the units conversion factor.
@@ -122,13 +124,13 @@ Container resources and persistent volumes
 {{- else if (trimSuffix "m" $shardSize | len | ne $shardSizeLen) -}}
   {{- $shardSize = trimSuffix "m" $shardSize | int | mul 1024 -}}
 {{- else if (trimSuffix "g" $shardSize | len | ne $shardSizeLen) -}}
-  {{- $shardSize = trimSuffix "g" $shardSize | int | mul (mul 1024 1024) -}}
+  {{- $shardSize = trimSuffix "g" $shardSize | int | mul 1024 1024 -}}
 {{- else -}}
   {{- fail "Invalid shard size value. Supported data unit prefixes are: k, m, g" -}}
 {{- end -}}
 
 {{/* Shard size and polling cycle validation: DB_SIZE / SHARD_SIZE >= 3 */}}
-{{- $maxShards := div (mul $dbSize (mul 1024 1024)) $shardSize | int -}}
+{{- $maxShards := div (mul $dbSize 1024 1024) $shardSize | int -}}
 {{- if lt $maxShards $minShards -}}
   {{- printf "\nNumber of max shards (DB_SIZE/SHARD_SIZE) must be greater than or equal to %d.\n\tDB_SIZE = %dg\n\tSHARD_SIZE = %dk\n\tMax shards configured: %d" $minShards $dbSize $shardSize $maxShards | fail -}}
 {{- end -}}
@@ -138,7 +140,7 @@ Container resources and persistent volumes
 {{- end -}}
 
 {{/* Defaults for Persistent Volume size and Storage Class names */}}
-{{- $defaultPVSize := default $dbSize | max 9 -}}
+{{- $defaultPVSize := default $dbSize | max 9 | add $pvPadding -}}
 {{- $defaultSCNames := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" -}}
 
 {{- $pvSize := .Values.custom.storage.size | default $defaultPVSize | int -}}

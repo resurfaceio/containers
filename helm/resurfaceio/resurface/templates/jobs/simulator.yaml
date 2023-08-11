@@ -2,8 +2,14 @@
 {{- $version := default "3.5.7" .Values.qa.simulator.version -}}
 {{- $initialSleepSeconds := default 180 .Values.qa.simulator.sleep.init | int -}}
 {{- $workload := default "RestSmall2" .Values.qa.simulator.workload -}}
-{{- $host := default "worker.resurface" .Values.qa.simulator.host -}}
-{{- $port := default "7701" .Values.qa.simulator.port -}}
+{{- $host := printf "worker.%s" .Release.Namespace -}}
+{{- $port := "7701" -}}
+{{- if and .Values.ingress.enabled .Values.ingress.controller.enabled -}}
+  {{- $host = printf "%s.%s" (include "kubernetes-ingress.fullname" (index .Subcharts "kubernetes-ingress")) .Release.Namespace -}}
+  {{- $port = "80" -}}
+{{- end -}}
+{{- $host = default $host .Values.qa.simulator.host -}}
+{{- $port = default $port .Values.qa.simulator.port -}}
 {{- $limitMessages := default 0 .Values.qa.simulator.limit.messages | int -}}
 {{- $limitMillis := default 0 .Values.qa.simulator.limit.millis | int -}}
 {{- $sleepPerBatch := default 0 .Values.qa.simulator.sleep.batch | int -}}

@@ -2,6 +2,10 @@
 {{- $akisenabled := .Values.consumer.aws.accesskey.enabled | default (ne "aws" (default "" .Values.provider)) -}}
 {{- $akid := coalesce .Values.consumer.aws.accesskeyid .Values.consumer.aws.accesskey.id -}}
 {{- $aksecret := coalesce .Values.consumer.aws.accesskeysecret .Values.consumer.aws.accesskey.secret -}}
+{{- $url := .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" .Release.Namespace -}}
+{{- if and .Values.ingress.enabled .Values.ingress.controller.enabled -}}
+  {{- $url = printf "http://%s.%s/fluke/message" (include "kubernetes-ingress.fullname" (index .Subcharts "kubernetes-ingress")) .Release.Namespace -}}
+{{- end -}}
 {{- if and $akisenabled $akid $aksecret -}}
 apiVersion: v1
 kind: Secret
@@ -43,7 +47,7 @@ spec:
             - name: AWS_REGION
               value: {{ .Values.consumer.aws.region | required "AWS region where Kinesis stream is deployed must be provided." | quote }}
             - name: USAGE_LOGGERS_URL
-              value: {{ .Values.custom.service.flukeserver.port | default 7701 | printf "http://worker.%s:%v/message" (.Release.Namespace) }}
+              value: {{ $url }}
             - name: USAGE_LOGGERS_RULES
               value: |
               {{- .Values.consumer.logger.rules | default "include default" | nindent 16 }}
