@@ -1,6 +1,6 @@
 apiVersion: v2
 name: resurface
-version: 3.6.1
+version: 3.6.2
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
@@ -8,7 +8,7 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
     - kind: changed
-      description: Increase default shard size to 1500 MiB
+      description: Increase default DB shard size to 1500 MiB
     - kind: changed
       description: Make PARQUET the default file format for iceberg
     - kind: changed
