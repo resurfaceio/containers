@@ -112,6 +112,67 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Increase default DB shard size to 1500 MiB
+        - kind: changed
+          description: Make PARQUET the default file format for iceberg
+        - kind: changed
+          description: Decouple DB_SIZE from memory request for iceberg
+        - kind: changed
+          description: Make simulator available for non-iceberg installations
+        - kind: changed
+          description: Upgrade HAProxy dependency chart to 1.32.2
+        - kind: changed
+          description: Upgrade Minio dependency chart to 5.0.13
+        - kind: changed
+          description: Upgrade Resurface image to 3.5.16
+        - kind: fixed
+          description: Add padding to PVC storage size in order to avoid out-of-space condition
+        - kind: fixed
+          description: Internal writes to DB are LB when Ingress Controller is enabled
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 3.5.16
+    created: "2023-08-14T20:00:42.661725428Z"
+    dependencies:
+    - condition: ingress.controller.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.32.2
+    - condition: minio.enabled
+      name: minio
+      repository: https://charts.min.io/
+      version: 5.0.13
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 3bfd94e1cc89acf1f390acdbb204fd738c0883ac486f9390f8887a76b27f5704
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.2/resurface-3.6.2.tgz
+    version: 3.6.2
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Cronjob to update AWS VPC Traffic Mirror sessions
         - kind: changed
@@ -1254,4 +1315,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2023-05-26T23:06:15.757476444Z"
+generated: "2023-08-14T20:00:42.661737829Z"
