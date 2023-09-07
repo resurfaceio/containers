@@ -8,23 +8,7 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
     - kind: changed
-      description: Increase default DB shard size to 1500 MiB
-    - kind: changed
-      description: Make PARQUET the default file format for iceberg
-    - kind: changed
-      description: Decouple DB_SIZE from memory request for iceberg
-    - kind: changed
-      description: Make simulator available for non-iceberg installations
-    - kind: changed
-      description: Upgrade HAProxy dependency chart to 1.32.2
-    - kind: changed
-      description: Upgrade Minio dependency chart to 5.0.13
-    - kind: changed
-      description: Upgrade Resurface image to 3.5.16
-    - kind: fixed
-      description: Add padding to PVC storage size in order to avoid out-of-space condition
-    - kind: fixed
-      description: Internal writes to DB are LB when Ingress Controller is enabled
+      description: Upgrade Resurface image to 3.5.26
 keywords:
   - API
   - HTTP
@@ -53,4 +37,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.5.16
+appVersion: 3.5.26

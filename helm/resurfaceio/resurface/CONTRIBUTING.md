@@ -28,7 +28,7 @@ helm install resurface . --create-namespace --namespace resurface --set custom.c
 helm upgrade -i resurface . -n resurface --set multinode.enabled=true --set multinode.workers=1 --reuse-values
 
 # enable tls
-helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.10.1 --set installCRDs=true --set prometheus.enabled=false
+helm repo add jetstack https://charts.jetstack.io; helm repo update; helm install cert-manager jetstack/cert-manager --namespace resurface --version v1.12.0 --set installCRDs=true --set prometheus.enabled=false
 helm upgrade resurface . -n resurface --set ingress.tls.enabled=true --set ingress.tls.autoissue.enabled=true --set ingress.tls.autoissue.email=rob@resurface.io --set ingress.tls.host=radware4 --reuse-values
 
 # enable basic auth
