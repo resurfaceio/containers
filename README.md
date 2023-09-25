@@ -12,11 +12,5 @@ These helm charts are used to manage Resurface installations on Kubernetes, with
 
 Full documentation is here:  <a href="https://resurface.io/docs">https://resurface.io/docs</a>
 
-## Available modules
-
-* helm - sources for Resurface database and sniffer deployments
-* compose - for local cluster testing (not for production)
-* test - for automated testing with python across different environments
-
 ---
 <small>&copy; 2016-2023 <a href="https://resurface.io">Graylog, Inc.</a></small>
