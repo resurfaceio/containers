@@ -63,22 +63,14 @@ Container resources and persistent volumes
 {{- $validIcebergFileFormats := list "ORC" "PARQUET" -}}
 
 {{/* Defaults for DB environment variables */}}
-{{- $defaultDBSize := or (eq $provider "ibm-openshift") (eq $provider "azure") | ternary 7 9 -}}
-{{- $defaultDBHeap := 3 -}}
+{{- $defaultDBSize := 4 -}}
+{{- $defaultDBHeap := 6 -}}
 {{- $defaultDBSlabs := 3 -}}
-{{- $defaultShardSize := "1500m" -}}
+{{- $defaultShardSize := "1300m" -}}
 {{- $defaultPollingCycle := "default" -}}
 {{- $defaultTimezone := "UTC" -}}
-{{- if $icebergIsEnabled -}}
-  {{- $defaultDBHeap = $defaultDBSize -}}
-  {{- $defaultDBSize = 9 -}}
-  {{/*- $defaultDBSlabs = 1 -*/}}
-  {{/*- $defaultShardSize = "1500m" -*/}}
-{{- end -}}
-{{/* Min shard number is hard coded in Resurface data ingestion service (fluke server) */}}
 {{- $minShards := 3 -}}
-{{/* Padding added to persistent volume, in GiB (pv size = DB_SIZE + padding) */}}
-{{- $pvPadding := 3 -}}
+
 {{/*
   All values without data unit prefix are assumed to be GiB/GB.
   Modifying the default order of magnitude only alters the units conversion factor.
@@ -140,7 +132,7 @@ Container resources and persistent volumes
 {{- end -}}
 
 {{/* Defaults for Persistent Volume size and Storage Class names */}}
-{{- $defaultPVSize := default $dbSize | max 9 | add $pvPadding -}}
+{{- $defaultPVSize := 20 -}}
 {{- $defaultSCNames := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" -}}
 
 {{- $pvSize := .Values.custom.storage.size | default $defaultPVSize | int -}}
@@ -183,9 +175,6 @@ Container resources and persistent volumes
     {{- fail "An object storage provider must be enabled for Iceberg. Supported values are: minio, s3" -}}
   {{- end -}}
 
-  {{- /* Define a minimum DB_HEAP size for Iceberg deployments. Less memory could result in unfulfilled queries due to lack of resources */ -}}
-  {{- $dbHeap = max $dbHeap 8 -}}
-
   {{/* Iceberg validation */}}
   {{- if lt $icebergMaxSize $icebergMinSize -}}
     {{- printf "Iceberg storage size must be greater than the reserved storage size (Current size: %s, Reserved storage size: %s)" $icebergMaxSize $icebergMinSize | fail -}}
@@ -201,7 +190,7 @@ Container resources and persistent volumes
 
 {{- /* Defaults for container resources */ -}}
 {{- $cpuReqDefault := 6 -}}
-{{- $memReqDefault := ternary 3 $dbSize $icebergIsEnabled | add $dbHeap -}}
+{{- $memReqDefault := 10 -}}
 
 {{- $cpuRequest := .Values.custom.resources.cpu | default $cpuReqDefault -}}
 {{- $memoryRequest := .Values.custom.resources.memory | default $memReqDefault }}
@@ -289,15 +278,15 @@ discovery.uri=http://coordinator:7700
 Common config.properties for both coordinator and workers
 */}}
 {{- define "resurface.config.common" -}}
-{{- $trinoMaxMemory := ternary "4000MB" "1000MB" .Values.iceberg.enabled -}}
-{{- $trinoMinExpireTime := ternary "60s" "1s" .Values.iceberg.enabled -}}
+{{- $trinoQueryLimit := "4000MB" -}}
+{{- $trinoMinExpireTime := "60s" -}}
 http-server.http.port=7700
 
 query.max-history=20
 query.max-length=1000000
-query.max-memory={{ $trinoMaxMemory }}
-query.max-memory-per-node={{ $trinoMaxMemory }}
-query.max-total-memory={{ $trinoMaxMemory }}
+query.max-memory={{ $trinoQueryLimit }}
+query.max-memory-per-node={{ $trinoQueryLimit }}
+query.max-total-memory={{ $trinoQueryLimit }}
 query.min-expire-age={{ $trinoMinExpireTime }}
 {{- end -}}
 

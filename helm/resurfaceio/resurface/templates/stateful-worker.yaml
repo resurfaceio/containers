@@ -34,7 +34,7 @@ spec:
                 path: config.properties
       containers:
         - name: worker
-          image: resurfaceio/resurface{{ if .Values.iceberg.enabled }}-iceberg{{ end }}-worker:{{ .Chart.AppVersion }}
+          image: resurfaceio/resurface-worker:{{ .Chart.AppVersion }}
           ports:
             - name: fluke
               containerPort: 7701

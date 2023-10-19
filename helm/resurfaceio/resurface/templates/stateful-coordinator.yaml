@@ -48,7 +48,7 @@ spec:
         {{- end }}
       containers:
         - name: coordinator
-          image: resurfaceio/resurface{{ if .Values.iceberg.enabled }}-iceberg{{ end }}:{{ .Chart.AppVersion }}
+          image: resurfaceio/resurface:{{ .Chart.AppVersion }}
           ports:
             - name: db
               containerPort: 7700

@@ -126,7 +126,7 @@ multinode:
 
 Iceberg integration can be configured in the **iceberg** section. In this mode, data will automatically be pushed to a given object storage server using the Apache Iceberg table format. This can increase storage capacity at least 10x with next to no performance impact. The configured object storage can be an external service such as AWS S3, or it can be hosted in the same Kubernetes cluster using MinIO. A valid license must be provided in order to enable an Iceberg integration succesfully. At the moment, downgrades from an iceberg deployment to a non-iceberg deployment are not supported.
 
-- **iceberg.enabled**: boolean. If set to `true`, all StatefulSet instances will be upgraded to use `resurface-iceberg` images. These contain all the requirements and configuration necessary to automatically push data to and query data from the configured object storage. Defaults to `false`.
+- **iceberg.enabled**: boolean. If set to `true`, data will automatically be replicated to the configured object storage, including all data already captured. Defaults to `false`.
 
 - The **iceberg.s3** subsection corresponds to the configuration for the AWS S3 object storage service.
   - **iceberg.s3.enabled**: If set to `true`, AWS S3 object storage will be used to store Iceberg data and metadata files. It is important to note that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
