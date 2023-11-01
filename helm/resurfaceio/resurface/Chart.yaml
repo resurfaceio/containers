@@ -1,6 +1,6 @@
 apiVersion: v2
 name: resurface
-version: 3.6.3
+version: 3.6.4
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
@@ -8,7 +8,7 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
     - kind: changed
-      description: Upgrade Resurface image to 3.5.26
+      description: Upgrade Resurface image to 3.5.30
 keywords:
   - API
   - HTTP
@@ -37,4 +37,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.5.26
+appVersion: 3.5.30
