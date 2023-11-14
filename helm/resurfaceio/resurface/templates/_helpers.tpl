@@ -64,7 +64,7 @@ Container resources and persistent volumes
 
 {{/* Defaults for DB environment variables */}}
 {{- $defaultDBSize := 4 -}}
-{{- $defaultDBHeap := 6 -}}
+{{- $defaultDBHeap := 12 -}}
 {{- $defaultDBSlabs := 3 -}}
 {{- $defaultShardSize := "1300m" -}}
 {{- $defaultPollingCycle := "default" -}}
@@ -190,7 +190,7 @@ Container resources and persistent volumes
 
 {{- /* Defaults for container resources */ -}}
 {{- $cpuReqDefault := 6 -}}
-{{- $memReqDefault := 10 -}}
+{{- $memReqDefault := 18 -}}
 
 {{- $cpuRequest := .Values.custom.resources.cpu | default $cpuReqDefault -}}
 {{- $memoryRequest := .Values.custom.resources.memory | default $memReqDefault }}

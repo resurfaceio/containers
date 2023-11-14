@@ -164,7 +164,7 @@ minio:
     size: 100Gi
   resources:
     requests:
-      memory: 16Gi
+      memory: 4Gi
   buckets:
     - name: iceberg.resurface
   securityContext:
