@@ -56,4 +56,31 @@ spec:
       hosts:
         - {{ .Values.ingress.tls.host }}
   {{- end }}
+{{- if eq $provider "ibm-openshift" | and .Values.iceberg.enabled .Values.minio.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "resurface.fullname" . }}-minio-ingress
+  annotations:
+    route.openshift.io/termination: edge
+    haproxy.router.openshift.io/rewrite-target: /
+spec:
+  defaultBackend:
+    service:
+      name: kubernetes-ingress-default-backend
+      port:
+        number: 8080
+  rules:
+    - http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-minio-console" .Release.Namespace }}
+                port:
+                  name: httpc
+      host: {{ include "resurface.fullname" . }}-minio.{{ required "The value ingress.tls.host must be set with the ingress subdomain name when running on OpenShift" .Values.ingress.tls.host }}
+{{- end }}
 {{- end }}

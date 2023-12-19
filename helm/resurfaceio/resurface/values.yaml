@@ -171,11 +171,6 @@ minio:
       memory: 4Gi
   buckets:
     - name: iceberg.resurface
-  securityContext:
-    enabled: true
-    runAsUser: 1000660000
-    runAsGroup: 1000660000
-    fsGroup: 1000660000
   configPathmc: "/tmp/minio/mc/"
 
 qa:
