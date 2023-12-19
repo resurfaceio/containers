@@ -32,6 +32,10 @@ spec:
             items:
               - key: config.properties
                 path: config.properties
+      tolerations:
+        - key: kubernetes.io/arch
+          operator: Equal
+          value: arm64
       containers:
         - name: worker
           image: resurfaceio/resurface-worker:{{ .Chart.AppVersion }}

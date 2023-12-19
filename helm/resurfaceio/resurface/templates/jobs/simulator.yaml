@@ -4,7 +4,7 @@
 {{- $workload := default "RestSmall2" .Values.qa.simulator.workload -}}
 {{- $host := printf "worker.%s" .Release.Namespace -}}
 {{- $port := "7701" -}}
-{{- if and .Values.ingress.enabled .Values.ingress.controller.enabled -}}
+{{- if not .Values.ingress.tls.enabled | and .Values.ingress.enabled .Values.ingress.controller.enabled -}}
   {{- $host = printf "%s.%s" (include "kubernetes-ingress.fullname" (index .Subcharts "kubernetes-ingress")) .Release.Namespace -}}
   {{- $port = "80" -}}
 {{- end -}}
@@ -12,6 +12,7 @@
 {{- $port = default $port .Values.qa.simulator.port -}}
 {{- $limitMessages := default 0 .Values.qa.simulator.limit.messages | int -}}
 {{- $limitMillis := default 0 .Values.qa.simulator.limit.millis | int -}}
+{{- $clockSkewDays := default 0 .Values.qa.simulator.skew | int -}}
 {{- $sleepPerBatch := default 0 .Values.qa.simulator.sleep.batch | int -}}
 apiVersion: batch/v1
 kind: Job
@@ -36,5 +37,5 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "wget https://dl.cloudsmith.io/public/resurfaceio/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
+            - "wget https://dl.cloudsmith.io/public/resurfaceio/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DCLOCK_SKEW_DAYS={{ $clockSkewDays }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
 {{- end -}}

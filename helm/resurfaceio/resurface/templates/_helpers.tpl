@@ -133,10 +133,8 @@ Container resources and persistent volumes
 
 {{/* Defaults for Persistent Volume size and Storage Class names */}}
 {{- $defaultPVSize := 20 -}}
-{{- $defaultSCNames := dict "azure" "managed-csi" "aws" "gp2" "gcp" "standard" -}}
 
 {{- $pvSize := .Values.custom.storage.size | default $defaultPVSize | int -}}
-{{- $storageClassName := .Values.custom.storage.classname | default (get $defaultSCNames $provider) -}}
 
 {{/* Defaults for Iceberg environment variables */}}
 {{- $defaultIcebergMaxSize := 100 -}}
@@ -241,8 +239,8 @@ Container resources and persistent volumes
     - metadata:
         name: {{ include "resurface.fullname" . }}-pvc
       spec:
-        {{- if not (empty $storageClassName) }}
-        storageClassName: {{ $storageClassName }}
+        {{- if not (empty .Values.custom.storage.classname) }}
+        storageClassName: {{ .Values.custom.storage.classname }}
         {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:

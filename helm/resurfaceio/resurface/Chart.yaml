@@ -4,11 +4,17 @@ version: 3.6.3
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
-  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
     - kind: changed
-      description: Upgrade Resurface image to 3.5.26
+      description: Upgrade Resurface image to 3.6.32
+    - kind: changed
+      description: Upgrade network-sniffer image to 1.4.0
+    - kind: fixed
+      description: Remove default storage classes
+    - kind: fixed
+      description: Toleration for arm64 GKE node pools
 keywords:
   - API
   - HTTP

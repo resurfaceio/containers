@@ -150,6 +150,10 @@ kubernetes-ingress:
       enablePorts:
         stat: false
       externalTrafficPolicy: Local
+    tolerations:
+      - key: kubernetes.io/arch
+        operator: Equal
+        value: arm64
   defaultBackend:
     enabled: true
 
