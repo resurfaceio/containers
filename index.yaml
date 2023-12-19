@@ -1,0 +1,55 @@
+apiVersion: v1
+entries:
+  resurface:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Upgrade Resurface image to 3.6.32
+        - kind: changed
+          description: Upgrade network-sniffer image to 1.4.0
+        - kind: fixed
+          description: Remove default storage classes
+        - kind: fixed
+          description: Toleration for arm64 GKE node pools
+      artifacthub.io/containsSecurityUpdates: "true"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 3.6.32
+    created: "2023-12-19T01:38:02.094295886Z"
+    dependencies:
+    - condition: ingress.controller.enabled
+      name: kubernetes-ingress
+      repository: https://haproxytech.github.io/helm-charts
+      version: 1.32.2
+    - condition: minio.enabled
+      name: minio
+      repository: https://charts.min.io/
+      version: 5.0.13
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: a654bfc68f2b874dbfaf9d297da3fff422dd920fb0bf009e4b4898d363f5fb86
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+    - API
+    - HTTP
+    - Triage
+    - Security
+    - Observability
+    - Logs
+    - Monitoring
+    - Troubleshooting
+    - Alerts
+    maintainers:
+    - email: ramon@resurface.io
+      name: Ramón Márquez
+    - email: rob@resurface.io
+      name: Rob Dickinson
+    name: resurface
+    sources:
+    - https://github.com/resurfaceio
+    type: application
+    urls:
+    - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.7/resurface-3.6.7.tgz
+    version: 3.6.7
+generated: "2023-12-19T01:38:02.094305434Z"
