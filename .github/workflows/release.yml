@@ -3,7 +3,7 @@ name: Release Charts
 on:
   push:
     branches:
-      - v3.5.x
+      - v3.6.x
     paths:
       - helm/resurfaceio/resurface/Chart.yaml
   workflow_dispatch:
