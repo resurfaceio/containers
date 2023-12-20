@@ -153,17 +153,17 @@ kubernetes-ingress:
         stat: false
       externalTrafficPolicy: Local
       tcpPorts:
-        - name: minio-console
+        - name: minioc
           port: 9001
           targetPort: 9001
     extraArgs:
-      - --configmap-tcp-services=haproxy-extra-ports
+      - "--configmap-tcp-services=resurface/haproxy-extra-ports"
     tolerations:
       - key: kubernetes.io/arch
         operator: Equal
         value: arm64
   defaultBackend:
-    enabled: true
+    enabled: false
 
 # Dependency chart: MinIO Object Storage
 minio:
