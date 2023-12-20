@@ -80,7 +80,7 @@ spec:
               service:
                 name: {{ printf "%s-minio-console" .Release.Namespace }}
                 port:
-                  name: httpc
+                  name: http
       host: {{ include "resurface.fullname" . }}-minio.{{ required "The value ingress.tls.host must be set with the ingress subdomain name when running on OpenShift" .Values.ingress.tls.host }}
 {{- end }}
 {{- end }}
