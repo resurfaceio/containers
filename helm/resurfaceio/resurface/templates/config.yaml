@@ -46,3 +46,14 @@ data:
   config.properties: |
     {{- include "resurface.config.worker" . | nindent 4 }}
     internal-communication.shared-secret={{ $iss }}
+{{- if ne .Values.provider "ibm-openshift" | and .Values.minio.enabled .Values.ingress.enabled .Values.ingress.controller.enabled .Values.ingress.minio.expose }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-extra-ports
+  namespace: {{ .Release.Namespace }}
+data:
+  9001:
+    {{ index .Subcharts "minio" | include "minio.fullname" | printf "%s/%s-console:9001" .Release.Namespace }}
+{{- end }}

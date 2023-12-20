@@ -11,6 +11,8 @@ ingress:
   importer:
     expose: true
     path: "/fluke"
+  minio:
+    expose: false
   tls:
     enabled: false
     host: 
@@ -150,6 +152,12 @@ kubernetes-ingress:
       enablePorts:
         stat: false
       externalTrafficPolicy: Local
+      tcpPorts:
+        - name: minio-console
+          port: 9001
+          targetPort: 9001
+    extraArgs:
+      - --configmap-tcp-services=haproxy-extra-ports
     tolerations:
       - key: kubernetes.io/arch
         operator: Equal
