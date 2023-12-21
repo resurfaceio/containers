@@ -18,10 +18,13 @@ Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .
   {{- if lt (mul $minioSize .Values.minio.replicas) (mul $dbSize (ternary .Values.multinode.workers 1 .Values.multinode.enabled)) }}
     WARNING: Iceberg overall storage size is less than Resurface DB size. Depending on the payload size and capture rate, this could result in a OOS exception. It is recommended to increase storage size or number of nodes for MinIO.
   {{ end -}}
-  {{- if eq .Values.minio.consoleService.type "LoadBalancer" }}
+  {{- if eq .Values.minio.consoleService.type "LoadBalancer" | or .Values.ingress.minio.expose }}
   · You can get the URL to access your MinIO console by running the following command:
-
+  {{- if eq .Values.minio.consoleService.type "LoadBalancer" }}
 echo http://$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "minio.fullname" .Subcharts.minio }}-console --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"){{ if ne (int .Values.minio.consoleService.port) 80 }}:{{ .Values.minio.consoleService.port | default 9001 }}{{ end }}/
+  {{- else }}
+echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}"):9001/
+  {{- end }}
 
   {{- end }}
 {{- end }}

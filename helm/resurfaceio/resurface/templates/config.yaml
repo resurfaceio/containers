@@ -46,7 +46,7 @@ data:
   config.properties: |
     {{- include "resurface.config.worker" . | nindent 4 }}
     internal-communication.shared-secret={{ $iss }}
-{{- if default "" .Values.provider | ne "ibm-openshift" | and .Values.minio.enabled .Values.ingress.enabled .Values.ingress.controller.enabled .Values.ingress.minio.expose }}
+{{- if default "" .Values.provider | ne "ibm-openshift" | and .Values.iceberg.enabled .Values.minio.enabled .Values.ingress.enabled .Values.ingress.controller.enabled .Values.ingress.minio.expose }}
 ---
 apiVersion: v1
 kind: ConfigMap

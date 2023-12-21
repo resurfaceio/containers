@@ -10,7 +10,7 @@ Resurface makes it easy to capture and analyze API calls with your own <a href="
 - **Ingress**: Requires HAProxy ingress controller. Enabled by default.
 - **TLS Secret**: (Optional) TLS certificate and key. Used for Ingress TLS termination. A TLS cert and key combination can be autoissued by the cert-manager utility, or it can be provided by the user. Disabled by default.
 - **Issuer**: (Optional) Issues TLS certificate from Let's Encrypt. Requires Cert-manager utility. Disabled by default.
-- **Daemonset**: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
+- **DaemonSet**: (Optional) Packet-sniffer-based logger. Captures API calls made to your application pods over the wire, parses them and sends them to your Resurface pod. A service account, cluster role, and cluster role binding are also deployed with this daemon set. Disabled by default.
 - **Deployments**: (Optional) Data stream consumer applications. Captures API calls made to the Azure API Management and AWS API Gateway services. The API calls are published as events to an Azure Event Hubs/AWS Kinesis Data Streams instance, the applications consume these events, parses them and sends them to your Resurface pod. Opaque secrets containing sensitive data (such as AWS credentials) may be created alongside these deployments. Disabled by default.
 - **CronJob**: (Optional) AWS VPC Traffic Mirror session maker. Creates traffic mirror sessions given different traffic sources (ECS tasks, EC2 instances, and/or Auto-Scaling Groups). When enabled, it updates the list of VNIs used by the sniffer to detect and capture incoming mirrored traffic for all active mirror sessions. It also restarts the DaemonSet accordingly.
 
@@ -37,6 +37,9 @@ The **ingress** values section is where the configuration for the Ingress resour
 - The **ingress.importer** nested section corresponds to the endpoint used by each Resurface worker node to import API calls into your Resurface database.
   - **ingress.importer.expose**: boolean. The importer endpoint can be disabled by setting this value to `false`. In that case, the endpoint will only be reachable through the worker importer service and not the ingress resource. Defaults to `true`.
   - **ingress.importer.path**: string. The ingress resource will route all calls made to this path to the worker importer service. Defaults to `"/fluke"`. Required only if **ingress.importer.expose** is set to `true`.
+
+- The **ingress.minio** nested section refers to routing access to the MinIO web console through the available Ingress Controller (see the Iceberg integration section below)
+  - **ingress.minio.expose**: boolean. If both the MinIO subchart has been deployed and the Iceberg integration is enabled, the MinIO web console can be accessed through port `9001` by setting this value to `true`. Defaults to `false`.
 
 - The **ingress.tls** nested section corresponds to the TLS termination configuration for the Ingress resource.
   - **ingress.tls.enabled**: boolean. The TLS termination feature can be enabled by setting this value to `true`. Defaults to `false`.
