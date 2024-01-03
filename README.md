@@ -13,4 +13,4 @@ These helm charts are used to manage Resurface installations on Kubernetes, with
 Full documentation is here:  <a href="https://resurface.io/docs">https://resurface.io/docs</a>
 
 ---
-<small>&copy; 2016-2023 <a href="https://resurface.io">Graylog, Inc.</a></small>
+<small>&copy; 2016-2024 <a href="https://resurface.io">Graylog, Inc.</a></small>
