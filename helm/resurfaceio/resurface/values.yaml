@@ -13,6 +13,7 @@ ingress:
     path: "/fluke"
   minio:
     expose: false
+    port: 9001
   tls:
     enabled: false
     host: 
@@ -179,6 +180,11 @@ minio:
       memory: 4Gi
   buckets:
     - name: iceberg.resurface
+  securityContext:
+    enabled: true
+    runAsUser: "1000640000"
+    runAsGroup: "1000640000"
+    fsGroup: "1000640000"
   configPathmc: "/tmp/minio/mc/"
 
 qa:
@@ -195,6 +201,8 @@ qa:
     sleep:
       init:
       batch:
+    clockskew:
+    batchsize:
   importer:
 
 # autoscaling:

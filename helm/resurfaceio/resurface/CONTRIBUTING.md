@@ -22,7 +22,7 @@ helm install resurface . --dry-run --debug --create-namespace -n resurface --set
 helm install resurface . --create-namespace -n resurface
 
 # enable iceberg with minio standalone
-helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set minio.enabled=true --set minio.mode=standalone --set minio.replicas=1 --set minio.rootUser=minio --set minio.rootPassword=minio123 --set minio.ingress.expose=true --reuse-values
+helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set minio.enabled=true --set minio.mode=standalone --set minio.replicas=1 --set minio.rootUser=minio --set minio.rootPassword=minio123 --set ingress.minio.expose=true --reuse-values
 
 # add worker node if you have enough cowbell
 helm upgrade -i resurface . -n resurface --set multinode.enabled=true --set multinode.workers=1 --reuse-values

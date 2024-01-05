@@ -47,7 +47,7 @@ echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-in
 
 helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
 {{ if and .Values.ingress.enabled $tlsenabled }}
-· You can find the UI for your Resurface instance here: https://{{ .Values.ingress.tls.host }}/ui
+· You can find the UI for your Resurface instance here: {{ eq .Values.provider "ibm-openshift" | ternary (print (include "resurface.fullname" .) ".") "" | printf "https://%[2]s%[1]s/ui" .Values.ingress.tls.host }}
 {{- else if .Values.ingress.enabled }}
 
 · Once the EXTERNAL IP for the Ingress Controller has been assigned, you can get the URL of the UI for your Resurface instance by running the following command:
@@ -79,7 +79,7 @@ kubectl get configmap/vnis-config -n resurface -o yaml
 {{ end }}
 {{ if and (empty (include "resurface.sniffer.mirror.options" .)) (empty (include "resurface.sniffer.options" .)) }}
   NOTE: NO services, pods, or labels were specified and discovery is DISABLED.
-  This might result in unexpected behavior. Please, specifiy at least one service, pod or label, or enable service discovery.
+  This might result in unexpected behavior. Please, specify at least one service, pod or label, or enable service discovery.
   For more information use the following command:
 
 helm show readme resurfaceio/resurface

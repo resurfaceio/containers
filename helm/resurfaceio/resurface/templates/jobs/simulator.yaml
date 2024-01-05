@@ -1,5 +1,5 @@
 {{- if and .Values.qa.enabled .Values.qa.simulator.enabled -}}
-{{- $version := default "3.5.7" .Values.qa.simulator.version -}}
+{{- $version := default "3.6.1" .Values.qa.simulator.version -}}
 {{- $initialSleepSeconds := default 180 .Values.qa.simulator.sleep.init | int -}}
 {{- $workload := default "RestSmall2" .Values.qa.simulator.workload -}}
 {{- $host := printf "worker.%s" .Release.Namespace -}}
@@ -12,8 +12,9 @@
 {{- $port = default $port .Values.qa.simulator.port -}}
 {{- $limitMessages := default 0 .Values.qa.simulator.limit.messages | int -}}
 {{- $limitMillis := default 0 .Values.qa.simulator.limit.millis | int -}}
-{{- $clockSkewDays := default 0 .Values.qa.simulator.skew | int -}}
+{{- $clockSkewDays := default 0 .Values.qa.simulator.clockskew | int -}}
 {{- $sleepPerBatch := default 0 .Values.qa.simulator.sleep.batch | int -}}
+{{- $batchSize := default 128 .Values.qa.simulator.batchsize | int -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -37,5 +38,5 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "wget https://dl.cloudsmith.io/public/resurfaceio/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DCLOCK_SKEW_DAYS={{ $clockSkewDays }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
+            - "wget https://dl.cloudsmith.io/public/resurfaceio/public/maven/io/resurface/resurfaceio-simulator/{{ $version }}/resurfaceio-simulator-{{ $version }}.jar && echo 'wait {{ div $initialSleepSeconds 60 }} minutes' && sleep {{ $initialSleepSeconds }} && echo 'done' && java -DWORKLOAD={{ $workload }} -DHOST={{ $host }} -DPORT={{ $port }} -DLIMIT_MESSAGES={{ $limitMessages }} -DLIMIT_MILLIS={{ $limitMillis }} -DCLOCK_SKEW_DAYS={{ $clockSkewDays }} -DSLEEP_PER_BATCH={{ $sleepPerBatch }} -DBATCH_SIZE={{ $batchSize }} -Xmx512M -jar resurfaceio-simulator-{{ $version }}.jar"
 {{- end -}}

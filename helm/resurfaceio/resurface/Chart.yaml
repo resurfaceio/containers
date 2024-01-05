@@ -28,11 +28,11 @@ keywords:
 home: https://resurface.io
 dependencies:
   - name: kubernetes-ingress
-    version: "1.32.2"
+    version: "1.35.5"
     repository: https://haproxytech.github.io/helm-charts
     condition: ingress.controller.enabled
   - name: minio
-    version: "5.0.13"
+    version: "5.0.14"
     repository: https://charts.min.io/
     condition: minio.enabled
 maintainers:
