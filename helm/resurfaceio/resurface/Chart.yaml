@@ -12,7 +12,7 @@ annotations:
     - kind: added
       description: Support for sql.forced-session-time-zone Trino config
     - kind: changed
-      description: Upgrade Resurface image to 3.6.32
+      description: Upgrade Resurface image to 3.6.42
     - kind: changed
       description: Upgrade HAProxy dependency chart to 1.35.5
     - kind: changed
