@@ -7,14 +7,16 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
+    - kind: added
+      description: Support to route MinIO console through ingress controller
+    - kind: added
+      description: Support for sql.forced-session-time-zone Trino config
     - kind: changed
       description: Upgrade Resurface image to 3.6.32
     - kind: changed
-      description: Upgrade network-sniffer image to 1.4.0
-    - kind: fixed
-      description: Remove default storage classes
-    - kind: fixed
-      description: Toleration for arm64 GKE node pools
+      description: Upgrade HAProxy dependency chart to 1.35.5
+    - kind: changed
+      description: Upgrade MinIO dependency chart to 5.0.14
 keywords:
   - API
   - HTTP
@@ -43,4 +45,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.6.50
+appVersion: 3.6.42
