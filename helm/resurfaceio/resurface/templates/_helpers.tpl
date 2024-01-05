@@ -51,6 +51,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Container timezone
+*/}}
+{{- define "resurface.timezone" -}}
+{{ .Values.custom.config.tz | default "UTC" }}
+{{- end }}
+
+{{/*
 Container resources and persistent volumes
 */}}
 {{- define "resurface.resources" }}
@@ -68,7 +75,6 @@ Container resources and persistent volumes
 {{- $defaultDBSlabs := 3 -}}
 {{- $defaultShardSize := "1300m" -}}
 {{- $defaultPollingCycle := "default" -}}
-{{- $defaultTimezone := "UTC" -}}
 {{- $minShards := 3 -}}
 
 {{/*
@@ -100,7 +106,6 @@ Container resources and persistent volumes
 {{- $dbSlabs := .Values.custom.config.dbslabs | default $defaultDBSlabs | int -}}
 {{- $shardSize := .Values.custom.config.shardsize | default $defaultShardSize -}}
 {{- $pollingCycle := .Values.custom.config.pollingcycle | default $defaultPollingCycle -}}
-{{- $timezone := .Values.custom.config.tz | default $defaultTimezone -}}
 
 {{/*
   Shard size can be passed with a data unit prefix (k, m, or g)
@@ -208,7 +213,7 @@ Container resources and persistent volumes
             - name: POLLING_CYCLE
               value: {{ $pollingCycle | quote }}
             - name: TZ
-              value: {{ $timezone | quote }}
+              value: {{ include "resurface.timezone" . | quote }}
             {{- if $icebergIsEnabled }}
             - name: ICEBERG_SIZE_MAX
               value: {{ mul $unitsCF $icebergMaxSize | printf "%dg" }}
@@ -286,6 +291,7 @@ query.max-memory={{ $trinoQueryLimit }}
 query.max-memory-per-node={{ $trinoQueryLimit }}
 query.max-total-memory={{ $trinoQueryLimit }}
 query.min-expire-age={{ $trinoMinExpireTime }}
+sql.forced-session-time-zone={{ include "resurface.timezone" . }}
 {{- end -}}
 
 {{/*
