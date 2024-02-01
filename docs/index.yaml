@@ -112,6 +112,55 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Upgrade Resurface image to 3.6.70
+        - kind: changed
+          description: Upgrade HAProxy dependency chart to 1.36.1
+        - kind: changed
+          description: Upgrade MinIO dependency chart to 5.0.15
+      artifacthub.io/containsSecurityUpdates: "true"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 3.6.70
+    created: "2024-02-01T14:19:20.414005696Z"
+    dependencies:
+      - condition: ingress.controller.enabled
+        name: kubernetes-ingress
+        repository: https://haproxytech.github.io/helm-charts
+        version: 1.36.1
+      - condition: minio.enabled
+        name: minio
+        repository: https://charts.min.io/
+        version: 5.0.15
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: 0fe1263e71d44a79c127d92c254f055a14bf1a74312e01b729df78838f5ea584
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+      - API
+      - HTTP
+      - Triage
+      - Security
+      - Observability
+      - Logs
+      - Monitoring
+      - Troubleshooting
+      - Alerts
+    maintainers:
+      - email: ramon@resurface.io
+        name: Ramón Márquez
+      - email: rob@resurface.io
+        name: Rob Dickinson
+    name: resurface
+    sources:
+      - https://github.com/resurfaceio
+    type: application
+    urls:
+      - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.9/resurface-3.6.9.tgz
+    version: 3.6.9
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Support to route MinIO console through ingress controller
         - kind: added
@@ -1599,4 +1648,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2024-01-05T19:08:29.538487219Z"
+generated: "2024-02-01T14:19:20.414016697Z"
