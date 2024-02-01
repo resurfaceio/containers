@@ -7,16 +7,12 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
-    - kind: added
-      description: Support to route MinIO console through ingress controller
-    - kind: added
-      description: Support for sql.forced-session-time-zone Trino config
     - kind: changed
-      description: Upgrade Resurface image to 3.6.42
+      description: Upgrade Resurface image to 3.6.70
     - kind: changed
-      description: Upgrade HAProxy dependency chart to 1.35.5
+      description: Upgrade HAProxy dependency chart to 1.36.1
     - kind: changed
-      description: Upgrade MinIO dependency chart to 5.0.14
+      description: Upgrade MinIO dependency chart to 5.0.15
 keywords:
   - API
   - HTTP
@@ -30,11 +26,11 @@ keywords:
 home: https://resurface.io
 dependencies:
   - name: kubernetes-ingress
-    version: "1.35.5"
+    version: "1.36.1"
     repository: https://haproxytech.github.io/helm-charts
     condition: ingress.controller.enabled
   - name: minio
-    version: "5.0.14"
+    version: "5.0.15"
     repository: https://charts.min.io/
     condition: minio.enabled
 maintainers:
@@ -45,4 +41,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.6.50
+appVersion: 3.6.70
