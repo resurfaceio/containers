@@ -254,13 +254,42 @@ Container resources and persistent volumes
 {{- end }}
 
 {{/*
+TLS helper
+*/}}
+{{- define "tls.helper.mode" -}}
+{{- $autoIssued := .Values.ingress.tls.autoissue.enabled -}}
+{{- $noSecretName :=  empty .Values.ingress.tls.byoc.secretname -}}
+{{- $noCertKey := and (empty .Values.ingress.tls.byoc.cert) (empty .Values.ingress.tls.byoc.key) -}}
+{{- $tlsMode := "" -}}
+{{- if .Values.ingress.tls.enabled -}}
+    {{- if not $autoIssued -}}
+        {{- if and $noSecretName $noCertKey -}}
+            {{- fail "TLS certificate auto-issuing is disabled. TLS Secret name is required for BYOC TLS configuration" -}}
+        {{- else -}}
+            {{- $tlsMode = $noSecretName | ternary "certkey-byoc" "byoc" -}}
+        {{- end -}}
+    {{- else if not $noSecretName | or (not $noCertKey) -}}
+        {{- $errMessage := "\nTLS certificate auto-issuing is enabled but certificate info was also provided.\n" -}}
+        {{- $errMessage = cat $errMessage "- If you wish to configure TLS with your own certs (BYOC)," -}}
+        {{- $errMessage = cat $errMessage "please disable certificate auto-issuing explicitly -- or,\n" -}}
+        {{- $errMessage = cat $errMessage "- If you wish to continue with the auto-issuing process," -}}
+        {{- $errMessage = cat $errMessage "please delete existing BYOC TLS Secret and unset BYOC values" -}}
+        {{- fail $errMessage -}}
+    {{- else -}}
+        {{- $tlsMode = "auto" -}}
+    {{- end -}}
+{{- end -}}
+{{ print $tlsMode }}
+{{- end -}}
+
+{{/*
 Coordinator config.properties
 */}}
 {{- define "resurface.config.coordinator" -}}
 coordinator=true
 discovery.uri=http://localhost:7700
 node-scheduler.include-coordinator=true
-{{ if or .Values.ingress.tls.enabled (eq (default "" .Values.provider) "ibm-openshift") -}}
+{{ if default "" .Values.provider | eq "ibm-openshift" | or .Values.ingress.tls.enabled -}}
 http-server.process-forwarded=true
 http-server.authentication.allow-insecure-over-http=true
 {{ include "resurface.config.auth" . -}}

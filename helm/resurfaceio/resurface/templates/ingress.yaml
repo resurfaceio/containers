@@ -11,18 +11,17 @@ metadata:
     {{- else }}
     haproxy.org/load-balance: "roundrobin"
     {{- if .Values.ingress.importer.expose }}
+    {{- $importerPath := .Values.ingress.importer.path | default "/fluke" }}
+    haproxy.org/backend-config-snippet: |
+      {{ print "acl no_trailing_slash path -m str " $importerPath }}
+      {{ printf "http-request redirect code 301 location %s/ if no_trailing_slash" $importerPath }}
     haproxy.org/path-rewrite: {{ .Values.ingress.importer.path | default "/fluke" }}/(.*) /\1
     {{- end }}
     {{- end }}
     {{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
-    cert-manager.io/issuer: {{ include "resurface.fullname" . }}-letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
+    cert-manager.io/issuer: {{ .Values.ingress.tls.autoissue.staging | ternary "-staging" "" | print (include "resurface.fullname" .) "-letsencrypt" }}
     {{- end }}
 spec:
-  defaultBackend:
-    service:
-      name: kubernetes-ingress-default-backend
-      port:
-        number: 8080
   {{- if ne $provider "ibm-openshift" }}
   ingressClassName: haproxy
   {{- end }}
@@ -66,11 +65,6 @@ metadata:
     route.openshift.io/termination: edge
     haproxy.router.openshift.io/rewrite-target: /
 spec:
-  defaultBackend:
-    service:
-      name: kubernetes-ingress-default-backend
-      port:
-        number: 8080
   rules:
     - http:
         paths:

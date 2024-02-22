@@ -1,16 +1,20 @@
-{{- if and .Values.ingress.tls.enabled .Values.ingress.tls.autoissue.enabled }}
+{{- if include "tls.helper.mode" . | eq "auto" | and .Values.ingress.enabled .Values.ingress.tls.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ include "resurface.fullname" . }}-letsencrypt{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}
+  name: {{ .Values.ingress.tls.autoissue.staging | ternary "-staging" "" | print (include "resurface.fullname" .) "-letsencrypt" }}
 spec:
   acme:
-    email: {{ .Values.ingress.tls.autoissue.email }}
-    server: https://acme{{ if .Values.ingress.tls.autoissue.staging }}-staging{{ end }}-v02.api.letsencrypt.org/directory
+    email: {{ required "E-mail address is required for TLS autoissuing process" .Values.ingress.tls.autoissue.email }}
+    server: {{ .Values.ingress.tls.autoissue.staging | ternary "-staging" "" | printf "https://acme%s-v02.api.letsencrypt.org/directory" }}
     privateKeySecretRef:
-      name: {{ include "resurface.fullname" . }}-pk
+      name: {{ include "resurface.fullname" . | printf "%s-pk" }}
     solvers:
       - http01:
           ingress:
-            name: {{ include "resurface.fullname" . }}-ingress
+            name: {{ include "resurface.fullname" . | printf "%s-ingress" }}
+            podTemplate:
+              spec:
+                tolerations:
+                  {{- toYaml .Values.tolerations | nindent 18 }}
 {{- end }}

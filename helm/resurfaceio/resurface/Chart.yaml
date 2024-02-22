@@ -4,18 +4,29 @@ version: 3.6.9
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
-  artifacthub.io/containsSecurityUpdates: "true"
+  artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
+    - kind: added
+      description: Support for custom Resurface image tag
+    - kind: added
+      description: Toleration for tainted arm64 nodes on GKE
+    - kind: added
+      description: Automatic binding of service account with SCC for OpenShift
     - kind: changed
-      description: Upgrade Resurface image to 3.6.70
+      description: Upgrade Resurface image to 3.6.72
     - kind: changed
-      description: Upgrade HAProxy dependency chart to 1.36.1
-    - kind: changed
-      description: Upgrade MinIO dependency chart to 5.0.15
+      description: Upgrade HAProxy dependency chart to 1.37.0
+    - kind: fixed
+      description: Dependency requirements for BYOC TLS
+    - kind: fixed
+      description: Add redirect to importer endpoint with missing trailing slash
 keywords:
   - API
   - HTTP
+  - SOAP
+  - REST
+  - GraphQL
   - Triage
   - Security
   - Observability
@@ -26,7 +37,7 @@ keywords:
 home: https://resurface.io
 dependencies:
   - name: kubernetes-ingress
-    version: "1.36.1"
+    version: "1.37.0"
     repository: https://haproxytech.github.io/helm-charts
     condition: ingress.controller.enabled
   - name: minio
@@ -41,4 +52,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.6.70
+appVersion: 3.6.72

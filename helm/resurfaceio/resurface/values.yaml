@@ -23,6 +23,8 @@ ingress:
       email: 
     byoc:
       secretname:
+      cert:
+      key:
 
 auth:
   enabled: false
@@ -83,6 +85,7 @@ custom:
     shardsize:
     pollingcycle:
     tz:
+    version:
   storage:
     size:
     classname:
@@ -145,6 +148,13 @@ consumer:
       include default
       skip_compression
 
+# Base tolerations
+tolerations: &base_tolerations
+  - key: kubernetes.io/arch
+    operator: Equal
+    value: arm64
+    effect: NoSchedule
+
 # Dependency chart: HAProxy Ingress Controller
 kubernetes-ingress:
   controller:
@@ -159,10 +169,7 @@ kubernetes-ingress:
           targetPort: 9001
     extraArgs:
       - "--configmap-tcp-services=resurface/haproxy-extra-ports"
-    tolerations:
-      - key: kubernetes.io/arch
-        operator: Equal
-        value: arm64
+    tolerations: *base_tolerations
   defaultBackend:
     enabled: false
 
@@ -180,12 +187,12 @@ minio:
       memory: 4Gi
   buckets:
     - name: iceberg.resurface
-  securityContext:
-    enabled: true
-    runAsUser: "1000640000"
-    runAsGroup: "1000640000"
-    fsGroup: "1000640000"
+  serviceAccount:
+    name: "minio-sa"
   configPathmc: "/tmp/minio/mc/"
+  tolerations: *base_tolerations
+  postJob:
+    tolerations: *base_tolerations
 
 qa:
   enabled: false

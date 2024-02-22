@@ -1,4 +1,4 @@
-{{- $tlsenabled := or .Values.ingress.tls.enabled (eq (default "" .Values.provider) "ibm-openshift") -}}
+{{- $tlsenabled := default "" .Values.provider | eq "ibm-openshift" | or .Values.ingress.tls.enabled -}}
 
 Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .Release.IsUpgrade }}upgraded{{end}}.
 

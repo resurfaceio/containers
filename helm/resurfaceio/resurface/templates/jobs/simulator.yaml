@@ -32,6 +32,8 @@ spec:
       serviceAccountName: resurface-sa
       securityContext:
         runAsUser: 0
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
       containers:
         - name: simulator
           image: eclipse-temurin:17-jre

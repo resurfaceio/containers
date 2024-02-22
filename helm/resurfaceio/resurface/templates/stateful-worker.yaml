@@ -33,12 +33,10 @@ spec:
               - key: config.properties
                 path: config.properties
       tolerations:
-        - key: kubernetes.io/arch
-          operator: Equal
-          value: arm64
+        {{- toYaml .Values.tolerations | nindent 8 }}
       containers:
         - name: worker
-          image: resurfaceio/resurface-worker:{{ .Chart.AppVersion }}
+          image: {{ .Values.custom.config.version | default .Chart.AppVersion | printf "resurfaceio/resurface-worker:%v" }}
           ports:
             - name: fluke
               containerPort: 7701

@@ -44,11 +44,11 @@ The **ingress** values section is where the configuration for the Ingress resour
 - The **ingress.tls** nested section corresponds to the TLS termination configuration for the Ingress resource.
   - **ingress.tls.enabled**: boolean. The TLS termination feature can be enabled by setting this value to `true`. Defaults to `false`.
   - **ingress.tls.host**: string. Host included in the TLS certificate. DNS records must be updated accordingly. Required only if **ingress.tls.enabled** is set to `true`.
-  - **ingress.tls.autoissue**: this nested subsection corresponds to the configuration needed to autoissue a TLS certificate using the cert-manager utility. The autoissing process is mutually exclusive with respect to the BYOC (bring-your-own-certificate) process.
+  - **ingress.tls.autoissue**: this nested subsection corresponds to the configuration needed to auto-issue a TLS certificate using the cert-manager utility. The auto-issuing process is mutually exclusive with respect to the BYOC (bring-your-own-certificate) process.
     - **ingress.tls.autoissue.enabled**: boolean. The TLS certificate automatic issuing and renewal process can be disabled by setting this value to `false`. Defaults to `true`.
     - **ingress.tls.autoissue.staging**: boolean. The TLS certificate automatic issuing and renewal process uses the "Let's Encrypt" ACME as CA. Let's Encrypt provides both a [staging environment](https://letsencrypt.org/docs/staging-environment/) and a [rate-limited production environment](https://letsencrypt.org/docs/rate-limits/) for the certificate issuing process. By setting this value to `true` cert-manager uses the former, and by setting it to `false` it then uses the latter. Defaults to `true`.
     - **ingress.tls.autoissue.email**: string. Let's Encrypt will send notices only if a certificate is about to expire and the renewal process has failed. Required only if **ingress.tls.autoissue.enabled** is set to `true`.
-  - **ingress.tls.byoc**: this nested subsection corresponds to the bring-your-own-certificate configuration. This process is mutually exclusive with respect to the autoissuing process. A user must supply the name of a Kubernetes TLS Secret that already exists in the same namespace.
+  - **ingress.tls.byoc**: this nested subsection corresponds to the bring-your-own-certificate configuration. This process is mutually exclusive with respect to the auto-issuing process. A user must supply the name of a Kubernetes TLS Secret that already exists in the same namespace.
     - **ingress.tls.byoc.secretname**: string. Name of an already existing Kubernetes TLS Secret to be used by the Ingress resource. Required only if **ingress.tls.enabled** is set to `true` and **ingress.tls.autoissue.enabled** is set to `false`.
 
 ```yaml
@@ -182,8 +182,9 @@ The **custom** section holds the values for fields that can be overriden in any 
   - **custom.config.dbheap**: integer. Available memory in GiB/GB (see **units**) to be used by the JVM running the application. It isn't recommended to set this value below `3`.
   - **custom.config.dbslabs**: integer. Used by the Resurface database to define a level of parallelism for queries.
   - **custom.config.shardsize**: integer|string. As an integer, this value represents the size in GiB/GB (see **units**) of each batch of API calls written to disk. It can also receive a string comprised of a value and the corresponding data unit prefix for different orders of magnitude (e.g. `'500m'`, `'2000k'`, `'3g'`). Defaults to `'500m'`
-  - **custom.config.pollingcycle**: string. Sleep cycle for alert polling thread. Allowed values are `'default'` (use configured cycle delay), `'off'` (no polling), `'fast'` (60 second delay), `'nonstop'` (zero cycle delay). Defaults to `'default'`
+  - **custom.config.pollingcycle**: string. Sleep cycle for alert polling thread. Allowed values are `'default'` (use configured cycle delay), `'off'` (no polling), `'fast'` (60-second delay), `'nonstop'` (zero cycle delay). Defaults to `'default'`
   - **custom.config.tz**: string. Used to specify a local timezone instead of the UTC timezone containers run with by default.
+  - **custom.config.version**: string. Overrides the default Resurface image tag for a given chart version.
 
 - The **custom.storage** subsection refers to the persistent storage configuration. Persistent volume implementation is specific to each cloud provider.
   - **custom.storage.size**: integer. Size in GiB/GB (see **units**) of the persistent volume that should be provisioned for each Resurface node. It should match the **custom.config.dbsize** value.
@@ -245,7 +246,7 @@ The **sniffer** section is where the configuration values for the optional netwo
       - **sniffer.vpcmirror.autosetup.target.sg**: string. Security group attached to the ENI of a target EKS node. Used to create security group rules to allow mirrored traffic across source and target. Required only if **sniffer.vpcmirror.autosetup.target.eks.cluster** is not set.
       - **sniffer.vpcmirror.autosetup.filter.id**: string. Traffic Mirror Filter ID. Traffic mirror filter creation is skipped when set to an already existing traffic mirror target. Optional.
 
-<!--      - **sniffer.vpcmirror.autosetup.source.ecs.tasks**: []string. Comma-separatted sequence of IDs of ECS tasks to capture traffic from. Filters out all other ECS tasks not intended for traffic mirroring. Optional.-->
+<!--      - **sniffer.vpcmirror.autosetup.source.ecs.tasks**: []string. Comma-separated sequence of IDs of ECS tasks to capture traffic from. Filters out all other ECS tasks not intended for traffic mirroring. Optional.-->
 
 
 - **sniffer.port**: (deprecated) integer. Container port exposed by the application to capture packets from. Defaults to `80`. Required only if **sniffer.enabled** is `true` and no other option is enabled.
