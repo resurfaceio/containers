@@ -126,11 +126,11 @@ entries:
           description: Dependency requirements for BYOC TLS
         - kind: fixed
           description: Add redirect to importer endpoint with missing trailing slash
-      artifacthub.io/containsSecurityUpdates: "true"
+      artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: 3.6.72
-    created: "2024-02-23T19:28:30.827731704Z"
+    created: "2024-02-23T19:55:58.238550884Z"
     dependencies:
       - condition: ingress.controller.enabled
         name: kubernetes-ingress
@@ -142,7 +142,7 @@ entries:
         version: 5.0.15
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: 02847c826320109d896ac73a7e62c16cbbe1e33461b212f06ae23c20ebb9259a
+    digest: 2cdd3b410c2d30bc856396fb9f95ff5eb4b7f09b84bc42040f9818b1f52a95da
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -168,8 +168,8 @@ entries:
       - https://github.com/resurfaceio
     type: application
     urls:
-      - https://github.com/resurfaceio/containers/releases/download/resurface-3.7.0/resurface-3.7.0.tgz
-    version: 3.7.0
+      - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.10/resurface-3.6.10.tgz
+    version: 3.6.10
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -1708,4 +1708,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2024-02-23T19:28:30.827744047Z"
+generated: "2024-02-23T19:55:58.238563097Z"
