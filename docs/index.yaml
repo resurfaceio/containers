@@ -112,6 +112,58 @@ entries:
   resurface:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Upgrade Resurface image to 3.6.86
+        - kind: changed
+          description: Upgrade HAProxy dependency chart to 1.38.2
+        - kind: changed
+          description: Upgrade MinIO dependency chart to 5.1.0
+      artifacthub.io/containsSecurityUpdates: "true"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 3.6.86
+    created: "2024-03-19T18:08:10.851467326Z"
+    dependencies:
+      - condition: ingress.controller.enabled
+        name: kubernetes-ingress
+        repository: https://haproxytech.github.io/helm-charts
+        version: 1.38.2
+      - condition: minio.enabled
+        name: minio
+        repository: https://charts.min.io/
+        version: 5.1.0
+    description: Resurface discovers and alerts on quality and security signatures
+      in your API traffic.
+    digest: a83c6e41e01781b318c89bfec48ebe91a3329aa885834f2735a01f6aec68d089
+    home: https://resurface.io
+    icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
+    keywords:
+      - API
+      - HTTP
+      - SOAP
+      - REST
+      - GraphQL
+      - Triage
+      - Security
+      - Observability
+      - Logs
+      - Monitoring
+      - Troubleshooting
+      - Alerts
+    maintainers:
+      - email: ramon@resurface.io
+        name: Ramón Márquez
+      - email: rob@resurface.io
+        name: Rob Dickinson
+    name: resurface
+    sources:
+      - https://github.com/resurfaceio
+    type: application
+    urls:
+      - https://github.com/resurfaceio/containers/releases/download/resurface-3.6.11/resurface-3.6.11.tgz
+    version: 3.6.11
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Support for custom Resurface image tag
         - kind: added
@@ -1708,4 +1760,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2024-02-23T19:55:58.238563097Z"
+generated: "2024-03-19T18:08:10.851481022Z"
