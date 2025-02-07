@@ -62,6 +62,18 @@ helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set iceber
 helm uninstall resurface -n resurface; kubectl delete $(kubectl get pvc -n resurface -o name) -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
+## Update Chart dependencies
+1. Modify the dependency version in `Chart.yaml`
+2. Run `helm dependency update .`
+3. Test that everything works as expected.
+4. Commit changes:
+```shell
+git add Chart.yaml Chart.lock
+git rm charts/<chart-name>-<old-version>.tgz
+git add charts/<chart-name>-<new-version>.tgz
+git commit
+```
+
 ## Update Docs
 
 `README.md` and `templates/NOTES.txt` contain information about both the usage of this Helm chart and its status as a Helm release once installed. If it applies, please update each accordingly.
