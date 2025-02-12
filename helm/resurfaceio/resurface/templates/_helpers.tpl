@@ -286,12 +286,14 @@ Container resources and persistent volumes
             - name: ICEBERG_SIZE_RESERVED
               value: {{ mul $unitsCF $icebergMinSize | printf "%dg" }}
             {{- if .Values.iceberg.azure.enabled }}
+            - name: ICEBERG_AZURE_ENABLED
+              value: {{ .Values.iceberg.azure.enabled | quote }}
             - name: ICEBERG_AZURE_AUTH_TYPE
               value: {{ $icebergAzureStorageAuth | quote }}
             - name: ICEBERG_AZURE_ACCESS_KEY
               value: {{ $icebergAzureStorageAccessKey | quote }}
-            - name: ICEBERG_S3_LOCATION
-              value: {{ printf "abfs://%s@%s.dfs.core.windows.net" $icebergAzureStorageContainerName $icebergAzureStorageAccountName }}
+            - name: ICEBERG_WAREHOUSE_DIR
+              value: {{ printf "abfs://%s@%s.dfs.%s" $icebergAzureStorageContainerName $icebergAzureStorageAccountName $icebergAzureStorageEndpoint }}
             {{- else }}
             - name: ICEBERG_S3_URL
               value: {{ $icebergS3URL | quote }}
@@ -305,7 +307,7 @@ Container resources and persistent volumes
                 secretKeyRef:
                   name: {{ $icebergS3Secret }}
                   key: rootPassword
-            - name: ICEBERG_S3_LOCATION
+            - name: ICEBERG_WAREHOUSE_DIR
               value: {{ printf "s3a://%s/" $icebergS3BucketName }}
             {{- end }}
             - name: ICEBERG_POLLING_MILLIS
