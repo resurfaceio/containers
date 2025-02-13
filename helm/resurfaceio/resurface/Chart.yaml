@@ -29,7 +29,7 @@ dependencies:
     repository: https://haproxytech.github.io/helm-charts
     condition: ingress.controller.enabled
   - name: minio
-    version: "5.2.0"
+    version: "5.4.0"
     repository: https://charts.min.io/
     condition: minio.enabled
 maintainers:
@@ -40,4 +40,4 @@ maintainers:
 sources:
   - https://github.com/resurfaceio
 icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
-appVersion: 3.7.34
+appVersion: 3.7.70

@@ -59,6 +59,15 @@ iceberg:
       region:
       accesskey:
       secretkey:
+  azure:
+    enabled: false
+    accountname:
+    containername:
+    endpoint: "core.windows.net"
+    auth:
+      type: "ACCESS_KEY"
+      accesskey:
+
   config:
     format: PARQUET
     codec: ZSTD
@@ -217,6 +226,8 @@ minio:
   tolerations: *base_tolerations
   postJob:
     tolerations: *base_tolerations
+  image:
+    tag: "RELEASE.2025-02-07T23-21-09Z"
 
 qa:
   enabled: false

@@ -1,7 +1,7 @@
 # Contributing to resurfaceio/containers
 &copy; 2016-2024 Graylog, Inc.
 
-## Before Installing Local Changes
+## Before Installing
 
 ```bash
 # check template rendering
@@ -15,7 +15,9 @@ helm install resurface . --dry-run --debug --create-namespace -n resurface --set
 helm install resurface . --dry-run --debug --create-namespace -n resurface --set provider=aws
 ```
 
-## Test Local Changes
+## Smoke tests
+
+### Testing Local Changes
 
 ```bash
 # install coordinator node
@@ -24,7 +26,7 @@ helm install resurface . --create-namespace -n resurface
 # enable iceberg with minio standalone
 helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set minio.enabled=true --set minio.mode=standalone --set minio.replicas=1 --set minio.rootUser=minio --set minio.rootPassword=minio123 --set ingress.minio.expose=true --reuse-values
 
-# add worker node if you have enough cowbell
+# add worker node (if you have enough cowbell)
 helm upgrade -i resurface . -n resurface --set multinode.enabled=true --set multinode.workers=1 --reuse-values
 
 # enable tls
@@ -38,43 +40,102 @@ noglob helm upgrade resurface . -n resurface --set auth.enabled=true --set auth.
 helm uninstall resurface -n resurface; kubectl delete $(kubectl get pvc -n resurface -o name) -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
-## Test Local Changes with a Cloud Provider
+### Testing Local Changes with a Cloud Provider
 
 ```bash
+# install coordinator node on aks
 helm install resurface . --create-namespace -n resurface --set provider=azure
+```
+```bash
+# install coordinator node on eks
 helm install resurface . --create-namespace -n resurface --set provider=aws
+```
+```bash
+# install coordinator node on gke
 helm install resurface . --create-namespace -n resurface --set provider=gcp
 ```
 
-## Test Storage Deployments
+### Testing Storage Deployments
 
 ```bash
 # MinIO Distributed
 helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set minio.enabled=true --set minio.mode=distributed --set minio.replicas=4 --set minio.rootUser=minio --set minio.rootPassword=minio123  --set minio.ingress.expose=true --reuse-values
-
+```
+```bash
 # AWS S3
 helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set iceberg.s3.enabled=true --set iceberg.s3.bucketname=iceberg.resurface --set iceberg.s3.aws.region=us-west-2 --set iceberg.s3.aws.accesskey=<AWS-ACCESS-KEY> --set iceberg.s3.aws.secretkey=<AWS-SECRET-KEY> --reuse-values
 ```
+```bash
+# Azure Blob Storage
+helm upgrade -i resurface . -n resurface --set iceberg.enabled=true --set iceberg.azure.enabled=true --set iceberg.azure.accountname=<AZURE-STORAGE-ACCOUNT-NAME> --set iceberg.azure.containername=<AZURE-STORAGE-CONTAINER-NAME> --set iceberg.azure.auth.accesskey=<AZURE-STORAGE-ACCESS-KEY> --reuse-values
+```
 
-## Uninstall
+### Uninstalling Chart
 
 ```bash
 helm uninstall resurface -n resurface; kubectl delete $(kubectl get pvc -n resurface -o name) -n resurface; helm uninstall cert-manager -n resurface; kubectl delete namespace resurface; kubectl delete clusterrole kubernetes-ingress; kubectl delete clusterrolebinding kubernetes-ingress; kubectl delete ingressclass haproxy
 ```
 
-## Update Docs
-
-`README.md` and `templates/NOTES.txt` contain information about both the usage of this Helm chart and its status as a Helm release once installed. If it applies, please update each accordingly.
-
-## Update Changelog and Chart version
-
-`Chart.yaml` contains an annotation named `artifacthub.io/changes` where the modifications introduced to the chart can be described briefly. The supported kinds of modification are *added*, *changed*, *deprecated*, *removed*, *fixed* and *security*.
-
-The github action in charge of making new helm releases is automatically triggered when the Chart version is updated. Make sure to test the changes that you have made as indicated above before updating this value. This chart follows semantic versioning (major: usually breaking changes, minor: usually new features/new app version, patch: usually bug fixes).
-
-## Push Local Changes
+## Pushing Local Changes
 
 ```bash
 git pull --rebase
 git push
 ```
+
+## Release Process
+
+### Running Security Scans
+
+By default, Artifact Hub provides [continuous security report generation](https://artifacthub.io/docs/topics/security_report/) once the chart has been released.
+In addition, a security scan must be performed locally before making any new releases.
+```bash
+trivy config .
+```
+
+### Searching for new Chart Versions
+
+```bash
+# update chart repositories
+helm repo update
+
+# check latest resurface chart version
+helm search repo resurfaceio/resurface
+
+# check latest dependency chart versions
+helm search repo haproxytech/kubernetes-ingress
+helm search repo minio-official/minio
+
+# and compare to currently declared versions
+helm dependency list .
+```
+
+### Updating Dependencies
+
+1. Modify the dependency version in `Chart.yaml`
+2. Run `helm dependency update .`
+3. Perform smoke tests and check that everything works as expected.
+4. Commit changes:
+```shell
+git rm charts/(CHART_NAME)-(OLD_VERSION).tgz
+git add charts/(CHART_NAME)-(NEW_VERSION).tgz
+git add Chart.yaml Chart.lock
+git commit
+```
+
+### Updating Docs
+
+`README.md` and `templates/NOTES.txt` contain information about both the usage of this Helm chart and its status as a Helm release once installed.
+If it applies, please update each accordingly.
+
+### Updating Changelog
+
+`Chart.yaml` contains an annotation named `artifacthub.io/changes` where the modifications introduced to the chart can be described briefly.
+The supported kinds of modification are *added*, *changed*, *deprecated*, *removed*, *fixed* and *security*.
+
+### Updating Chart Version
+
+The GitHub action in charge of making new helm releases is automatically triggered once changes are *pushed to the main branch*, and only when *the Chart version is updated*.
+Make sure to test the changes that you have made as indicated above before updating this value in `Chart.yaml`.
+
+This chart follows semantic versioning (major: usually breaking changes, minor: usually new features/new app version, patch: usually bug fixes).
