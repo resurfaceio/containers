@@ -63,6 +63,7 @@ iceberg:
     enabled: false
     accountname:
     containername:
+    endpoint: "core.windows.net"
     auth:
       type: "ACCESS_KEY"
       accesskey:

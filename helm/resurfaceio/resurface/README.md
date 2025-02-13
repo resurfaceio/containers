@@ -132,12 +132,21 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
 - **iceberg.enabled**: boolean. If set to `true`, data will automatically be replicated to the configured object storage, including all data already captured. Defaults to `false`.
 
 - The **iceberg.s3** subsection corresponds to the configuration for the AWS S3 object storage service.
-  - **iceberg.s3.enabled**: If set to `true`, AWS S3 object storage will be used to store Iceberg data and metadata files. It is important to note that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
+  - **iceberg.s3.enabled**: If set to `true`, AWS S3 object storage will be used to store Iceberg data and metadata files. It is important to note that MinIO, AWS S3, and Azure Blob Storage iceberg deployments are all mutually exclusive. Defaults to `false`.
   - **iceberg.s3.bucketname**: string. Unique name for the S3 bucket where data will be written to.
   - **iceberg.s3.aws**: nested subsection where the configuration for the AWS account that owns the S3 bucket can be found.
-  - **iceberg.s3.aws.region**: string. AWS region where S3 bucket was created in. Required only if **iceberg.s3.enabled** is set to `true`.
-  - **iceberg.s3.aws.accesskey**: string. AWS Credentials. It is **not** recommended to pass the AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
-  - **iceberg.s3.aws.secretkey**: string. AWS Credentials. It is **not** recommended to pass AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
+    - **iceberg.s3.aws.region**: string. AWS region where S3 bucket was created in. Required only if **iceberg.s3.enabled** is set to `true`.
+    - **iceberg.s3.aws.accesskey**: string. AWS Credentials. It is **not** recommended to pass the AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
+    - **iceberg.s3.aws.secretkey**: string. AWS Credentials. It is **not** recommended to pass AWS credentials as helm values, and instead create a kubernetes secret object manually named **resurface-s3-creds** with the corresponding key-value pairs. Required only if **iceberg.s3.enabled** is set to `true` and the **resurface-s3-creds** secret does not exist.
+
+- The **iceberg.azure** subsection corresponds to the configuration for the Azure Blob Storage (Azure Data Lake Storage Gen2) service.
+  - **iceberg.azure.enabled**: If set to `true`, Azure Blob Storage will be used to store Iceberg data and metadata files. It is important to note that MinIO, AWS S3, and Azure Blob Storage iceberg deployments are all mutually exclusive. Defaults to `false`.
+  - **iceberg.azure.accountname**: string. Name of the Azure storage account that will hold the data. The Azure storage account must have hierarchical namespace enabled
+  - **iceberg.azure.containername**: string. Name of the Azure storage container where data will be written to.
+  - **iceberg.azure.endpoint**: string. Hostname suffix of the Azure storage endpoint. Defaults to `core.windows.net`.
+  - **iceberg.azure.auth**: nested subsection where the configuration required to access the Azure storage account can be found.
+    - **iceberg.azure.auth.type**: string. Authentication type to use for Azure Storage access. Defaults to `ACCESS_KEY`
+    - **iceberg.azure.auth.accesskey**: string. The decrypted access key for the Azure Storage account. Requires authentication type `ACCESSS_KEY`.
 
 - The **iceberg.config** subsection contains configuration specific to Iceberg.
   - **iceberg.config.format**: string. File format used for Iceberg data file storage. It can be either `'PARQUET'` or `'ORC'` format. Defaults to `'PARQUET'`.
@@ -147,7 +156,7 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
   - **iceberg.size.reserved**: integer. Reserved space size in GiB/GB (see **units**) for Iceberg storage (metadata & logs). Must be less than **iceberg.size.max**. Defaults to `20`.
 
 The **minio** section corresponds to values passed to the `minio-official/minio` subchart. For more detailed information on all the values that can be set for this chart, please visit: https://artifacthub.io/packages/helm/minio-official/minio
-  - **minio.enabled**: If set to `true`, MinIO subchart will be deployed. It is important to note that MinIO and AWS S3 iceberg deployments are mutually exclusive. Defaults to `false`.
+  - **minio.enabled**: If set to `true`, MinIO subchart will be deployed. It is important to note that MinIO, AWS S3, and Azure Blob Storage iceberg deployments are all mutually exclusive. Defaults to `false`.
   - **minio.rootUser**: string. Required if **minio.enabled** is set to `true`.
   - **minio.rootPassword**: string. Required if **minio.enabled** is set to `true`.
   - **minio.mode**: string. MinIO [deployment topology](https://min.io/docs/minio/linux/operations/installation.html#install-and-deploy-minio). It can be either `standalone` or `distributed`. Defaults to `standalone`.

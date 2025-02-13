@@ -3,7 +3,7 @@
 Resurface has been successfully {{ if .Release.IsInstall }}installed{{ else if .Release.IsUpgrade }}upgraded{{end}}.
 
 · Your helm release is named {{ .Release.Name }}.
-· You are running Resurface version {{ .Chart.AppVersion }} in {{ if .Values.multinode.enabled }}multi{{ else }}single{{end}}-node configuration.
+· You are running Resurface version {{ .Values.custom.config.version | default .Chart.AppVersion }} in {{ if .Values.multinode.enabled }}multi{{ else }}single{{end}}-node configuration.
 {{- if .Values.multinode.enabled }}
 · Number of worker nodes: {{ .Values.multinode.workers }}
 {{- end }}
@@ -31,6 +31,11 @@ echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-in
 {{- if .Values.iceberg.s3.enabled -}} using external AWS S3 bucket as object storage provider.
   · AWS S3 bucket name: {{ .Values.iceberg.s3.bucketname }}
   · AWS S3 region: {{ .Values.iceberg.s3.awsregion }}
+{{- end }}
+{{- if .Values.iceberg.azure.enabled -}} using external Azure Blob Storage as object storage provider.
+  · Azure Storage region: {{ .Values.iceberg.azure.endpoint }}
+  · Azure Storage Account: {{ .Values.iceberg.azure.accountname }}
+  · Azure Storage Container: {{ .Values.iceberg.azure.containername }}
 {{- end }}
 {{- else }} disabled.
 {{- end }}
