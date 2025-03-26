@@ -119,12 +119,12 @@ entries:
         - kind: changed
           description: Upgrade Resurface image to 3.7.84
         - kind: changed
-          description: Use specific RELEASE.2025-02-07T23-21-09Z tag for MinIO image
+          description: Use specific tag for MinIO image to address AWS S3 new checksums used by Trino
       artifacthub.io/containsSecurityUpdates: "true"
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: 3.7.84
-    created: "2025-03-26T16:26:46.121914697Z"
+    created: "2025-03-26T16:37:14.889967843Z"
     dependencies:
     - condition: ingress.controller.enabled
       name: kubernetes-ingress
@@ -136,7 +136,7 @@ entries:
       version: 5.4.0
     description: Resurface discovers and alerts on quality and security signatures
       in your API traffic.
-    digest: 6d241bd4e66423d41560ae5c6a02085753898bf1fc4254d41df0b6240ede4ed0
+    digest: 8478cf2d9aae405810f7c6bdd2fd89dc4ff5e9a7865b31807604b81e9601f9d4
     home: https://resurface.io
     icon: https://raw.githubusercontent.com/resurfaceio/insomnia-plugin/master/assets/plugin/icon-alt.svg
     keywords:
@@ -2096,4 +2096,4 @@ entries:
     urls:
     - https://github.com/resurfaceio/containers/releases/download/resurface-3.0.0/resurface-3.0.0.tgz
     version: 3.0.0
-generated: "2025-03-26T16:26:46.121926749Z"
+generated: "2025-03-26T16:37:14.889977992Z"
