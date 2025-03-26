@@ -146,7 +146,7 @@ Iceberg integration can be configured in the **iceberg** section. In this mode, 
   - **iceberg.azure.endpoint**: string. Hostname suffix of the Azure storage endpoint. Defaults to `core.windows.net`.
   - **iceberg.azure.auth**: nested subsection where the configuration required to access the Azure storage account can be found.
     - **iceberg.azure.auth.type**: string. Authentication type to use for Azure Storage access. Defaults to `ACCESS_KEY`
-    - **iceberg.azure.auth.accesskey**: string. The decrypted access key for the Azure Storage account. Requires authentication type `ACCESSS_KEY`.
+    - **iceberg.azure.auth.accesskey**: string. The decrypted access key for the Azure Storage account. Requires authentication type `ACCESS_KEY`.
 
 - The **iceberg.config** subsection contains configuration specific to Iceberg.
   - **iceberg.config.format**: string. File format used for Iceberg data file storage. It can be either `'PARQUET'` or `'ORC'` format. Defaults to `'PARQUET'`.

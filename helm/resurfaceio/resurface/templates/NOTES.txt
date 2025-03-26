@@ -65,7 +65,7 @@ helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}
 
 · Once the EXTERNAL IP for the Ingress Controller has been assigned, you can get the URL of the UI for your Resurface instance by running the following command:
 
-echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")/ui
+echo http://$(kubectl get svc {{ include "resurface.fullname" . }}-kubernetes-ingress --namespace {{ .Release.Namespace }} --template "{{"{{ $ing := index .status.loadBalancer.ingress 0 }}{{ or $ing.ip $ing.hostname }}"}}")/ui
 
 {{- else }}
 · You can get the URL of the UI for your Resurface instance by running the following command:
