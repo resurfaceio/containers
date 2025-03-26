@@ -1,14 +1,20 @@
 apiVersion: v2
 name: resurface
-version: 3.8.3
+version: 3.9.0
 type: application
 description: Resurface discovers and alerts on quality and security signatures in your API traffic.
 annotations:
   artifacthub.io/containsSecurityUpdates: "true"
   artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
+    - kind: added
+      description: Support for Azure Storage as remote object storage for Iceberg
+    - kind: added
+      description: Support for PII detection introduced in Graylog API Security 3.7
     - kind: changed
-      description: Upgrade Resurface image to 3.7.34
+      description: Upgrade Resurface image to 3.7.84
+    - kind: changed
+      description: Use specific tag for MinIO image to address AWS S3 new checksums used by Trino
 keywords:
   - API
   - HTTP
