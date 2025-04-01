@@ -115,6 +115,7 @@ custom:
     writeresponseheaders:
     writepiitokens:
     skippii:
+    maxcallage:
   storage:
     size:
     classname:

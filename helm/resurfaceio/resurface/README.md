@@ -212,6 +212,7 @@ The **custom** section holds the values for fields that can be overridden in any
   - **custom.config.writerequestheaders**: boolean. Controls if request headers are persisted after analysis. Set to `false` to disable.
   - **custom.config.writeresponsebodies**: boolean. Controls if response bodies are persisted after analysis. Set to `false` to disable.
   - **custom.config.writeresponseheaders**: boolean. Controls if response headers are persisted after analysis. Set to `false` to disable.
+  - **custom.config.maxcallage**: integer. Threshold, in days, for dropping incoming calls (i.e. older calls are discarded at capture time). Defaults to `14` days.
 
 - The **custom.storage** subsection refers to the persistent storage configuration. Persistent volume implementation is specific to each cloud provider.
   - **custom.storage.size**: integer. Size in GiB/GB (see **units**) of the persistent volume that should be provisioned for each Resurface node. It should match the **custom.config.dbsize** value.

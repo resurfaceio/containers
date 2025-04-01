@@ -71,9 +71,9 @@ Container resources and persistent volumes
 {{- $validIcebergAzureAuth := list "NONE" "ACCESS_KEY" "OAUTH" -}}
 
 {{/* Defaults for DB environment variables */}}
-{{- $defaultDBSize := 4 -}}
-{{- $defaultDBHeap := 12 -}}
-{{- $defaultDBSlabs := 3 -}}
+{{- $defaultDBSize := int 4 -}}
+{{- $defaultDBHeap := int 12 -}}
+{{- $defaultDBSlabs := int 3 -}}
 {{- $defaultShardSize := "1300m" -}}
 {{- $defaultPollingCycle := $icebergIsEnabled | ternary "default" "fast" -}}
 {{- $defaultWriteRequestBodies := "true" -}}
@@ -82,7 +82,8 @@ Container resources and persistent volumes
 {{- $defaultWriteResponseHeaders := "true" -}}
 {{- $defaultWritePiiTokens := "true" -}}
 {{- $defaultSkipProcessingPii := "false" -}}
-{{- $minShards := 3 -}}
+{{- $defaultMaxCallAge := int 14 -}}
+{{- $minShards := int 3 -}}
 
 {{/*
   All values without data unit prefix are assumed to be GiB/GB.
@@ -119,6 +120,7 @@ Container resources and persistent volumes
 {{- $writeResponseHeaders := .Values.custom.config.writeresponseheaders | quote | default $defaultWriteResponseHeaders -}}
 {{- $writePiiTokens := .Values.custom.config.writepiitokens | quote | default $defaultWritePiiTokens -}}
 {{- $skipProcessingPii := .Values.custom.config.skippii | quote | default $defaultSkipProcessingPii -}}
+{{- $maxCallAge := .Values.custom.config.maxcallage | int | default $defaultMaxCallAge -}}
 
 {{/*
   Shard size can be passed with a data unit prefix (k, m, or g)
@@ -278,6 +280,8 @@ Container resources and persistent volumes
               value: {{ $writePiiTokens | trimAll "\"" | quote  }}
             - name: SKIP_PROCESSING_PII
               value: {{ $skipProcessingPii | trimAll "\"" | quote  }}
+            - name: MAX_CALL_AGE_IN_DAYS
+              value: {{ $maxCallAge | quote }}
             {{- if $icebergIsEnabled }}
             - name: ICEBERG_ENABLED
               value: {{ .Values.iceberg.enabled | quote }}
